@@ -142,7 +142,93 @@ if (langSelect) {
   langSelect.addEventListener("change", (e) => applyPlanningLang(e.target.value));
 }
 
-// 3. Media Upload Size Guard (prevents browser memory exhaustion on large videos)
+// 3. Interactive Body Reference & WHO ICF Functional Selector (Visual Challenge Requirement)
+const checkGrid = document.querySelector(".check-grid");
+if (checkGrid) {
+  const bodyConsole = document.createElement("div");
+  bodyConsole.className = "body-icf-console";
+  bodyConsole.innerHTML = `
+    <svg viewBox="0 0 160 220" class="body-icf-svg" role="img" aria-label="Interactive astronaut body map">
+      <g fill="#0c1729" stroke="#2c4466" stroke-width="1.5">
+        <circle cx="80" cy="30" r="18" />
+        <rect x="54" y="54" width="52" height="72" rx="12" />
+        <rect x="30" y="58" width="18" height="64" rx="8" />
+        <rect x="112" y="58" width="18" height="64" rx="8" />
+        <rect x="58" y="132" width="18" height="78" rx="8" />
+        <rect x="84" y="132" width="18" height="78" rx="8" />
+      </g>
+      <circle cx="80" cy="30" r="15" class="icf-zone" data-fn="Vision" data-title="Head, Vision &amp; Neuro-Ocular" data-desc="Click to toggle Vision / Cognitive / Sleep impact. Monitors cephalad fluid shift and SANS." data-codes="WHO ICF b210, b134, b140 | NANDA-I 00198, 00204" />
+      <rect x="60" y="62" width="40" height="54" rx="8" class="icf-zone" data-fn="Cognitive focus" data-title="Thorax, Cardio &amp; Stress Response" data-desc="Click to toggle Cognitive / Stress impact. Tracks cardiovascular adaptation and isolation." data-codes="WHO ICF b152, b410 | NANDA-I 00027, 00146" />
+      <rect x="30" y="58" width="18" height="64" rx="8" class="icf-zone" data-fn="Fine motor" data-title="Upper Limbs &amp; EVA Dexterity" data-desc="Click to toggle Fine Motor impact. Tracks spacesuit glove fatigue and tool handling." data-codes="WHO ICF d440 | NANDA-I 00093" />
+      <rect x="112" y="58" width="18" height="64" rx="8" class="icf-zone" data-fn="Fine motor" data-title="Upper Limbs &amp; EVA Dexterity" data-desc="Click to toggle Fine Motor impact. Tracks spacesuit glove fatigue and tool handling." data-codes="WHO ICF d440 | NANDA-I 00093" />
+      <rect x="58" y="132" width="44" height="78" rx="8" class="icf-zone" data-fn="Mobility or balance" data-title="Lower Limbs, Gait &amp; Vestibular" data-desc="Click to toggle Mobility or Balance impact. Tracks bone unloading and post-G orthostatic stability." data-codes="WHO ICF b760, d410 | NANDA-I 00085" />
+    </svg>
+    <div class="icf-info">
+      <h3 id="icfZoneTitle">Interactive Body &amp; WHO ICF Map</h3>
+      <p id="icfZoneDesc">Click a body region on the figure to highlight its spaceflight function and toggle the corresponding mission task domain below.</p>
+      <div class="icf-badges" id="icfZoneBadges">
+        <span class="icf-badge">WHO ICF b210 · Vision</span>
+        <span class="icf-badge">WHO ICF d410 · Mobility</span>
+        <span class="icf-badge">WHO ICF d440 · Fine Motor</span>
+        <span class="icf-badge">NANDA-I · NIC · NOC</span>
+      </div>
+    </div>
+  `;
+  checkGrid.parentNode.insertBefore(bodyConsole, checkGrid);
+
+  bodyConsole.querySelectorAll(".icf-zone").forEach((zone) => {
+    zone.addEventListener("click", () => {
+      const fnVal = zone.dataset.fn;
+      document.getElementById("icfZoneTitle").textContent = zone.dataset.title;
+      document.getElementById("icfZoneDesc").textContent = zone.dataset.desc;
+      document.getElementById("icfZoneBadges").innerHTML = zone.dataset.codes
+        .split("|")
+        .map((c) => `<span class="icf-badge">${c.trim()}</span>`)
+        .join("");
+      const checkbox = document.querySelector(`input[name="function"][value="${fnVal}"]`);
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        zone.classList.toggle("active", checkbox.checked);
+      }
+    });
+  });
+}
+
+// 4. Hands-Free Voice Dictation for Description & Media Upload Size Guard
+const descInput = document.getElementById("description");
+if (descInput) {
+  const voiceBar = document.createElement("div");
+  voiceBar.className = "multimodal-bar";
+  const voiceBtn = document.createElement("button");
+  voiceBtn.type = "button";
+  voiceBtn.className = "quiet";
+  voiceBtn.textContent = "🎤 Dictate observation (Voice)";
+  const voiceHint = document.createElement("span");
+  voiceHint.className = "hint";
+  voiceBar.append(voiceBtn, voiceHint);
+  descInput.parentNode.append(voiceBar);
+
+  voiceBtn.addEventListener("click", () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      voiceHint.textContent = "Speech recognition unavailable in this browser.";
+      return;
+    }
+    const rec = new SR();
+    rec.lang = document.documentElement.lang || "en-US";
+    voiceHint.textContent = "Listening...";
+    rec.onresult = (ev) => {
+      const text = ev.results[0][0].transcript;
+      descInput.value = (descInput.value ? descInput.value + " " : "") + text;
+      voiceHint.textContent = "Captured.";
+    };
+    rec.onerror = () => {
+      voiceHint.textContent = "Microphone unavailable.";
+    };
+    rec.start();
+  });
+}
+
 const mediaInput = document.getElementById("media");
 if (mediaInput) {
   mediaInput.addEventListener("change", (e) => {
@@ -154,7 +240,7 @@ if (mediaInput) {
   }, true);
 }
 
-// 4. Optional Radiation & Space Pharmacy Fields + Interoperable FHIR/LOINC/ICF Export + PIN Encryption
+// 5. Optional Radiation & Space Pharmacy Fields + Interoperable FHIR/LOINC/ICF Export + PIN Encryption
 const obsHeading = document.getElementById("observations");
 const obsPanel = obsHeading?.closest("section.panel");
 if (obsPanel) {
@@ -167,7 +253,6 @@ if (obsPanel) {
   obsPanel.append(extraGrid);
 }
 
-// Add Interoperable FHIR/LOINC/ICF Export + Web Crypto PIN Lock in #history
 const historyActions = document.querySelector(".history-actions");
 if (historyActions) {
   const fhirBtn = document.createElement("button");
@@ -186,9 +271,9 @@ if (historyActions) {
 
   const LOINC_MAP = {
     heartRate: { code: "8867-4", display: "Heart rate", unit: "/min" },
-    bloodPressure: { code: "85354-9", display: "Blood pressure panel", unit: "mm[Hg]" },
+    bp: { code: "85354-9", display: "Blood pressure panel", unit: "mm[Hg]" },
     temperature: { code: "8310-5", display: "Body temperature", unit: "Cel" },
-    bloodGlucose: { code: "2339-0", display: "Glucose [Mass/volume] in Blood", unit: "mg/dL" }
+    oxygen: { code: "59408-5", display: "Oxygen saturation in Arterial blood by Pulse oximetry", unit: "%" }
   };
 
   const ICF_MAP = {
@@ -237,7 +322,7 @@ if (historyActions) {
             .filter(([k]) => LOINC_MAP[k])
             .map(([k, val]) => ({
               code: { coding: [{ system: "http://loinc.org", code: LOINC_MAP[k].code, display: LOINC_MAP[k].display }] },
-              valueString: String(val),
+              valueString: String(val?.value ?? val),
               unit: LOINC_MAP[k].unit
             })),
           note: [{ text: rec.description || rec.reason }]
@@ -249,7 +334,7 @@ if (historyActions) {
   fhirBtn.addEventListener("click", () => {
     const records = getScopedRecords();
     if (!records.length) {
-      alert("No saved records in the selected scope to export.");
+      alert("Select a mission scope with saved records first.");
       return;
     }
     const bundle = buildFhirBundle(records);
@@ -261,11 +346,10 @@ if (historyActions) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  // Web Crypto AES-GCM + PBKDF2 Encrypted Backup (Zero External Dependencies)
   lockBtn.addEventListener("click", async () => {
     const records = getScopedRecords();
     if (!records.length) {
-      alert("No saved records in the selected scope to encrypt.");
+      alert("Select a mission scope with saved records first.");
       return;
     }
     const pin = prompt("Enter a PIN/passphrase to encrypt your local backup (AES-256-GCM):");
@@ -303,7 +387,7 @@ if (historyActions) {
   });
 }
 
-// 5. QAOA Scoring & Statevector Simulator
+// 6. QAOA Scoring & Statevector Simulator
 function score(bits) {
   return plan.tasks.reduce((total, task, index) => {
     if (bits[index]) {

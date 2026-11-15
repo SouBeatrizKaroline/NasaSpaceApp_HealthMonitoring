@@ -25,6 +25,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -263,6 +267,49 @@ body {
   box-shadow: var(--shadow-card);
 }
 
+/* Profile Panel */
+.profile-panel {
+  margin-bottom: 24px;
+  border-color: var(--line-strong);
+}
+
+.profile-panel h2 {
+  margin: 0 0 6px;
+  font-size: 1.18rem;
+}
+
+.profile-panel > p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 16px;
+}
+
+.profile-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.profile-controls p {
+  margin: 0;
+  padding: 10px 14px;
+  background: rgba(8, 17, 32, 0.85);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.profile-controls strong {
+  color: var(--cyan);
+  margin-left: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+#exampleMission {
+  margin-top: 12px;
+}
+
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -310,7 +357,7 @@ body {
 /* Workspace Two-Column Layout */
 .workspace {
   display: grid;
-  grid-template-columns: minmax(190px, 1fr) minmax(0, 4fr);
+  grid-template-columns: minmax(195px, 1fr) minmax(0, 4fr);
   gap: clamp(18px, 3vw, 30px);
   align-items: start;
 }
@@ -508,6 +555,66 @@ a:focus-visible,
   text-decoration: underline;
 }
 
+/* Interactive Body Reference & WHO ICF Map */
+.body-icf-console {
+  margin: 14px 0 20px;
+  padding: 16px;
+  background: rgba(8, 16, 30, 0.82);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.body-icf-svg {
+  width: 100%;
+  max-height: 220px;
+}
+
+.icf-zone {
+  fill: rgba(124, 226, 247, 0.1);
+  stroke: rgba(138, 173, 219, 0.45);
+  stroke-width: 1.8;
+  cursor: pointer;
+  transition: fill 0.18s ease, stroke 0.18s ease;
+}
+
+.icf-zone:hover,
+.icf-zone.active {
+  fill: rgba(124, 226, 247, 0.32);
+  stroke: var(--cyan);
+}
+
+.icf-info h3 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: var(--cyan);
+}
+
+.icf-info p {
+  margin: 0 0 8px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.icf-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.icf-badge {
+  font-size: 0.72rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(124, 226, 247, 0.1);
+  border: 1px solid rgba(124, 226, 247, 0.3);
+  color: var(--cyan);
+}
+
 /* Checkboxes & Radio Cards */
 .check-grid {
   display: grid;
@@ -585,7 +692,7 @@ a:focus-visible,
   width: fit-content;
 }
 
-/* Upload Dropzone */
+/* Upload Dropzone & Multimodal Live Capture */
 .upload {
   display: flex;
   align-items: center;
@@ -613,6 +720,14 @@ a:focus-visible,
   width: 1px;
   height: 1px;
   opacity: 0;
+}
+
+.multimodal-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .media-preview {
@@ -699,7 +814,7 @@ button:disabled {
   color: var(--text);
 }
 
-/* Saved Records */
+/* Saved Records & Definition Lists (<dl>) */
 .history-actions {
   margin: 12px 0 18px;
 }
@@ -715,7 +830,7 @@ button:disabled {
 }
 
 .record-card {
-  padding: 16px;
+  padding: 16px 18px;
   background: rgba(8, 17, 32, 0.9);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -738,24 +853,43 @@ button:disabled {
 }
 
 .record-card strong {
-  color: var(--text);
+  color: var(--cyan);
+}
+
+.record-card small {
+  color: var(--gold);
+  font-size: 0.78rem;
 }
 
 .record-card summary {
   cursor: pointer;
   padding-block: 6px;
   color: var(--cyan);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
 }
 
-.record-card pre {
+.record-card dl {
+  display: grid;
+  grid-template-columns: minmax(130px, max-content) 1fr;
+  gap: 6px 14px;
+  margin: 10px 0 0;
+  padding: 12px 14px;
   background: #060d19;
   border: 1px solid var(--line);
-  padding: 12px;
   border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  overflow-x: auto;
+  font-size: 0.82rem;
+}
+
+.record-card dt {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.record-card dd {
+  margin: 0;
+  color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 /* Onboard QAOA / Qiskit Task Planning */
@@ -922,6 +1056,9 @@ footer {
   .gravity-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .body-icf-console {
+    grid-template-columns: 1fr;
+  }
   .grid.three,
   .grid.four {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -946,7 +1083,8 @@ footer {
   .grid.two,
   .grid.three,
   .grid.four,
-  .check-grid {
+  .check-grid,
+  .record-card dl {
     grid-template-columns: 1fr;
   }
   .gravity-card {
