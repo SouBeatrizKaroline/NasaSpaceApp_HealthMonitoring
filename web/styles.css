@@ -314,3 +314,7 @@ footer { text-align: center; color: #7c91b0; font-size: 0.76rem; padding: 24px 1
 #missionReport summary { cursor: pointer; color: var(--cyan); }
 #reportText { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
 @media (max-width: 720px) { .comparison-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.gravity-evidence { margin: 10px 0; }
+.gravity-evidence summary { color: var(--cyan); cursor: pointer; width: fit-content; padding: 6px 0; }
+.gravity-evidence p { color: var(--muted); margin-block: 6px; }

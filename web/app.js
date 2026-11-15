@@ -26,6 +26,10 @@ for (const [code, labels] of Object.entries({"en":["Mission comparison","Latest 
   ["comparisonTitle","comparisonHelp","missingPre","missingStage","reportTitle","reportLocal","saveReport","requestReview","reviewHelp"]
     .forEach((key, index) => { strings[code][key] = labels[index]; });
 }
+const evidenceKeys = ["whyGravity","gravityEvidence","gravityResearch","sleepChange","sleepUnavailable","descriptiveOnly"];
+for (const [code, labels] of Object.entries({"en":["Why record gravity transitions?","NASA describes changes in orientation, coordination, balance, and movement during gravity transitions. Record the environment and time since transition alongside changes in daily tasks so a reviewer can see the context.","NASA Human Research Program · Gravity Fields","Sleep change from latest preflight check-in","Sleep comparison unavailable","Reported differences are descriptive."],"pt":["Por que registrar transições de gravidade?","A NASA descreve mudanças na orientação, coordenação, equilíbrio e movimento durante transições de gravidade. Registre o ambiente e o tempo desde a transição junto das mudanças nas tarefas para contextualizar a revisão.","Programa de Pesquisa Humana da NASA · Campos gravitacionais","Mudança no sono desde o último registro pré-voo","Comparação de sono indisponível","As diferenças relatadas são descritivas."],"es":["¿Por qué registrar las transiciones de gravedad?","La NASA describe cambios en la orientación, la coordinación, el equilibrio y el movimiento durante las transiciones de gravedad. Registra el entorno y el tiempo desde la transición junto con los cambios en tus tareas para contextualizar la revisión.","Programa de Investigación Humana de la NASA · Campos gravitatorios","Cambio en el sueño desde el último registro previo al vuelo","Comparación del sueño no disponible","Las diferencias declaradas son descriptivas."],"fr":["Pourquoi consigner les transitions de gravité ?","La NASA décrit des changements d’orientation, de coordination, d’équilibre et de mouvement lors des transitions de gravité. Consignez l’environnement et le temps depuis la transition avec les changements dans vos activités pour éclairer la revue.","Programme de recherche humaine de la NASA · Champs gravitationnels","Évolution du sommeil depuis le dernier suivi avant le vol","Comparaison du sommeil indisponible","Les écarts déclarés sont descriptifs."]})) {
+  evidenceKeys.forEach((key, index) => { strings[code][key] = labels[index]; });
+}
 let lang = localStorage.getItem("crew-health-check.language") || "en";
 let previewUrls = [];
 const $ = (id) => document.getElementById(id);
@@ -97,6 +101,13 @@ function updateHistoryScopes() {
   scopes.forEach(scope => selector.add(new Option(scope === "legacy" ? t("legacy") : scope, scope)));
   selector.value = scopes.includes(selected) ? selected : "";
 }
+function reportedSleepHours(row) {
+  const value = row?.wellbeing?.sleepHours;
+  if ((typeof value !== "string" && typeof value !== "number") || String(value).trim() === "") return null;
+  const hours = Number(value);
+  return Number.isFinite(hours) && hours >= 0 && hours <= 24 ? hours : null;
+}
+
 function renderMissionComparison() {
   const scope = $("historyScope").value;
   const section = $("missionComparison");
@@ -112,7 +123,11 @@ function renderMissionComparison() {
   const rows = readRecords()
     .filter(row => row.astronautCode === activeCode && scopeOf(row) === scope)
     .sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
-  const lines = [t("comparisonTitle"), scope, t("comparisonHelp")];
+  const lines = [t("comparisonTitle"), scope, t("comparisonHelp"), t("descriptiveOnly")];
+  const baselineSleep = reportedSleepHours(rows.find(row => row.stage === "pre"));
+  const hourDifference = new Intl.NumberFormat(lang, {
+    style: "unit", unit: "hour", unitDisplay: "short", signDisplay: "exceptZero", maximumFractionDigits: 2
+  });
   for (const stage of ["pre", "during", "post"]) {
     const card = document.createElement("article");
     card.className = "record-card comparison-card";
@@ -144,6 +159,12 @@ function renderMissionComparison() {
       ["measurementSource", row.measurementSource],
       ["description", row.description]
     ];
+    if (stage !== "pre") {
+      const currentSleep = reportedSleepHours(row);
+      fields.splice(3, 0, ["sleepChange", baselineSleep === null || currentSleep === null
+        ? t("sleepUnavailable")
+        : hourDifference.format(currentSleep - baselineSleep)]);
+    }
     const details = document.createElement("dl");
     for (const [key, value] of fields) {
       if (value == null || value === "") continue;

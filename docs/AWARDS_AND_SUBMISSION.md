@@ -35,3 +35,9 @@ Aim for 30 seconds or up to seven slides as described in the [2026 community sub
 - Attribute NASA and other sources, identify the team's contributions, and complete all applicable disclosure fields accurately. Distinguish prior work from work completed during the event wherever the form or guide requests it.
 - Check two profiles, mission isolation, reload persistence, offline use, mobile layout, and text export. Record actual results and retain any limitations.
 - Describe a follow-up preference as a local record. Describe Qiskit results as simulator outputs for operational tasks.
+
+## Evidence available in the interface
+
+- **Science:** Open **Why record gravity transitions?** below the gravity selector. It links the NASA Human Research Program's findings on orientation, coordination, balance, and movement to the check-in fields.
+- **Mission concept and storytelling:** Select one astronaut and mission. The history shows the latest record in each stage and the reported sleep difference from the latest preflight check-in, when both values are present. The same information is included in the downloadable report.
+- **Interpretation:** A difference in reported sleep is descriptive and does not establish a cause. Crew-entered observations are distinct from NASA research. The current interface does not import a mission health dataset.
