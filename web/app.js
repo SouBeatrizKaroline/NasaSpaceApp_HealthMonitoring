@@ -12,6 +12,18 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    navAvatar: "Avatar",
+    avatarTitle: "Your mission avatar",
+    avatarIntro: "Save check-ins to unlock helmet colors for this profile and mission.",
+    avatarEquipped: "Equipped",
+    avatarEquip: "Equip",
+    avatarUnlock: "Unlocks at",
+    avatarPoints: "routine points",
+    helmetClassic: "Classic",
+    helmetNebula: "Nebula",
+    helmetAurora: "Aurora",
+    helmetSolar: "Solar",
+    avatarSaveError: "Could not save your helmet on this device.",
     helloCrew: "Hello,",
     todayGuidance: "Guidance for today",
     todayGuidanceCopy: "Use the check-in to record what changed. Follow your mission procedures if you need to raise a concern.",
@@ -152,6 +164,18 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    navAvatar: "Avatar",
+    avatarTitle: "Seu avatar da missão",
+    avatarIntro: "Salve check-ins para desbloquear cores de capacete para este perfil e missão.",
+    avatarEquipped: "Equipado",
+    avatarEquip: "Equipar",
+    avatarUnlock: "Desbloqueia com",
+    avatarPoints: "pontos de rotina",
+    helmetClassic: "Clássico",
+    helmetNebula: "Nebulosa",
+    helmetAurora: "Aurora",
+    helmetSolar: "Solar",
+    avatarSaveError: "Não foi possível salvar seu capacete neste dispositivo.",
     helloCrew: "Olá,",
     todayGuidance: "Orientações para hoje",
     todayGuidanceCopy: "Use o check-in para registrar o que mudou. Siga os procedimentos da missão se precisar comunicar uma preocupação.",
@@ -301,6 +325,7 @@ const $ = (id) => document.getElementById(id);
 let lang = localStorage.getItem("crew-health-check.lang") || "en";
 const demoMode = new URLSearchParams(location.search).get("demo") === "1";
 let demoRecords = [];
+let demoHelmet = "classic";
 const demoActivities = Object.create(null);
 let activeProfile = null;
 let currentStep = 1;
@@ -321,6 +346,7 @@ function applyLang(newLang) {
   updateNetworkBadge();
   renderHealthGuide();
   renderToday();
+  if (activeProfile && $("view-avatar").classList.contains("active")) renderAvatar();
 }
 
 function updateNetworkBadge() {
@@ -360,7 +386,10 @@ function getProfileRecords() {
 
 function switchView(viewName) {
   document.querySelectorAll(".nav-tab").forEach((b) => {
-    b.classList.toggle("active", b.dataset.view === viewName);
+    const selected = b.dataset.view === viewName;
+    b.classList.toggle("active", selected);
+    if (selected) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
   });
   document.querySelectorAll(".view").forEach((v) => {
     v.classList.toggle("active", v.id === `view-${viewName}`);
@@ -368,6 +397,7 @@ function switchView(viewName) {
   if (viewName === "today") renderToday();
   if (viewName === "history") renderHistory();
   if (viewName === "activity") renderRoutine(getProfileRecords());
+  if (viewName === "avatar") renderAvatar();
 }
 
 document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -857,12 +887,16 @@ $("groundFileInput").addEventListener("change", async (e) => {
 });
 
 
-function renderRoutine(rows) {
-  const days = new Set(rows.flatMap(row => {
+function countRoutineDays(rows) {
+  return new Set(rows.flatMap(row => {
     const date = new Date(row.recordedAt);
     if (!Number.isFinite(date.getTime())) return [];
     return [date.toISOString().slice(0, 10)];
   })).size;
+}
+
+function renderRoutine(rows) {
+  const days = countRoutineDays(rows);
   $("routineDays").textContent = days;
   $("routinePoints").textContent = days * 10;
   $("routineGoal").value = Math.min(days, 3);
@@ -927,6 +961,61 @@ document.querySelectorAll("[data-team-task]").forEach(task => {
   });
 });
 
+
+function renderAvatar(message = "", focusHelmet = null) {
+  if (!activeProfile) return;
+  const catalog = [
+    { id: "classic", label: "helmetClassic", points: 0 },
+    { id: "nebula", label: "helmetNebula", points: 20 },
+    { id: "aurora", label: "helmetAurora", points: 40 },
+    { id: "solar", label: "helmetSolar", points: 70 }
+  ];
+  const points = countRoutineDays(getProfileRecords()) * 10;
+  const key = "crew-health-check.helmet:" + activeProfile.crewId + ":" + activeProfile.missionCode;
+  let saved = demoHelmet;
+  if (!demoMode) {
+    try { saved = localStorage.getItem(key); } catch { saved = null; }
+  }
+  const selected = catalog.find(item => item.id === saved && item.points <= points) || catalog[0];
+  $("avatarCabin").dataset.helmet = selected.id;
+  $("avatarWallet").textContent = points + " " + t("avatarPoints");
+  $("avatarFeedback").textContent = message;
+  const choices = $("avatarChoices");
+  choices.replaceChildren();
+  for (const item of catalog) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "helmet-option";
+    button.dataset.helmet = item.id;
+    button.disabled = item.points > points;
+    button.setAttribute("aria-pressed", String(selected.id === item.id));
+    const swatch = document.createElement("span");
+    swatch.className = "helmet-swatch";
+    swatch.setAttribute("aria-hidden", "true");
+    const label = document.createElement("strong");
+    label.textContent = t(item.label);
+    const status = document.createElement("small");
+    status.textContent = selected.id === item.id ? t("avatarEquipped")
+      : button.disabled ? t("avatarUnlock") + " " + item.points + " " + t("avatarPoints") : t("avatarEquip");
+    button.append(swatch, label, status);
+    button.addEventListener("click", () => {
+      if (demoMode) demoHelmet = item.id;
+      else {
+        try { localStorage.setItem(key, item.id); }
+        catch { renderAvatar(t("avatarSaveError"), item.id); return; }
+      }
+      renderAvatar("", item.id);
+    });
+    choices.append(button);
+    if (focusHelmet === item.id) button.focus();
+  }
+}
+
+$("openAvatar").addEventListener("click", () => {
+  switchView("avatar");
+  $("avatarHeading").tabIndex = -1;
+  $("avatarHeading").focus();
+});
 applyLang(lang);
 
 

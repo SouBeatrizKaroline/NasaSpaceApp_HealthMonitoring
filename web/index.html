@@ -97,6 +97,7 @@
         <button type="button" class="nav-tab" data-view="planning" data-i18n="navPlanning">Task Planning</button>
         <button type="button" class="nav-tab" data-view="guide" data-i18n="navGuide">Health Guide</button>
         <button type="button" class="nav-tab" data-view="activity" data-i18n="navActivity">Crew Activity</button>
+        <button type="button" class="nav-tab" data-view="avatar" data-i18n="navAvatar">Avatar</button>
       </nav>
       </aside>
 
@@ -131,6 +132,7 @@
           <p class="muted" data-i18n="todayGuidanceCopy">Use the check-in to record what changed. Follow your mission procedures if you need to raise a concern.</p>
           <div class="console-links">
             <button type="button" class="btn-outline" id="openGuide" data-i18n="navGuide">Health Guide</button>
+            <button type="button" class="btn-outline" id="openAvatar" data-i18n="navAvatar">Avatar</button>
             <button type="button" class="btn-outline" id="openActivity" data-i18n="navActivity">Crew Activity</button>
             <button type="button" class="btn-outline" id="todayPlanningBtn" data-i18n="navPlanning">Task Planning</button>
           </div>
@@ -460,6 +462,21 @@
             <label class="crew-task"><input type="checkbox" data-team-task="review"><span data-i18n="taskReview">Review the team task plan together</span></label>
             <p id="teamProgress" role="status"></p>
           </article>
+        </div>
+      </section>
+      <section id="view-avatar" class="view" aria-labelledby="avatarHeading">
+        <h1 id="avatarHeading" data-i18n="avatarTitle">Your mission avatar</h1>
+        <p class="muted" data-i18n="avatarIntro">Save check-ins to unlock helmet colors for this profile and mission.</p>
+        <div class="avatar-layout">
+          <div class="avatar-cabin" id="avatarCabin" data-helmet="classic" aria-hidden="true">
+            <div class="cabin-window"></div>
+            <div class="crew-figure"><div class="crew-helmet"><span></span></div><div class="crew-suit"></div><div class="crew-boots"></div></div>
+          </div>
+          <div class="card avatar-locker">
+            <h2 id="avatarWallet"></h2>
+            <div id="avatarChoices" class="avatar-choices"></div>
+            <p id="avatarFeedback" role="status"></p>
+          </div>
         </div>
       </section>
     </div>

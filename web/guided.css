@@ -335,3 +335,101 @@ h1, h2, h3, .brand strong, .sidebar-brand strong {
 [data-theme="dark"] .console-hero { background: linear-gradient(115deg,#10192a,#092835); }
 [data-theme="dark"] .console-heading .btn-primary { background: #08768b; }
 [data-theme="dark"] .console-heading .btn-primary:hover { background: #085e72; }
+
+/* The mission workspace uses the same controls at every screen size. */
+:root {
+  --header-bg: #211e49;
+  --green: #5944b7;
+  --green-hover: #483497;
+  --green-soft: #ebe6ff;
+  --focus: #7254db;
+}
+:root[data-theme="dark"] {
+  --header-bg: #171536;
+  --bg: #0e0d22;
+  --surface: #1c193c;
+  --surface-alt: #15142d;
+  --border: #3d3766;
+  --border-strong: #766bad;
+  --ink: #f1edff;
+  --muted: #c2b9e1;
+  --green: #6750c4;
+  --green-hover: #5741b1;
+  --green-soft: #2b2452;
+  --focus: #53e4ce;
+}
+[data-theme="dark"] .console-hero, [data-theme="dark"] .today-card {
+  background: linear-gradient(115deg,#1c193c,#232147);
+}
+[data-theme="dark"] .console-heading .btn-primary { background: var(--green); }
+[data-theme="dark"] .console-heading .btn-primary:hover { background: var(--green-hover); }
+#appWorkspace .nav-tab.active { background: var(--green-soft); color: var(--ink); }
+#appWorkspace .nav-tab:focus-visible { outline-offset: -3px; }
+[data-theme="dark"] #view-checkin .step-dot.done { border-color: #349e94; }
+[data-theme="dark"] #view-checkin .step-dot.active { border-color: #53e4ce; }
+.avatar-layout { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 18px; align-items: start; }
+.avatar-cabin {
+  min-height: 330px;
+  border-radius: 20px;
+  border: 1px solid #655a9e;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg,#181637 0 70%,#48d6c8 70% 71%,#231d50 71%);
+  display: grid;
+  place-items: end center;
+  padding-bottom: 30px;
+}
+.cabin-window {
+  position: absolute;
+  top: 25px;
+  right: 11%;
+  width: 42%;
+  height: 46%;
+  border: 5px solid #574a8e;
+  border-radius: 33px;
+  background: radial-gradient(ellipse at 55% 140%,#538bec 0 45%,#54dec4 46% 47%,#0a1029 49%);
+}
+.crew-figure {
+  width: 115px;
+  position: relative;
+  margin-right: 27%;
+  display: grid;
+  justify-items: center;
+}
+.crew-helmet, .helmet-swatch {
+  --helmet: #e6e0fa;
+  background: var(--helmet);
+  border-radius: 50%;
+}
+[data-helmet="nebula"] :is(.crew-helmet,.helmet-swatch) { --helmet: #ae97ff; }
+[data-helmet="aurora"] :is(.crew-helmet,.helmet-swatch) { --helmet: #80efdc; }
+[data-helmet="solar"] :is(.crew-helmet,.helmet-swatch) { --helmet: #ffce82; }
+.crew-helmet { width: 87px; height: 81px; display: grid; place-items: center; z-index: 1; }
+.crew-helmet span { width: 64px; height: 45px; border-radius: 50%; background: #171638; display: flex; justify-content: center; align-items: center; gap: 9px; }
+.crew-helmet span::before, .crew-helmet span::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #58e7d0; }
+.crew-suit { width: 72px; height: 74px; margin-top: -5px; border-radius: 18px 18px 12px 12px; background: #ddd7f2; position: relative; }
+.crew-suit::before { content: ""; position: absolute; inset: 23px 22px auto; height: 16px; border-radius: 4px; background: linear-gradient(90deg,#5946a7,#29264d); }
+.crew-boots { width: 67px; height: 30px; border-radius: 0 0 9px 9px; background: linear-gradient(90deg,#bcb5d8 45%, transparent 45% 55%,#bcb5d8 55%); }
+.avatar-choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.helmet-option { display: grid; gap: 5px; justify-items: center; padding: 12px 5px; background: var(--surface-alt); border: 1px solid var(--border); color: var(--ink); border-radius: 11px; cursor: pointer; }
+.helmet-option[aria-pressed="true"] { border-color: var(--focus); background: var(--green-soft); }
+.helmet-option:disabled { cursor: default; color: var(--muted); }
+.helmet-swatch { width: 22px; height: 22px; border: 1px solid var(--border-strong); }
+@media (max-width: 680px) {
+  #appWorkspace { padding-bottom: 82px; }
+  #appWorkspace .nav-tabs {
+    position: fixed;
+    z-index: 30;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    inset-inline: 8px;
+    margin: 0;
+    padding: 5px;
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 5px 24px #0005;
+  }
+  #appWorkspace .nav-tab { flex: 0 0 auto; min-height: 44px; }
+  .avatar-layout { grid-template-columns: minmax(0,1fr); }
+  .avatar-cabin { min-height: 280px; }
+}
