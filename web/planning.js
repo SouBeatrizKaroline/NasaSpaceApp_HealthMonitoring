@@ -1,5 +1,60 @@
 "use strict";
 
+// 1. Register Offline Service Worker (True offline-first for deep-space / blackout)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
+// 2. Multilingual i18n for Onboard Task Planning (#planning)
+const planningI18n = {
+  en: {
+    title: "Onboard task planning",
+    lead: "Enter operational tasks and compare an exact schedule with an in-browser QAOA simulator and local Qiskit Aer. Keep crew and health data out of planning files.",
+    budget: "Available minutes",
+    tasks: "Tasks (up to 8)",
+    format: "One task per line: task name | minutes (1–240) | priority points (1–100).",
+    compare: "Compare schedules",
+    download: "Download Qiskit input",
+    sample: "Load sample lunar tasks",
+    resultLabel: "Qiskit result file"
+  },
+  pt: {
+    title: "Planejamento de tarefas a bordo",
+    lead: "Informe tarefas operacionais e compare o cronograma exato com o simulador QAOA no navegador e o Qiskit Aer local. Mantenha dados de saúde e tripulação fora dos arquivos de planejamento.",
+    budget: "Minutos disponíveis",
+    tasks: "Tarefas (até 8)",
+    format: "Uma tarefa por linha: nome da tarefa | minutos (1–240) | pontos de prioridade (1–100).",
+    compare: "Comparar cronogramas",
+    download: "Baixar entrada Qiskit",
+    sample: "Carregar tarefas lunares",
+    resultLabel: "Arquivo de resultado Qiskit"
+  },
+  es: {
+    title: "Planificación de tareas a bordo",
+    lead: "Ingresa tareas operativas y compara el horario exacto con el simulador QAOA en el navegador y Qiskit Aer local. Mantén los datos de salud fuera de estos archivos.",
+    budget: "Minutos disponibles",
+    tasks: "Tareas (hasta 8)",
+    format: "Una tarea por línea: nombre | minutos (1–240) | puntos de prioridad (1–100).",
+    compare: "Comparar horarios",
+    download: "Descargar entrada Qiskit",
+    sample: "Cargar tareas lunares",
+    resultLabel: "Archivo de resultado Qiskit"
+  },
+  fr: {
+    title: "Planification des tâches à bord",
+    lead: "Saisissez des tâches opérationnelles et comparez le planning exact avec le simulateur QAOA intégré et Qiskit Aer local. Gardez les données de santé hors de ces fichiers.",
+    budget: "Minutes disponibles",
+    tasks: "Tâches (jusqu'à 8)",
+    format: "Une tâche par ligne : nom | minutes (1–240) | points de priorité (1–100).",
+    compare: "Comparer les plannings",
+    download: "Télécharger l'entrée Qiskit",
+    sample: "Charger tâches lunaires",
+    resultLabel: "Fichier résultat Qiskit"
+  }
+};
+
 const planningSection = document.getElementById("planning");
 const planningForm = document.getElementById("planningForm");
 const download = document.getElementById("planningDownload");
@@ -62,6 +117,193 @@ histogramBox.append(histTitle, histBars);
 
 planningSection.append(comparisonGrid, histogramBox);
 
+function applyPlanningLang(code) {
+  const dict = planningI18n[code] || planningI18n.en;
+  planningTitleEl.textContent = dict.title;
+  const leadP = planningSection.querySelector(":scope > p");
+  if (leadP) leadP.textContent = dict.lead;
+  const budgetSpan = document.getElementById("planningBudget")?.previousElementSibling;
+  if (budgetSpan) budgetSpan.textContent = dict.budget;
+  const tasksSpan = document.getElementById("planningTasks")?.previousElementSibling;
+  if (tasksSpan) tasksSpan.textContent = dict.tasks;
+  const formatEl = document.getElementById("planningFormat");
+  if (formatEl) formatEl.textContent = dict.format;
+  const submitBtn = planningForm.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.textContent = dict.compare;
+  download.textContent = dict.download;
+  sampleBtn.textContent = dict.sample;
+  const resSpan = resultFile?.previousElementSibling;
+  if (resSpan) resSpan.textContent = dict.resultLabel;
+}
+
+const langSelect = document.getElementById("language");
+if (langSelect) {
+  applyPlanningLang(langSelect.value);
+  langSelect.addEventListener("change", (e) => applyPlanningLang(e.target.value));
+}
+
+// 3. Media Upload Size Guard (prevents browser memory exhaustion on large videos)
+const mediaInput = document.getElementById("media");
+if (mediaInput) {
+  mediaInput.addEventListener("change", (e) => {
+    const oversized = [...e.target.files].find((f) => f.size > 25 * 1024 * 1024);
+    if (oversized) {
+      alert(`File "${oversized.name}" exceeds the 25 MB session preview limit.`);
+      mediaInput.value = "";
+    }
+  }, true);
+}
+
+// 4. Optional Radiation & Space Pharmacy Fields + Interoperable FHIR/LOINC/ICF Export + PIN Encryption
+const obsHeading = document.getElementById("observations");
+const obsPanel = obsHeading?.closest("section.panel");
+if (obsPanel) {
+  const extraGrid = document.createElement("div");
+  extraGrid.className = "grid two";
+  extraGrid.innerHTML = `
+    <label><span>Radiation dosimeter (mSv/day, optional)</span><input id="radiationDose" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 0.45"></label>
+    <label><span>Onboard medication / pharmacy note (optional)</span><input id="pharmacyNote" type="text" maxlength="140" placeholder="e.g. Ibuprofen 200mg (Kit B, verify radiation exposure)"></label>
+  `;
+  obsPanel.append(extraGrid);
+}
+
+// Add Interoperable FHIR/LOINC/ICF Export + Web Crypto PIN Lock in #history
+const historyActions = document.querySelector(".history-actions");
+if (historyActions) {
+  const fhirBtn = document.createElement("button");
+  fhirBtn.type = "button";
+  fhirBtn.className = "secondary";
+  fhirBtn.id = "exportFhir";
+  fhirBtn.textContent = "Export FHIR / LOINC + ICF";
+
+  const lockBtn = document.createElement("button");
+  lockBtn.type = "button";
+  lockBtn.className = "quiet";
+  lockBtn.id = "encryptBackup";
+  lockBtn.textContent = "Encrypt backup (PIN)";
+
+  historyActions.append(fhirBtn, lockBtn);
+
+  const LOINC_MAP = {
+    heartRate: { code: "8867-4", display: "Heart rate", unit: "/min" },
+    bloodPressure: { code: "85354-9", display: "Blood pressure panel", unit: "mm[Hg]" },
+    temperature: { code: "8310-5", display: "Body temperature", unit: "Cel" },
+    bloodGlucose: { code: "2339-0", display: "Glucose [Mass/volume] in Blood", unit: "mg/dL" }
+  };
+
+  const ICF_MAP = {
+    "Mobility or balance": ["b760", "d410-d429"],
+    "Vision": ["b210"],
+    "Fine motor": ["d440"],
+    "Cognitive focus": ["b140"],
+    "Sleep": ["b134"],
+    "Mood": ["b152"]
+  };
+
+  function getScopedRecords() {
+    const raw = JSON.parse(localStorage.getItem("crew-health-check.records") || "[]");
+    const scope = document.getElementById("historyScope")?.value;
+    if (!scope) return raw;
+    return raw.filter((r) => ((r.astronautCode && r.missionCode) ? `${r.astronautCode} / ${r.missionCode}` : "legacy") === scope);
+  }
+
+  function buildFhirBundle(records) {
+    const preBaseline = records.find((r) => r.stage === "pre") || null;
+    const radDose = document.getElementById("radiationDose")?.value || null;
+    const pharmNote = document.getElementById("pharmacyNote")?.value?.trim() || null;
+
+    return {
+      resourceType: "Bundle",
+      type: "collection",
+      meta: {
+        profile: ["NASA-STD-3001-Crew-Wellness-Prototype"],
+        standards: ["HL7 FHIR R5", "LOINC", "WHO ICF", "NANDA-I/NIC/NOC", "WHO ICD-11 (Flight Surgeon review only)"]
+      },
+      timestamp: new Date().toISOString(),
+      preFlightBaselineRef: preBaseline ? preBaseline.recordedAt : null,
+      sessionContext: {
+        radiationDosimeterMsvDay: radDose ? Number(radDose) : null,
+        pharmacyNote: pharmNote
+      },
+      entry: records.map((rec) => ({
+        resource: {
+          resourceType: "Observation",
+          status: "preliminary",
+          effectiveDateTime: rec.recordedAt,
+          subject: { display: rec.astronautCode || "CREW" },
+          encounter: { display: `${rec.missionCode || "MISSION"} | ${rec.stage} | ${rec.mission?.gravity || ""}` },
+          icfFunctionalDomains: (rec.functionChanges || []).flatMap((f) => ICF_MAP[f] || []),
+          component: Object.entries(rec.measurements || {})
+            .filter(([k]) => LOINC_MAP[k])
+            .map(([k, val]) => ({
+              code: { coding: [{ system: "http://loinc.org", code: LOINC_MAP[k].code, display: LOINC_MAP[k].display }] },
+              valueString: String(val),
+              unit: LOINC_MAP[k].unit
+            })),
+          note: [{ text: rec.description || rec.reason }]
+        }
+      }))
+    };
+  }
+
+  fhirBtn.addEventListener("click", () => {
+    const records = getScopedRecords();
+    if (!records.length) {
+      alert("No saved records in the selected scope to export.");
+      return;
+    }
+    const bundle = buildFhirBundle(records);
+    const url = URL.createObjectURL(new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "crew-wellness-fhir-loinc-icf.json";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  // Web Crypto AES-GCM + PBKDF2 Encrypted Backup (Zero External Dependencies)
+  lockBtn.addEventListener("click", async () => {
+    const records = getScopedRecords();
+    if (!records.length) {
+      alert("No saved records in the selected scope to encrypt.");
+      return;
+    }
+    const pin = prompt("Enter a PIN/passphrase to encrypt your local backup (AES-256-GCM):");
+    if (!pin) return;
+    try {
+      const enc = new TextEncoder();
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveKey"]);
+      const key = await crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt"]
+      );
+      const payload = enc.encode(JSON.stringify(buildFhirBundle(records)));
+      const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, payload);
+      const out = {
+        format: "crew-wellness-aes256gcm-v1",
+        kdf: "PBKDF2-SHA256-100k",
+        salt: Array.from(salt),
+        iv: Array.from(iv),
+        ciphertext: Array.from(new Uint8Array(ciphertext))
+      };
+      const url = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: "application/json" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "crew-wellness-encrypted-backup.json";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      alert("Web Crypto API is unavailable in this browser context.");
+    }
+  });
+}
+
+// 5. QAOA Scoring & Statevector Simulator
 function score(bits) {
   return plan.tasks.reduce((total, task, index) => {
     if (bits[index]) {
@@ -77,14 +319,11 @@ function describe(result) {
   return result.minutes + " min / " + result.points + " points — " + (result.names.join(", ") || "No tasks selected");
 }
 
-// Pure-JS QAOA (p=1) Statevector Simulator for n <= 8 qubits
-// Minimizes H_C(x) = -sum(v_i * x_i) + penalty * max(0, sum(d_i * x_i) - budget)^2
 function runBrowserQaoa(tasks, budget) {
   const n = tasks.length;
   const dim = 1 << n;
   const penalty = 2.0;
 
-  // Precompute normalized cost diagonal H_C[mask]
   const costs = new Float64Array(dim);
   let maxAbs = 1;
   for (let mask = 0; mask < dim; mask++) {
@@ -103,7 +342,6 @@ function runBrowserQaoa(tasks, budget) {
   }
   for (let mask = 0; mask < dim; mask++) costs[mask] /= maxAbs;
 
-  // Apply QAOA p=1 circuit and grid-search (gamma, beta)
   let bestExpectation = Infinity;
   let bestProbs = null;
   let bestGamma = 0.8;
@@ -118,14 +356,12 @@ function runBrowserQaoa(tasks, budget) {
     for (let bIdx = 1; bIdx <= 5; bIdx++) {
       const beta = bIdx * 0.25;
 
-      // 1. Initialize |+>^n and apply Cost Unitary e^{-i * gamma * H_C}
       for (let m = 0; m < dim; m++) {
         const angle = -gamma * costs[m];
         re[m] = invSqrtDim * Math.cos(angle);
         im[m] = invSqrtDim * Math.sin(angle);
       }
 
-      // 2. Apply Mixer Unitary prod_q R_X(2 * beta) = prod_q (cos(beta)I - i sin(beta)X)
       const cb = Math.cos(beta);
       const sb = Math.sin(beta);
       for (let q = 0; q < n; q++) {
@@ -143,7 +379,6 @@ function runBrowserQaoa(tasks, budget) {
         }
       }
 
-      // 3. Compute expectation <H_C>
       let expVal = 0;
       const probs = new Float64Array(dim);
       for (let m = 0; m < dim; m++) {
@@ -161,7 +396,6 @@ function runBrowserQaoa(tasks, budget) {
     }
   }
 
-  // Rank top-5 measured basis states & pick best feasible high-probability state
   const ranked = [];
   for (let m = 0; m < dim; m++) {
     ranked.push({ mask: m, prob: bestProbs[m] });
@@ -257,7 +491,6 @@ planningForm.addEventListener("submit", (event) => {
     if (candidate.minutes <= plan.budget && candidate.points > optimum.points) optimum = candidate;
   }
 
-  // Run live in-browser QAOA statevector simulation
   const qaoa = runBrowserQaoa(tasks, plan.budget);
   const qaoaResult = score(qaoa.bits);
   const gap = optimum.points - qaoaResult.points;
