@@ -1,0 +1,8 @@
+[package]
+name = "astrocare_q"
+version = "0.1.0"
+edition = "2021"
+description = "Spaceflight-grade clinical anamnesis, NANDA-I nursing triage, and QUBO optimization engine for astronauts."
+
+# Zero external dependencies for maximum reliability, offline compilation, and minimal binary footprint.
+[dependencies]

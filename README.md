@@ -2,7 +2,7 @@
 
 > **2026 NASA Space Apps Challenge** · *Create Health Monitoring Software for Astronauts on Space Missions*
 
-**AstroCare-Q** is a lean, autonomous health monitoring platform built for astronauts on long-duration space missions (Lunar/Artemis, orbital stations, rovers, and Mars). The system integrates **Structured Space Anamnesis**, **NANDA-I Nursing Diagnoses**, **Medical Triage (ICD-11 / Flight Surgeon)**, **Multimodal Analysis (Video, Photo, Voice)**, and **Quantum Computing/Sensing** into a clean, low-cognitive-load interface.
+**AstroCare-Q** is a lean, spaceflight-grade autonomous health monitoring platform built for astronauts on long-duration missions (Lunar/Artemis, orbital stations, rovers, and Mars). The core engine is written in **Rust** for deterministic performance, memory safety without garbage collection, and ultra-lightweight footprint—capable of running natively on constrained flight hardware or compiling to **WebAssembly (WASM)** for offline browser execution.
 
 ---
 
@@ -18,7 +18,7 @@ On deep-space missions, communication delays prevent real-time medical support f
    - **Photo / Image:** Visual assessment of skin lesions, facial edema (*puffy face*), or rapid diagnostic test strips.
    - **Voice:** Hands-free spoken anamnesis transcription plus basic vocal fatigue/stress indicators.
 3. **Quantum Computing, Engineering & Science (Feasible with Limited Resources):**
-   - **Quantum Computing (QUBO / QML):** Combinatorial triage optimization—prioritizing which clinical protocols to run first under tight crew time and limited medical supply constraints—executed on a local simulator.
+   - **Quantum Computing (QUBO / QML):** Combinatorial triage optimization—prioritizing which clinical protocols to run first under tight crew time and limited medical supply constraints—executed in deterministic Rust (with optional Qiskit bridge).
    - **Quantum Engineering (Sensor Layer):** Telemetry architecture ready for next-generation quantum biosensors (NV-center / OPM magnetometry and quantum radiation dosimetry, simulated via JSON/API in the MVP).
    - **Quantum Science:** Cumulative cosmic radiation biological risk modeling and post-quantum cryptography (PQC) concepts for securing clinical telemetry.
 4. **Lean Design (Low Cognitive Load):**
@@ -37,27 +37,37 @@ NasaSpaceApp_HealthMonitoring/
 │   ├── CLINICAL_NANDA_MEDICAL.md      # Anamnesis, NANDA-I & Medical Triage engine
 │   └── QUANTUM_ARCHITECTURE.md        # Quantum Computing, Engineering & Science in the MVP
 └── mvp/
+    ├── Cargo.toml                     # Zero-dependency Rust project manifest
+    ├── src/
+    │   └── main.rs                    # Spaceflight-grade Rust Clinical & QUBO Triage Engine
     ├── anamnesis_nanda_engine.json    # Clinical rule base linking NASA Hazards to NANDA-I
-    └── quantum_triage_qubo.py         # Working QUBO clinical triage optimization prototype
+    └── quantum_triage_qubo.py         # Optional Python/Qiskit reference script
 ```
 
 ---
 
-## 🛠️ Recommended MVP Stack (Resource-Constrained)
+## 🛠️ Spaceflight-Grade Stack (Lightweight & Resource-Constrained)
 
-| Layer | Lightweight / Free Tech | Rationale |
+| Layer | Technology | Why It Fits Space Missions |
 | :--- | :--- | :--- |
-| **Frontend** | React + Vite + TypeScript + Tailwind CSS | Fast to prototype, responsive, and lightweight for offline spacecraft use. |
-| **Backend** | Python (FastAPI) | Natively integrates computer vision, audio processing, and quantum libraries. |
-| **Multimodal** | OpenCV + MediaPipe + Web Speech API | Webcam rPPG, image analysis, and voice-to-text without heavy GPU requirements. |
-| **Quantum** | Qiskit (AerSimulator) / NumPy fallback | Runs QUBO/QAOA optimization locally on a standard laptop for the hackathon demo. |
+| **Core Engine** | **Rust** (zero external crates / `no_std`-ready) | Memory-safe without garbage collection, deterministic latency, tiny binary, compiles to **WASM**. |
+| **Frontend** | Lightweight Web UI / WASM (HTML + TypeScript) | Runs 100% offline inside the spacecraft cabin with minimal RAM/CPU usage. |
+| **Multimodal** | Browser WebRTC + Web Speech API / lightweight CV | Webcam rPPG, photo capture, and hands-free voice input without heavy GPU requirements. |
+| **Quantum** | Rust QUBO Solver + optional Qiskit Aer bridge | Runs QUBO triage optimization in microseconds on-device without needing quantum hardware. |
 
 ---
 
-## 🚀 Running the QUBO Triage Prototype (MVP)
+## 🚀 Running the Rust Core Prototype (MVP)
+
+No external dependencies or internet access required:
 
 ```bash
-python mvp/quantum_triage_qubo.py
+cd mvp
+cargo run --release
 ```
 
-The script runs clinical triage optimization for an astronaut with multiple simultaneous alerts while respecting mission time and medical supply constraints.
+Or compile directly with `rustc`:
+
+```bash
+rustc mvp/src/main.rs -O -o astrocare_q && ./astrocare_q
+```
