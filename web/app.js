@@ -12,6 +12,12 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    themeDark: "Dark mode",
+    gateFormTitle: "Open a mission workspace",
+    progressContext: "Context",
+    progressObservations: "Observations",
+    progressMeasurements: "Measurements",
+    progressReview: "Review",
     readingHelpTitle: "No readings?",
     mediaDetails: "Preview a photo, video or audio clip (optional)",
     activityDetails: "Add what was harder to do (optional)",
@@ -118,6 +124,12 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    themeDark: "Modo escuro",
+    gateFormTitle: "Abrir espaço da missão",
+    progressContext: "Contexto",
+    progressObservations: "Observações",
+    progressMeasurements: "Medições",
+    progressReview: "Revisão",
     readingHelpTitle: "Sem medições?",
     mediaDetails: "Visualize uma foto, vídeo ou áudio (opcional)",
     activityDetails: "Conte o que ficou mais difícil de fazer (opcional)",
@@ -691,3 +703,25 @@ $("groundFileInput").addEventListener("change", async (e) => {
 });
 
 applyLang(lang);
+
+
+const themeToggle = $("themeToggle");
+const themePreference = window.matchMedia("(prefers-color-scheme: dark)");
+const themeKey = "crew-health-check.theme";
+let selectedTheme;
+try { selectedTheme = localStorage.getItem(themeKey); } catch { /* Follow the system. */ }
+
+function applyTheme() {
+  const theme = ["dark", "light"].includes(selectedTheme)
+    ? selectedTheme : themePreference.matches ? "dark" : "light";
+  document.documentElement.dataset.theme = theme;
+  themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
+}
+
+themeToggle.addEventListener("click", () => {
+  selectedTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  try { localStorage.setItem(themeKey, selectedTheme); } catch { /* Keep the session theme. */ }
+  applyTheme();
+});
+themePreference.addEventListener("change", applyTheme);
+applyTheme();

@@ -20,6 +20,7 @@
       </div>
 
       <div class="topbar-actions">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false" data-i18n="themeDark">Dark mode</button>
         <span class="status-pill offline-ok" id="networkBadge">
           <span class="dot" aria-hidden="true"></span>
           <span id="networkText" data-i18n="worksOffline">Works offline</span>
@@ -39,14 +40,16 @@
 
   <main class="shell">
     <!-- LOCAL PROFILE GATE -->
-    <section id="profileGate" class="card profile-gate" aria-labelledby="profileGateTitle">
+    <section id="profileGate" class="profile-gate" aria-labelledby="profileGateTitle">
       <div class="hero-strip">
+        <img class="gate-mark" src="favicon.svg" alt="" width="56" height="56">
         <span class="eyebrow" data-i18n="eyebrow">NASA SPACE APPS · ONBOARD CREW TOOL</span>
         <h1 id="profileGateTitle" data-i18n="gateTitle">Open your onboard profile</h1>
         <p class="muted" data-i18n="gateLead">Enter a Crew ID and Mission code to start or resume your local check-in log. Works without internet.</p>
       </div>
 
-      <form id="profileForm" class="profile-form">
+      <form id="profileForm" class="profile-form card">
+        <h2 data-i18n="gateFormTitle">Open a mission workspace</h2>
         <div class="field-row">
           <label>
             <span data-i18n="crewIdLabel">Crew ID (local identifier)</span>
@@ -158,13 +161,13 @@
           <div class="wizard-top" id="wizardHeader">
             <span class="step-caption" id="stepCaption">Step 1 of 4 · Mission context</span>
             <div class="stepper" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="checkinStepper">
-              <span class="step-dot active">1</span>
+              <span class="step-dot active"><span class="step-number">1</span><span data-i18n="progressContext">Context</span></span>
               <span class="step-line"></span>
-              <span class="step-dot">2</span>
+              <span class="step-dot"><span class="step-number">2</span><span data-i18n="progressObservations">Observations</span></span>
               <span class="step-line"></span>
-              <span class="step-dot">3</span>
+              <span class="step-dot"><span class="step-number">3</span><span data-i18n="progressMeasurements">Measurements</span></span>
               <span class="step-line"></span>
-              <span class="step-dot">4</span>
+              <span class="step-dot"><span class="step-number">4</span><span data-i18n="progressReview">Review</span></span>
             </div>
           </div>
 

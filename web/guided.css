@@ -129,3 +129,69 @@
     font-size: 0;
   }
 }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --header-bg: #080e20;
+  --bg: #060a17;
+  --surface: #101829;
+  --surface-alt: #0a1223;
+  --border: #28364b;
+  --border-strong: #536982;
+  --ink: #edf5ff;
+  --muted: #aec3dc;
+  --green: #08768b;
+  --green-hover: #085e72;
+  --green-soft: #102b35;
+  --focus: #58dff4;
+  --amber-bg: #302614;
+  --amber-ink: #ffda88;
+  --amber-border: #785720;
+  --red-bg: #321b2b;
+  --red-ink: #ffc0cd;
+  --red-border: #854958;
+  --shadow: none;
+}
+.theme-toggle {
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid #597582;
+  border-radius: 8px;
+  background: transparent;
+  color: #eef8fb;
+  font: inherit;
+  cursor: pointer;
+}
+.theme-toggle[aria-pressed="true"] { background: #12394c; border-color: #5ad9ed; }
+#profileGate { max-width: 430px; margin: clamp(24px, 6vh, 68px) auto; }
+#profileGate .hero-strip { text-align: center; background: none; padding: 0 12px 20px; }
+.gate-mark { display: block; margin: 0 auto 15px; border-radius: 14px; }
+#profileGate .profile-form { padding: 22px; }
+#profileGate .profile-form .field-row { grid-template-columns: minmax(0,1fr); }
+#profileGate .btn-row button { width: 100%; min-height: 44px; }
+#profileGate .notice-inline { padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; }
+[data-theme="dark"] .mission-sidebar { background: #0b1426; border: 1px solid var(--border); }
+[data-theme="dark"] .reading-help { background: #102b35; color: #e3f6ff; }
+[data-theme="dark"] .today-card { background: linear-gradient(120deg,#101829,#0b2739); }
+#view-checkin .stepper { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+#view-checkin .step-line { display: none; }
+#view-checkin .step-dot {
+  width: auto;
+  height: auto;
+  min-height: 60px;
+  align-content: center;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  font-size: .8rem;
+  text-align: center;
+  padding: 7px 3px;
+  overflow-wrap: anywhere;
+}
+#view-checkin .step-dot.active { background: var(--green); border-color: var(--green); color: white; }
+#view-checkin .step-dot.done { background: var(--green-soft); color: var(--ink); border-color: var(--border-strong); }
+#view-checkin .step-number { font-variant-numeric: tabular-nums; }
+#view-checkin .wizard-step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: clamp(16px,3vw,28px); }
+@media(max-width: 530px) {
+  .topbar-inner, .topbar-actions { flex-wrap: wrap; }
+  #view-checkin .stepper { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
