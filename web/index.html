@@ -40,6 +40,7 @@
   </header>
 
   <main class="shell">
+    <div id="demoBanner" class="card demo-banner" hidden><strong data-i18n="demoNotice">Demo mode · sample data and session-only changes</strong> <a href="?" data-i18n="exitDemo">Exit demo</a></div>
     <!-- LOCAL PROFILE GATE -->
     <section id="profileGate" class="profile-gate" aria-labelledby="profileGateTitle">
       <div class="hero-strip">
@@ -69,6 +70,7 @@
           <button type="submit" class="btn-primary" data-i18n="openProfileBtn">Open onboard workspace →</button>
         </div>
       </form>
+      <p><a class="btn-outline demo-entry" href="?demo=1" data-i18n="tryDemo">Try the demo</a></p>
 
       <p class="notice-inline" data-i18n="localIdNote">
         ℹ Crew ID is a local device identifier for separating mission logs in this browser. It is not an authentication credential and does not diagnose medical conditions.
@@ -93,6 +95,8 @@
         <button type="button" class="nav-tab" data-view="history" data-i18n="navHistory">Mission History</button>
         <button type="button" class="nav-tab" data-view="ground" data-i18n="navGround">Ground Review</button>
         <button type="button" class="nav-tab" data-view="planning" data-i18n="navPlanning">Task Planning</button>
+        <button type="button" class="nav-tab" data-view="guide" data-i18n="navGuide">Health Guide</button>
+        <button type="button" class="nav-tab" data-view="activity" data-i18n="navActivity">Crew Activity</button>
       </nav>
       </aside>
 
@@ -153,6 +157,12 @@
               <button type="button" id="todayPlanningBtn" class="btn-ghost" data-i18n="openPlanningLink">Organize mission tasks (Task Planning) →</button>
             </div>
           </div>
+        </div>
+        <div class="routine-strip card">
+          <div><strong id="routinePoints">0</strong><span data-i18n="routinePoints">Routine points</span></div>
+          <div><strong id="routineDays">0</strong><span data-i18n="routineDays">Days logged</span></div>
+          <button type="button" class="btn-outline" id="openActivity" data-i18n="navActivity">Crew Activity</button>
+          <button type="button" class="btn-outline" id="openGuide" data-i18n="navGuide">Health Guide</button>
         </div>
         <section class="reading-deck" aria-labelledby="readingDeckTitle">
           <h2 id="readingDeckTitle" data-i18n="readingDeck">Latest readings</h2>
@@ -462,6 +472,28 @@
               </label>
             </div>
           </details>
+        </div>
+      </section>
+      <section id="view-guide" class="view" aria-labelledby="guideHeading">
+        <h1 id="guideHeading" data-i18n="navGuide">Health Guide</h1>
+        <p class="muted" data-i18n="guideIntro">Choose a topic for practical help with your check-in and context on spaceflight.</p>
+        <div id="healthTopics" class="care-grid"></div>
+        <p><a href="https://www.nasa.gov/hrp/hazards/" rel="noreferrer" data-i18n="guideSource">NASA Human Research Program · Five hazards of human spaceflight</a></p>
+      </section>
+      <section id="view-activity" class="view" aria-labelledby="activityHeading">
+        <h1 id="activityHeading" data-i18n="navActivity">Crew Activity</h1>
+        <div class="care-grid">
+          <article class="card care-panel"><h2 data-i18n="personalGoal">Personal goal</h2>
+            <p data-i18n="pointsRule">Earn 10 points for each day you save a check-in. Readings and answers never affect points.</p>
+            <label><span data-i18n="firstMilestone">First milestone · 3 days logged</span><progress id="routineGoal" max="3" value="0"></progress></label>
+            <p id="routineGoalText" role="status"></p>
+          </article>
+          <article class="card care-panel"><h2 data-i18n="teamActivities">Team activities</h2>
+            <p data-i18n="teamLocal">Use this mission checklist together on this device. It does not contain health readings.</p>
+            <label class="crew-task"><input type="checkbox" data-team-task="handoff"><span data-i18n="taskHandoff">Agree on who handles the next handoff</span></label>
+            <label class="crew-task"><input type="checkbox" data-team-task="review"><span data-i18n="taskReview">Review the team task plan together</span></label>
+            <p id="teamProgress" role="status"></p>
+          </article>
         </div>
       </section>
     </div>

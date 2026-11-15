@@ -12,6 +12,24 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    tryDemo: "Try the demo",
+    demoNotice: "Demo mode · sample data and session-only changes",
+    exitDemo: "Exit demo",
+    navGuide: "Health Guide",
+    navActivity: "Crew Activity",
+    routinePoints: "Routine points",
+    routineDays: "Days logged",
+    guideIntro: "Choose a topic for help with your check-in and context on spaceflight.",
+    guideSource: "NASA Human Research Program · Five hazards of human spaceflight",
+    personalGoal: "Personal goal",
+    pointsRule: "Earn 10 points for each UTC day you save a check-in. Readings and answers never affect points.",
+    firstMilestone: "First milestone · 3 days logged",
+    teamActivities: "Team activities",
+    teamLocal: "Use this mission checklist together on this device. It does not contain health readings.",
+    taskHandoff: "Agree on who handles the next handoff",
+    taskReview: "Review the team task plan together",
+    teamDone: "activities complete",
+    goalDone: "days logged",
     readingDeck: "Latest readings",
     readingDeckHint: "Open a card to see recent entries and your preflight reference.",
     readingAbsent: "No readings in the latest check-in",
@@ -130,6 +148,24 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    tryDemo: "Experimentar a demo",
+    demoNotice: "Modo demo · dados de exemplo e mudanças temporárias",
+    exitDemo: "Sair da demo",
+    navGuide: "Guia de Saúde",
+    navActivity: "Atividades da Tripulação",
+    routinePoints: "Pontos de rotina",
+    routineDays: "Dias registrados",
+    guideIntro: "Escolha um tema para tirar dúvidas sobre o check-in e conhecer o contexto espacial.",
+    guideSource: "NASA Human Research Program · Cinco perigos do voo espacial",
+    personalGoal: "Meta pessoal",
+    pointsRule: "Ganhe 10 pontos por dia UTC com check-in salvo. Medições e respostas não afetam os pontos.",
+    firstMilestone: "Primeiro marco · 3 dias registrados",
+    teamActivities: "Atividades em equipe",
+    teamLocal: "Usem esta lista juntos neste dispositivo. Ela não contém medições de saúde.",
+    taskHandoff: "Combinar quem fará a próxima passagem de turno",
+    taskReview: "Revisar juntos o plano de tarefas da equipe",
+    teamDone: "atividades concluídas",
+    goalDone: "dias registrados",
     readingDeck: "Últimas medições",
     readingDeckHint: "Abra um cartão para ver os registros recentes e a referência pré-voo.",
     readingAbsent: "Sem medição no último check-in",
@@ -255,6 +291,9 @@ const STAGE_NAMES = { pre: "Preflight", during: "In flight", post: "Recovery" };
 const $ = (id) => document.getElementById(id);
 
 let lang = localStorage.getItem("crew-health-check.lang") || "en";
+const demoMode = new URLSearchParams(location.search).get("demo") === "1";
+let demoRecords = [];
+const demoActivities = Object.create(null);
 let activeProfile = null;
 let currentStep = 1;
 let lastExportStatus = "Saved onboard";
@@ -272,6 +311,7 @@ function applyLang(newLang) {
     el.textContent = t(el.dataset.i18n);
   });
   updateNetworkBadge();
+  renderHealthGuide();
   renderToday();
 }
 
@@ -290,6 +330,7 @@ window.addEventListener("online", updateNetworkBadge);
 window.addEventListener("offline", updateNetworkBadge);
 
 function readRecords() {
+  if (demoMode) return demoRecords;
   try {
     return JSON.parse(localStorage.getItem(RECORDS_KEY) || "[]");
   } catch {
@@ -298,6 +339,7 @@ function readRecords() {
 }
 
 function writeRecords(rows) {
+  if (demoMode) { demoRecords = rows; return; }
   localStorage.setItem(RECORDS_KEY, JSON.stringify(rows));
 }
 
@@ -317,6 +359,7 @@ function switchView(viewName) {
   });
   if (viewName === "today") renderToday();
   if (viewName === "history") renderHistory();
+  if (viewName === "activity") renderRoutine(getProfileRecords());
 }
 
 document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -326,7 +369,7 @@ document.querySelectorAll(".nav-tab").forEach((btn) => {
 // Profile Gate & Reload Persistence
 function openWorkspace(profile) {
   activeProfile = profile;
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  if (!demoMode) localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
   $("profileGate").hidden = true;
   $("appWorkspace").hidden = false;
   $("barCrewId").textContent = profile.crewId;
@@ -348,6 +391,7 @@ $("profileForm").addEventListener("submit", (e) => {
 });
 
 $("switchProfileBtn").addEventListener("click", () => {
+  if (demoMode) { location.href = "?"; return; }
   localStorage.removeItem(PROFILE_KEY);
   activeProfile = null;
   $("appWorkspace").hidden = true;
@@ -356,7 +400,21 @@ $("switchProfileBtn").addEventListener("click", () => {
 });
 
 // Restore profile on page reload
-const savedProfile = localStorage.getItem(PROFILE_KEY);
+$("demoBanner").hidden = !demoMode;
+if (demoMode) {
+  const profile = { crewId: "DEMO-CREW", missionCode: "DEMO-MISSION", missionDay: 2 };
+  demoRecords = [4, 2, 1].map((daysAgo, index) => ({
+    id: "example-" + index, ...profile, stage: index === 0 ? "pre" : "during",
+    gravity: index === 0 ? "Earth gravity (1.00 g)" : "Microgravity (~0 g)",
+    missionDay: index === 0 ? null : index,
+    recordedAt: new Date(Date.now() - daysAgo * 86400000).toISOString(),
+    observations: "Example entry · demonstration only.",
+    functionChanges: [], measurementSource: "Illustrative data",
+    measurements: { heartRate: { value: 66 + index, unit: "bpm" }, sleepHours: { value: 8 - index * 0.5, unit: "h" } }
+  }));
+  openWorkspace(profile);
+}
+const savedProfile = demoMode ? null : localStorage.getItem(PROFILE_KEY);
 if (savedProfile) {
   try {
     const parsed = JSON.parse(savedProfile);
@@ -445,6 +503,7 @@ function renderToday() {
   const rows = getProfileRecords();
   const latest = [...rows].sort((a, b) => Date.parse(b.recordedAt) - Date.parse(a.recordedAt))[0] || null;
   renderReadingDeck(rows, latest);
+  renderRoutine(rows);
   $("todayCrewId").textContent = activeProfile.crewId;
   $("todayMission").textContent = activeProfile.missionCode;
   $("todayPhase").textContent = latest ? STAGE_NAMES[latest.stage] : "Preflight";
@@ -776,6 +835,77 @@ $("groundFileInput").addEventListener("change", async (e) => {
   } catch (err) {
     showGroundError(err.message || "Could not read this JSON file. Please verify it was exported from Crew Health Check.");
   }
+});
+
+
+function renderRoutine(rows) {
+  const days = new Set(rows.flatMap(row => {
+    const date = new Date(row.recordedAt);
+    if (!Number.isFinite(date.getTime())) return [];
+    return [date.toISOString().slice(0, 10)];
+  })).size;
+  $("routineDays").textContent = days;
+  $("routinePoints").textContent = days * 10;
+  $("routineGoal").value = Math.min(days, 3);
+  $("routineGoalText").textContent = `${Math.min(days, 3)} / 3 ${t("goalDone")}`;
+  const tasks = [...document.querySelectorAll("[data-team-task]")];
+  const state = readTeamActivity();
+  tasks.forEach(task => { task.checked = state[task.dataset.teamTask] === true; });
+  $("teamProgress").textContent = `${tasks.filter(task => task.checked).length} / ${tasks.length} ${t("teamDone")}`;
+}
+
+function readTeamActivity() {
+  if (!activeProfile) return {};
+  if (demoMode) return demoActivities;
+  try { return JSON.parse(localStorage.getItem("crew-health-check.activity:" + activeProfile.missionCode)) || {}; }
+  catch { return {}; }
+}
+
+function renderHealthGuide() {
+  const topics = lang === "pt" ? [
+    ["Como registrar medições", "Use as instruções do aparelho e o procedimento da missão. Copie o valor e a unidade exibidos e informe a origem. Se não mediu, deixe em branco."],
+    ["Visão e equilíbrio", "Mudanças de gravidade podem afetar orientação e equilíbrio. No check-in, descreva o que percebeu, quando começou e se interferiu em uma tarefa."],
+    ["Coração, músculos e ossos", "A mudança de gravidade pode afetar a circulação, a força e os ossos. Registre o contexto de gravidade ao comparar observações de fases diferentes."],
+    ["Sono e disposição", "Isolamento e confinamento fazem parte do contexto da missão. Você pode anotar como dormiu e como se sentiu, com suas próprias palavras."],
+    ["Radiação, distância e habitat", "A NASA também destaca a exposição à radiação, a distância da Terra e os ambientes fechados. Use os procedimentos da missão para saber quando e como comunicar uma preocupação."]
+  ] : [
+    ["Recording a measurement", "Follow the device instructions and mission procedure. Copy the displayed value and unit, and record the source. Leave it blank if you did not measure it."],
+    ["Vision and balance", "Changes in gravity can affect orientation and balance. In your check-in, describe what you noticed, when it began, and whether it affected a task."],
+    ["Heart, muscles and bones", "Changes in gravity can affect circulation, strength and bones. Record the gravity setting when comparing observations across mission phases."],
+    ["Sleep and how you feel", "Isolation and confinement are part of the mission context. Record how you slept and how you felt in your own words."],
+    ["Radiation, distance and habitat", "NASA also highlights radiation exposure, distance from Earth and closed environments. Use your mission procedures to decide when and how to report a concern."]
+  ];
+  const container = $("healthTopics");
+  container.replaceChildren();
+  for (const [title, copy] of topics) {
+    const topic = document.createElement("details");
+    topic.className = "card care-panel";
+    const label = document.createElement("summary");
+    label.textContent = title;
+    const description = document.createElement("p");
+    description.textContent = copy;
+    topic.append(label, description);
+    container.append(topic);
+  }
+}
+
+$("openGuide").addEventListener("click", () => switchView("guide"));
+$("openActivity").addEventListener("click", () => switchView("activity"));
+document.querySelectorAll("[data-team-task]").forEach(task => {
+  task.addEventListener("change", () => {
+    if (!activeProfile) return;
+    const state = readTeamActivity();
+    state[task.dataset.teamTask] = task.checked;
+    if (!demoMode) {
+      try { localStorage.setItem("crew-health-check.activity:" + activeProfile.missionCode, JSON.stringify(state)); }
+      catch {
+        task.checked = !task.checked;
+        $("teamProgress").textContent = lang === "pt" ? "Não foi possível salvar neste dispositivo." : "Could not save on this device.";
+        return;
+      }
+    }
+    renderRoutine(getProfileRecords());
+  });
 });
 
 applyLang(lang);
