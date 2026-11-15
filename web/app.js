@@ -22,6 +22,10 @@ for (const [code, labels] of Object.entries({"en":["Astronaut profile","Use a fi
 const PROFILE_KEY = "crew-health-check.profiles.v1";
 let activeCode = "";
 let profileDirty = false;
+for (const [code, labels] of Object.entries({"en":["Mission comparison","Latest check-in per stage. The history filter does not change this comparison.","No preflight baseline recorded.","No check-in recorded for this stage.","Preview mission report","The report stays on this device until you share it.","Download report (.txt)","Save preference for professional follow-up","Your preference is saved locally. Share the report through your mission’s approved contact pathway."],"pt":["Comparação da missão","Último registro de cada etapa. O filtro do histórico não altera esta comparação.","Nenhum registro de referência pré-voo.","Nenhum registro nesta etapa.","Ver relatório da missão","O relatório fica neste dispositivo até você compartilhá-lo.","Baixar relatório (.txt)","Salvar preferência por acompanhamento profissional","A preferência fica salva localmente. Compartilhe o relatório pelo canal aprovado da missão."],"es":["Comparación de la misión","Último registro de cada etapa. El filtro del historial no cambia esta comparación.","No hay registro de referencia previo al vuelo.","No hay registros en esta etapa.","Ver informe de misión","El informe queda en este dispositivo hasta que lo compartas.","Descargar informe (.txt)","Guardar preferencia de seguimiento profesional","La preferencia se guarda localmente. Comparte el informe por el canal aprobado de tu misión."],"fr":["Comparaison de mission","Dernier suivi de chaque étape. Le filtre de l’historique ne change pas cette comparaison.","Aucun suivi de référence avant le vol.","Aucun suivi pour cette étape.","Voir le rapport de mission","Le rapport reste sur cet appareil jusqu’à son partage.","Télécharger le rapport (.txt)","Enregistrer une préférence de suivi professionnel","La préférence reste sur cet appareil. Partagez le rapport via le canal approuvé de la mission."]})) {
+  ["comparisonTitle","comparisonHelp","missingPre","missingStage","reportTitle","reportLocal","saveReport","requestReview","reviewHelp"]
+    .forEach((key, index) => { strings[code][key] = labels[index]; });
+}
 let lang = localStorage.getItem("crew-health-check.language") || "en";
 let previewUrls = [];
 const $ = (id) => document.getElementById(id);
@@ -93,9 +97,91 @@ function updateHistoryScopes() {
   scopes.forEach(scope => selector.add(new Option(scope === "legacy" ? t("legacy") : scope, scope)));
   selector.value = scopes.includes(selected) ? selected : "";
 }
+function renderMissionComparison() {
+  const scope = $("historyScope").value;
+  const section = $("missionComparison");
+  const cards = $("stageCards");
+  const report = $("reportText");
+  if (section.dataset.scope !== scope) $("missionReport").open = false;
+  section.dataset.scope = scope;
+  section.hidden = !activeCode || !scope || scope === "legacy";
+  cards.replaceChildren();
+  report.textContent = "";
+  if (section.hidden) return;
+
+  const rows = readRecords()
+    .filter(row => row.astronautCode === activeCode && scopeOf(row) === scope)
+    .sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
+  const lines = [t("comparisonTitle"), scope, t("comparisonHelp")];
+  for (const stage of ["pre", "during", "post"]) {
+    const card = document.createElement("article");
+    card.className = "record-card comparison-card";
+    const heading = document.createElement("h4");
+    heading.textContent = t(stage);
+    card.append(heading);
+    lines.push("", heading.textContent);
+    const row = rows.find(record => record.stage === stage);
+    if (!row) {
+      const missing = document.createElement("p");
+      missing.textContent = t(stage === "pre" ? "missingPre" : "missingStage");
+      lines.push(missing.textContent);
+      card.append(missing);
+      cards.append(card);
+      continue;
+    }
+
+    const time = document.createElement("time");
+    time.dateTime = row.recordedAt;
+    time.textContent = new Date(row.recordedAt).toLocaleString(lang);
+    card.append(time);
+    lines.push(time.textContent);
+    const fields = [
+      ["gravity", row.mission?.gravity],
+      ["elapsed", row.mission?.timeSinceTransition],
+      ["sleepHours", row.wellbeing?.sleepHours],
+      ["functionTitle", (row.functionChanges || []).join(", ")],
+      ...Object.entries(row.measurements || {}).map(([key, reading]) => [key, reading.value + " " + reading.unit]),
+      ["measurementSource", row.measurementSource],
+      ["description", row.description]
+    ];
+    const details = document.createElement("dl");
+    for (const [key, value] of fields) {
+      if (value == null || value === "") continue;
+      const term = document.createElement("dt");
+      const detail = document.createElement("dd");
+      term.textContent = t(key);
+      detail.textContent = value;
+      details.append(term, detail);
+      lines.push(term.textContent + ": " + value);
+    }
+    for (const [key, value] of [
+      ["onset", row.onset], ["pattern", row.pattern], ["associated", row.associatedChanges],
+      ["measurementTime", row.measurementTime], ["mood", row.wellbeing?.mood], ["stress", row.wellbeing?.stress]
+    ]) {
+      if (value != null && value !== "") lines.push(t(key) + ": " + value);
+    }
+    if (row.reviewPreference === "Review requested") lines.push(t("requestReview"));
+    card.append(details);
+    cards.append(card);
+  }
+  report.textContent = lines.join("\n");
+}
+
+$("saveReport").addEventListener("click", () => {
+  const report = $("reportText").textContent;
+  if (!report) return;
+  const url = URL.createObjectURL(new Blob([report], {type: "text/plain;charset=utf-8"}));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "crew-mission-report.txt";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
 function renderRecords(){
  const host=$("recordList");if(!host)return;host.replaceChildren();
  updateHistoryScopes();
+ renderMissionComparison();
  const rows=filteredRecords();
  $("export").disabled = rows.length === 0;
  $("clear").disabled = !$("historyScope").value;

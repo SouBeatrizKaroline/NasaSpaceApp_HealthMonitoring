@@ -303,3 +303,14 @@ footer { text-align: center; color: #7c91b0; font-size: 0.76rem; padding: 24px 1
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
+
+#missionComparison { margin: 20px 0 26px; }
+.comparison-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.comparison-card { border-top: 3px solid var(--cyan); overflow-wrap: anywhere; }
+.comparison-card h4 { margin: 0 0 8px; }
+.comparison-card time, .comparison-card dt { color: var(--muted); font-size: .85rem; }
+.comparison-card dd { margin: 0 0 9px; white-space: pre-wrap; }
+#missionReport { margin-top: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; }
+#missionReport summary { cursor: pointer; color: var(--cyan); }
+#reportText { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+@media (max-width: 720px) { .comparison-grid { grid-template-columns: minmax(0, 1fr); } }

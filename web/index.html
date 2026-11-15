@@ -131,6 +131,17 @@
         <label><span data-i18n="stageFilter"></span><select id="stageFilter"><option value="" data-i18n="allStages"></option><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
       </div>
       <div class="actions history-actions"><button class="secondary" id="export" type="button" data-i18n="export">Export records</button><button class="quiet" id="clear" type="button" data-i18n="clear">Delete selected history</button></div>
+      <section id="missionComparison" hidden aria-labelledby="comparisonTitle">
+        <h3 id="comparisonTitle" data-i18n="comparisonTitle">Mission comparison</h3>
+        <p data-i18n="comparisonHelp">Latest check-in per stage. The history filter does not change this comparison.</p>
+        <div id="stageCards" class="comparison-grid"></div>
+        <details id="missionReport">
+          <summary data-i18n="reportTitle">Preview mission report</summary>
+          <p data-i18n="reportLocal">The report stays on this device until you share it.</p>
+          <button type="button" class="secondary" id="saveReport" data-i18n="saveReport">Download report (.txt)</button>
+          <pre id="reportText"></pre>
+        </details>
+      </section>
       <div id="recordList" class="record-list" aria-live="polite"></div>
     </section>
     </div></div>

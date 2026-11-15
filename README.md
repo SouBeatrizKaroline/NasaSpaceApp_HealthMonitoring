@@ -27,7 +27,7 @@ Open or create a local astronaut profile with a fictional code. Re-enter the sam
 
 Use fictional astronaut and mission codes (for example, `CRW-01` and `DEMO-01`). Use the same pair before, during, and after the mission to keep the preflight reference, in-flight observations, and recovery reports together. Use a new mission code for a subsequent mission.
 
-In the history, select an astronaut and mission pair and optionally filter by stage. Open a record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without an astronaut code remain in browser storage and are not assigned to a profile.
+In the history, select an astronaut and mission pair and optionally filter by stage. The mission comparison shows the latest saved check-in in each stage and labels missing stages. Preview and download a plain-text report from the comparison. Sharing the report requires a separate contact pathway. Open any history record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without an astronaut code remain in browser storage and are not assigned to a profile.
 
 Codes group local records. They provide no sign-in or access control. Use fictional data only.
 
