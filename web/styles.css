@@ -101,3 +101,53 @@ a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 @media (max-width: 480px) {
   .gravity-card { padding: 10px; }
 }
+
+
+/* Workspace layout and form hierarchy */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(165px, 1fr) minmax(0, 4fr);
+  gap: clamp(16px, 3vw, 32px);
+  align-items: start;
+}
+.workflow { position: sticky; top: 20px; }
+.workflow nav {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #111b30;
+}
+.workflow a {
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+.workflow a:hover { color: var(--cyan); background: #243653; }
+.workspace-content > .panel:first-child { margin-top: 0; }
+[id] { scroll-margin-top: 20px; }
+.workspace .section-heading { margin-bottom: 16px; }
+.workspace label > span:first-child { font-size: .875rem; }
+.workspace .subtext { font-size: .875rem; }
+.workspace .check:has(input:checked), .workspace .radio:has(input:checked) {
+  background: #233653;
+  border-color: #83c7e3;
+}
+.workspace .check input, .workspace .radio input { min-height: 0; }
+.workspace input::placeholder, .workspace textarea::placeholder { color: #94a7c2; }
+.workspace .hint { color: var(--muted); }
+.workspace button:disabled { opacity: .55; cursor: default; }
+.history-actions { margin: 12px 0 18px; }
+.history-actions .quiet:not(:disabled) { color: #ffc6b5; }
+.record-card summary { cursor: pointer; padding-block: 8px; color: var(--cyan); }
+.record-card summary:focus-visible { outline: 3px solid var(--focus); }
+.record-card pre { background: #111d32; padding: 12px; border-radius: 8px; }
+@media (max-width: 850px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .workflow { display: none; }
+}
+@media (min-width: 851px) {
+  .quick-nav { display: none; }
+}

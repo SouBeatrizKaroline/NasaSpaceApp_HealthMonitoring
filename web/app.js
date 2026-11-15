@@ -87,7 +87,10 @@ function updateHistoryScopes() {
 function renderRecords(){
  const host=$("recordList");if(!host)return;host.replaceChildren();
  updateHistoryScopes();
- const rows=filteredRecords();$("recordCount").textContent=String(rows.length);
+ const rows=filteredRecords();
+ $("export").disabled = rows.length === 0;
+ $("clear").disabled = !$("historyScope").value;
+ $("recordCount").textContent=String(rows.length);
  if(!rows.length){const p=document.createElement("p");p.className="subtext";p.textContent=t("empty");host.append(p);return}
  rows.slice().reverse().forEach(row=>{
   const card=document.createElement("article");card.className="record-card";
@@ -118,7 +121,7 @@ $("stage").addEventListener("change", () => updateStage(true));
 $("historyScope").addEventListener("change", renderRecords);
 $("stageFilter").addEventListener("change", renderRecords);
 $("language").addEventListener("change",e=>applyLanguage(e.target.value));
-$("checkin").addEventListener("submit",e=>{e.preventDefault();const record=collect();if(!record.description&&record.reason==="Routine check-in"){showToast(t("required"));$("description").focus();return}try{const rows=readRecords();rows.push(record);writeRecords(rows);updateHistoryScopes();$("historyScope").value=scopeOf(record);$("stageFilter").value="";renderRecords();showToast(t("saved"))}catch{showToast("Storage is unavailable. Export or clear browser data.")}});
+$("checkin").addEventListener("submit",e=>{e.preventDefault();const record=collect();if(!record.description && record.reason==="Routine check-in" && !Object.keys(record.measurements).length && !record.functionChanges.length && !Object.values(record.wellbeing).some(Boolean)){showToast(t("required"));$("description").focus();return}try{const rows=readRecords();rows.push(record);writeRecords(rows);updateHistoryScopes();$("historyScope").value=scopeOf(record);$("stageFilter").value="";renderRecords();showToast(t("saved"))}catch{showToast("Storage is unavailable. Export or clear browser data.")}});
 $("export").addEventListener("click",()=>{const records=filteredRecords();if(!records.length){showToast(t("noExport"));return}const blob=new Blob([JSON.stringify({format:"crew-health-check-demo-v3",exportedAt:new Date().toISOString(),records},null,2)],{type:"application/json"});const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="crew-health-check-records.json";link.click();URL.revokeObjectURL(link.href);showToast(t("exported"))});
 $("clear").addEventListener("click",()=>{const scope=$("historyScope").value;if(!scope||!confirm(t("confirmScoped")))return;writeRecords(readRecords().filter(row=>scopeOf(row)!==scope));renderRecords();showToast(t("cleared"))});
 $("media").addEventListener("change",e=>{previewUrls.forEach(URL.revokeObjectURL);previewUrls=[];const host=$("mediaPreview");host.replaceChildren();[...e.target.files].forEach(file=>{const url=URL.createObjectURL(file);previewUrls.push(url);let el;if(file.type.startsWith("image/")){el=document.createElement("img");el.alt=file.name;el.src=url}else if(file.type.startsWith("video/")){el=document.createElement("video");el.controls=true;el.src=url}else if(file.type.startsWith("audio/")){el=document.createElement("audio");el.controls=true;el.src=url}else return;host.append(el)});});

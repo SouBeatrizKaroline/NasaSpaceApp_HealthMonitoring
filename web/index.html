@@ -21,7 +21,7 @@
       <nav class="quick-nav"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav>
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
-    <section class="context panel" id="mission">
+    <div class="workspace"><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
       <h2 data-i18n="contextTitle">Mission context</h2>
       <div class="grid three">
         <label><span data-i18n="crewCode"></span><input id="crewCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
@@ -49,7 +49,7 @@
     </section>
     <form id="checkin">
       <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="reasonTitle">What brings you here?</h2></div><span class="tag" data-i18n="selfReported">SELF-REPORTED</span></div>
+        <div class="section-heading"><div><h2 data-i18n="reasonTitle">What brings you here?</h2></div></div>
         <div class="grid two">
           <label><span data-i18n="reason">Check-in reason</span><select id="reason"><option value="Routine check-in">Routine check-in</option><option value="New symptom">New symptom</option><option value="Change from baseline">Change from baseline</option><option value="Follow-up">Follow-up</option><option value="Other concern">Other concern</option></select></label>
           <label><span data-i18n="onset">When did it begin?</span><input id="onset" type="text" placeholder="Date, mission time, or approximate duration"></label>
@@ -61,7 +61,7 @@
         </div>
       </section>
       <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="functionTitle">How are mission tasks affected?</h2></div><span class="tag" data-i18n="functionTag">FUNCTION & DAILY ACTIVITY</span></div>
+        <div class="section-heading"><div><h2 data-i18n="functionTitle">How are mission tasks affected?</h2></div></div>
         <p class="subtext" data-i18n="functionHelp">Select any areas that feel different from your usual baseline.</p>
         <div class="check-grid">
           <label class="check"><input type="checkbox" name="function" value="Mobility or balance"><span data-i18n="mobility">Mobility or balance</span></label>
@@ -79,7 +79,7 @@
         <p class="hint" data-i18n="scaleHint">Self-rating: 1 = low, 5 = high. This is not a clinical scale.</p>
       </section>
       <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="measureTitle">Optional measurements</h2></div><span class="tag" data-i18n="manualOnly">ENTERED BY YOU</span></div>
+        <div class="section-heading"><div><h2 id="observations" data-i18n="measureTitle">Optional measurements</h2></div></div>
         <p class="subtext" data-i18n="measureHelp">Enter a reading only if you have it. Include its unit and source; leave unknown values blank.</p>
         <div class="grid four">
           <label><span data-i18n="heartRate">Heart rate (bpm)</span><input id="heartRate" type="number" min="0" inputmode="decimal"></label>
@@ -107,7 +107,7 @@
         </div>
         <label class="consent check"><input id="privateNote" type="checkbox"><span data-i18n="privateNote">Mark this entry as needing a private follow-up</span></label>
       </section>
-      <div class="actions"><button class="primary" type="submit" data-i18n="save">Save check-in</button><button class="secondary" id="export" type="button" data-i18n="export">Export records (JSON)</button><button class="quiet" id="clear" type="button" data-i18n="clear">Clear local records</button></div>
+      <div class="actions"><button class="primary" type="submit" data-i18n="save">Save check-in</button></div>
     </form>
     <section class="panel records" id="history">
       <div class="section-heading"><div><h2 data-i18n="recordsTitle">Saved on this device</h2></div><span class="tag" id="recordCount">0</span></div>
@@ -116,8 +116,10 @@
         <label><span data-i18n="historyScope"></span><select id="historyScope"></select></label>
         <label><span data-i18n="stageFilter"></span><select id="stageFilter"><option value="" data-i18n="allStages"></option><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
       </div>
+      <div class="actions history-actions"><button class="secondary" id="export" type="button" data-i18n="export">Export records</button><button class="quiet" id="clear" type="button" data-i18n="clear">Delete selected history</button></div>
       <div id="recordList" class="record-list" aria-live="polite"></div>
     </section>
+    </div></div>
   </main>
   <footer><span data-i18n="footer">Independent educational prototype · No clinical interpretation · No agency endorsement</span></footer>
   <div id="toast" role="status" aria-live="polite"></div>
