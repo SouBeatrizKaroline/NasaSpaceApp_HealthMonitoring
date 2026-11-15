@@ -11,6 +11,10 @@ const lifecycleKeys = ["crewCode","missionCode","stage","pre","during","post","p
 for (const [code, labels] of Object.entries(lifecycleStrings)) {
   lifecycleKeys.forEach((key, index) => { strings[code][key] = labels[index]; });
 }
+const gravityLabels = ["compare","micro","moon","mars","earthNote","microNote","moonNote","marsNote","otherNote","gravitySource","navCheckin"];
+for (const [code, labels] of Object.entries({"en":["Compare gravity environments","Microgravity / free fall","Moon","Mars","Record your baseline before flight or note changes in balance and mobility after return.","Free fall reduces apparent weight. Note changes in orientation, movement or exercise.","Partial gravity changes how movement and equipment feel. Note gait, balance or task changes after landing.","Note changes in walking, balance and surface tasks after the transition to partial gravity.","Record when the gravity environment changed and which activities were affected.","NASA · Human body in space","Check-in"],"pt":["Compare os ambientes gravitacionais","Microgravidade / queda livre","Lua","Marte","Registre seu estado habitual antes do voo ou mudanças no equilíbrio e na mobilidade após o retorno.","A queda livre reduz o peso aparente. Registre mudanças de orientação, movimento ou exercício.","A gravidade parcial muda a sensação ao se mover e usar equipamentos. Registre mudanças na marcha, no equilíbrio ou nas tarefas.","Registre mudanças na caminhada, no equilíbrio e nas tarefas de superfície após a transição.","Registre quando a gravidade mudou e quais atividades foram afetadas.","NASA · O corpo humano no espaço","Registro"],"es":["Compara los entornos gravitatorios","Microgravedad / caída libre","Luna","Marte","Registra tu estado habitual antes del vuelo o cambios de equilibrio y movilidad después del regreso.","La caída libre reduce el peso aparente. Registra cambios de orientación, movimiento o ejercicio.","La gravedad parcial cambia cómo se perciben el movimiento y los equipos. Registra cambios de marcha, equilibrio o tareas.","Registra cambios al caminar, mantener el equilibrio o trabajar en superficie tras la transición.","Registra cuándo cambió la gravedad y qué actividades se vieron afectadas.","NASA · El cuerpo humano en el espacio","Registro"],"fr":["Comparez les environnements gravitationnels","Microgravité / chute libre","Lune","Mars","Consignez votre état habituel avant le vol ou les changements d’équilibre et de mobilité au retour.","La chute libre réduit le poids apparent. Notez les changements d’orientation, de mouvement ou d’exercice.","La gravité partielle modifie la perception des mouvements et des équipements. Notez les changements de marche, d’équilibre ou d’activité.","Notez les changements de marche, d’équilibre et de tâches en surface après la transition.","Notez quand la gravité a changé et quelles activités ont été touchées.","NASA · Le corps humain dans l’espace","Suivi"]})) {
+  gravityLabels.forEach((key, index) => { strings[code][key] = labels[index]; });
+}
 let lang = localStorage.getItem("crew-health-check.language") || "en";
 let previewUrls = [];
 const $ = (id) => document.getElementById(id);
@@ -36,6 +40,21 @@ function collect(){
  return {astronautCode:getValue("crewCode").toUpperCase(),missionCode:getValue("missionCode").toUpperCase(),stage:$("stage").value,id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),recordedAt:new Date().toISOString(),mission:{phase:$("phase").value,gravity:$("gravity").value,timeSinceTransition:getValue("elapsed")||null},reason:$("reason").value,onset:getValue("onset")||null,description:getValue("description"),pattern:getValue("pattern")||null,associatedChanges:getValue("associated")||null,functionChanges:[...document.querySelectorAll('input[name="function"]:checked')].map(x=>x.value),wellbeing:{sleepHours:getValue("sleepHours")||null,mood:getValue("mood")||null,stress:getValue("stress")||null},measurements,measurementSource:getValue("measurementSource")||null,measurementTime:getValue("measurementTime")||null,reviewPreference:selected?selected.value:"Routine entry",privateFollowUp:$("privateNote").checked,mediaStored:false};
 }
 const stageKeys = {pre:"pre", during:"during", post:"post"};
+const gravityNotes = {
+  "Earth gravity": "earthNote",
+  "Microgravity": "microNote",
+  "Lunar gravity": "moonNote",
+  "Martian gravity": "marsNote"
+};
+
+function updateGravity() {
+  const selected = $("gravity").value;
+  document.querySelectorAll("[data-gravity]").forEach(card => {
+    card.setAttribute("aria-pressed", String(card.dataset.gravity === selected));
+  });
+  $("gravityNote").textContent = t(gravityNotes[selected] || "otherNote");
+}
+
 function updateStage(resetContext) {
   const stage = $("stage").value;
   $("stageHelp").textContent = t(stage + "Help");
@@ -46,7 +65,8 @@ function updateStage(resetContext) {
   if (resetContext || $("phase").selectedOptions[0]?.disabled) {
     $("phase").value = phases.find(option => !option.disabled).value;
   }
-  if (resetContext) $("gravity").selectedIndex = stage === "during" ? 1 : 0;
+  if (resetContext) $("gravity").value = stage === "during" ? "Microgravity" : "Earth gravity";
+  updateGravity();
 }
 function scopeOf(row) {
   return row.astronautCode && row.missionCode ? row.astronautCode + " / " + row.missionCode : "legacy";
@@ -87,6 +107,13 @@ function renderRecords(){
   card.append(header,ctx,body,foot,disclosure);host.append(card);
  });
 }
+$("gravity").addEventListener("change", updateGravity);
+document.querySelectorAll("[data-gravity]").forEach(card => {
+  card.addEventListener("click", () => {
+    $("gravity").value = card.dataset.gravity;
+    updateGravity();
+  });
+});
 $("stage").addEventListener("change", () => updateStage(true));
 $("historyScope").addEventListener("change", renderRecords);
 $("stageFilter").addEventListener("change", renderRecords);

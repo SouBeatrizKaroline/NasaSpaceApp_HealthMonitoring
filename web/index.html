@@ -14,12 +14,15 @@
   </header>
   <main class="layout">
     <section class="intro">
+      <div class="orbital-art" aria-hidden="true"><span></span></div>
       <div class="eyebrow" data-i18n="eyebrow">CREW WELLNESS / PRIVATE CHECK-IN</div>
       <h1 data-i18n="title">A clear picture of how you are doing.</h1>
       <p data-i18n="lead">Record what changed, what you notice, and how it affects your mission tasks. You are in control of what you enter.</p>
+      <nav class="quick-nav"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav>
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
-    <section class="context panel">
+    <section class="context panel" id="mission">
+      <h2 data-i18n="contextTitle">Mission context</h2>
       <div class="grid three">
         <label><span data-i18n="crewCode"></span><input id="crewCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
         <label><span data-i18n="missionCode"></span><input id="missionCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="DEMO-01"></label>
@@ -27,16 +30,26 @@
       </div>
       <p id="stageHelp"></p>
       <p class="hint" data-i18n="codeHelp"></p>
-      <div class="section-heading"><div><span class="step">01</span><h2 data-i18n="contextTitle">Mission context</h2></div><span class="tag" data-i18n="editable">EDITABLE</span></div>
       <div class="grid three">
         <label><span data-i18n="phase">Mission phase</span><select id="phase"><option value="Pre-mission preparation" data-i18n="pre"></option><option value="Post-mission recovery" data-i18n="post"></option><option value="Transit">Transit</option><option value="Surface operations">Surface operations</option><option value="EVA preparation">EVA preparation</option><option value="Return">Return</option></select></label>
-        <label><span data-i18n="gravity">Gravity environment</span><select id="gravity"><option value="Earth gravity" data-i18n="earth"></option><option value="Microgravity">Microgravity / free fall</option><option value="Partial gravity">Partial gravity</option><option value="Higher-gravity transition">Higher-gravity transition</option><option value="Not sure">Not sure</option></select></label>
+        <label><span data-i18n="gravity">Gravity environment</span><select id="gravity"><option value="Earth gravity" data-i18n="earth"></option><option value="Microgravity" data-i18n="micro">Microgravity / free fall</option><option value="Lunar gravity" data-i18n="moon">Moon</option><option value="Martian gravity" data-i18n="mars">Mars</option><option value="Partial gravity">Partial gravity</option><option value="Higher-gravity transition">Higher-gravity transition</option><option value="Not sure">Not sure</option></select></label>
         <label><span data-i18n="elapsed">Time since transition (optional)</span><input id="elapsed" type="text" placeholder="e.g. 4 hours"></label>
+      </div>
+      <div class="gravity-console">
+        <h3 data-i18n="compare">Compare gravity environments</h3>
+        <div class="gravity-grid">
+          <button type="button" class="gravity-card earth" data-gravity="Earth gravity" aria-pressed="true"><span class="gravity-value">1.00 g</span><strong data-i18n="earth">Earth gravity</strong></button>
+          <button type="button" class="gravity-card orbit" data-gravity="Microgravity" aria-pressed="false"><span class="gravity-value">~0 g</span><strong data-i18n="micro">Microgravity / free fall</strong></button>
+          <button type="button" class="gravity-card moon" data-gravity="Lunar gravity" aria-pressed="false"><span class="gravity-value">0.17 g</span><strong data-i18n="moon">Moon</strong></button>
+          <button type="button" class="gravity-card mars" data-gravity="Martian gravity" aria-pressed="false"><span class="gravity-value">0.38 g</span><strong data-i18n="mars">Mars</strong></button>
+        </div>
+        <p id="gravityNote" aria-live="polite"></p>
+        <a class="gravity-source" href="https://www.nasa.gov/humans-in-space/the-human-body-in-space/" data-i18n="gravitySource">NASA · Human body in space</a>
       </div>
     </section>
     <form id="checkin">
       <section class="panel">
-        <div class="section-heading"><div><span class="step">02</span><h2 data-i18n="reasonTitle">What brings you here?</h2></div><span class="tag" data-i18n="selfReported">SELF-REPORTED</span></div>
+        <div class="section-heading"><div><h2 data-i18n="reasonTitle">What brings you here?</h2></div><span class="tag" data-i18n="selfReported">SELF-REPORTED</span></div>
         <div class="grid two">
           <label><span data-i18n="reason">Check-in reason</span><select id="reason"><option value="Routine check-in">Routine check-in</option><option value="New symptom">New symptom</option><option value="Change from baseline">Change from baseline</option><option value="Follow-up">Follow-up</option><option value="Other concern">Other concern</option></select></label>
           <label><span data-i18n="onset">When did it begin?</span><input id="onset" type="text" placeholder="Date, mission time, or approximate duration"></label>
@@ -48,7 +61,7 @@
         </div>
       </section>
       <section class="panel">
-        <div class="section-heading"><div><span class="step">03</span><h2 data-i18n="functionTitle">How are mission tasks affected?</h2></div><span class="tag" data-i18n="functionTag">FUNCTION & DAILY ACTIVITY</span></div>
+        <div class="section-heading"><div><h2 data-i18n="functionTitle">How are mission tasks affected?</h2></div><span class="tag" data-i18n="functionTag">FUNCTION & DAILY ACTIVITY</span></div>
         <p class="subtext" data-i18n="functionHelp">Select any areas that feel different from your usual baseline.</p>
         <div class="check-grid">
           <label class="check"><input type="checkbox" name="function" value="Mobility or balance"><span data-i18n="mobility">Mobility or balance</span></label>
@@ -66,7 +79,7 @@
         <p class="hint" data-i18n="scaleHint">Self-rating: 1 = low, 5 = high. This is not a clinical scale.</p>
       </section>
       <section class="panel">
-        <div class="section-heading"><div><span class="step">04</span><h2 data-i18n="measureTitle">Optional measurements</h2></div><span class="tag" data-i18n="manualOnly">ENTERED BY YOU</span></div>
+        <div class="section-heading"><div><h2 data-i18n="measureTitle">Optional measurements</h2></div><span class="tag" data-i18n="manualOnly">ENTERED BY YOU</span></div>
         <p class="subtext" data-i18n="measureHelp">Enter a reading only if you have it. Include its unit and source; leave unknown values blank.</p>
         <div class="grid four">
           <label><span data-i18n="heartRate">Heart rate (bpm)</span><input id="heartRate" type="number" min="0" inputmode="decimal"></label>
@@ -80,13 +93,13 @@
         </div>
       </section>
       <section class="panel">
-        <div class="section-heading"><div><span class="step">05</span><h2 data-i18n="evidenceTitle">Optional supporting media</h2></div><span class="tag" data-i18n="sessionOnly">SESSION ONLY</span></div>
+        <div class="section-heading"><div><h2 data-i18n="evidenceTitle">Optional supporting media</h2></div><span class="tag" data-i18n="sessionOnly">SESSION ONLY</span></div>
         <p class="subtext" data-i18n="mediaHelp">Choose a photo, video, or audio clip to preview it for a human reviewer. The demo does not analyze or upload files.</p>
         <label class="upload"><span class="upload-icon">＋</span><span><strong data-i18n="chooseMedia">Choose media</strong><small data-i18n="mediaTypes">Image, video, or audio</small></span><input id="media" type="file" accept="image/*,video/*,audio/*" multiple></label>
         <div id="mediaPreview" class="media-preview" aria-live="polite"></div>
       </section>
       <section class="panel review-panel">
-        <div class="section-heading"><div><span class="step">06</span><h2 data-i18n="reviewTitle">What would you like to do?</h2></div></div>
+        <div class="section-heading"><div><h2 data-i18n="reviewTitle">What would you like to do?</h2></div></div>
         <div class="radio-list">
           <label class="radio"><input type="radio" name="review" value="Routine entry" checked><span><strong data-i18n="routine">Save this check-in</strong><small data-i18n="routineHelp">Record only. This is not a health clearance.</small></span></label>
           <label class="radio"><input type="radio" name="review" value="Review requested"><span><strong data-i18n="requestReview">Request professional review</strong><small data-i18n="reviewHelp">Use your mission's approved contact pathway.</small></span></label>
@@ -96,8 +109,8 @@
       </section>
       <div class="actions"><button class="primary" type="submit" data-i18n="save">Save check-in</button><button class="secondary" id="export" type="button" data-i18n="export">Export records (JSON)</button><button class="quiet" id="clear" type="button" data-i18n="clear">Clear local records</button></div>
     </form>
-    <section class="panel records">
-      <div class="section-heading"><div><span class="step">↳</span><h2 data-i18n="recordsTitle">Saved on this device</h2></div><span class="tag" id="recordCount">0</span></div>
+    <section class="panel records" id="history">
+      <div class="section-heading"><div><h2 data-i18n="recordsTitle">Saved on this device</h2></div><span class="tag" id="recordCount">0</span></div>
       <p class="subtext" data-i18n="recordsHelp">Text entries stay in this browser until exported or cleared. Media previews are not stored.</p>
       <div class="grid two">
         <label><span data-i18n="historyScope"></span><select id="historyScope"></select></label>
