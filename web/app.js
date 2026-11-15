@@ -12,6 +12,10 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    helloCrew: "Hello,",
+    todayGuidance: "Guidance for today",
+    todayGuidanceCopy: "Use the check-in to record what changed. Follow your mission procedures if you need to raise a concern.",
+    exploreBody: "Explore spaceflight and your body",
     tryDemo: "Try the demo",
     demoNotice: "Demo mode · sample data and session-only changes",
     exitDemo: "Exit demo",
@@ -148,6 +152,10 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    helloCrew: "Olá,",
+    todayGuidance: "Orientações para hoje",
+    todayGuidanceCopy: "Use o check-in para registrar o que mudou. Siga os procedimentos da missão se precisar comunicar uma preocupação.",
+    exploreBody: "Explore o corpo no espaço",
     tryDemo: "Experimentar a demo",
     demoNotice: "Modo demo · dados de exemplo e mudanças temporárias",
     exitDemo: "Sair da demo",
@@ -467,12 +475,13 @@ function renderReadingDeck(rows, latest) {
     const body = document.createElement("div");
     body.className = "reading-tile-body";
     const baseline = newestFirst.find(row => row.stage === "pre" && row.measurements?.[key]);
-    const reference = document.createElement("p");
+    const reference = document.createElement("span");
     reference.textContent = baseline
       ? `${t("readingBaseline")}: ${format(baseline.measurements[key])}`
       : `${t("readingBaseline")}: —`;
     const samples = newestFirst.filter(row => row.measurements?.[key] && Number.isFinite(Date.parse(row.recordedAt))).slice(0, 5);
-    body.append(reference);
+    reference.className = "reading-reference";
+    summary.append(reference);
     if (samples.length) {
       const heading = document.createElement("strong");
       heading.textContent = t("readingRecent");
@@ -496,6 +505,16 @@ function renderReadingDeck(rows, latest) {
     card.append(summary, body);
     deck.append(card);
   }
+  const shortcut = document.createElement("button");
+  shortcut.type = "button";
+  shortcut.className = "reading-tile console-guide-tile";
+  shortcut.textContent = t("exploreBody") + " →";
+  shortcut.addEventListener("click", () => {
+    switchView("guide");
+    $("guideHeading").setAttribute("tabindex", "-1");
+    $("guideHeading").focus();
+  });
+  deck.append(shortcut);
 }
 
 function renderToday() {
@@ -506,7 +525,7 @@ function renderToday() {
   renderRoutine(rows);
   $("todayCrewId").textContent = activeProfile.crewId;
   $("todayMission").textContent = activeProfile.missionCode;
-  $("todayPhase").textContent = latest ? STAGE_NAMES[latest.stage] : "Preflight";
+  $("todayPhase").textContent = latest ? STAGE_NAMES[latest.stage] : "—";
   $("todayDay").textContent = (latest?.missionDay || activeProfile.missionDay)
     ? `Day ${latest?.missionDay || activeProfile.missionDay}`
     : "Not set";

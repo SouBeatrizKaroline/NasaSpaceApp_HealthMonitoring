@@ -102,72 +102,38 @@
 
       <!-- VIEW 1: TODAY -->
       <section id="view-today" class="view active" aria-labelledby="todayHeading">
-        <div class="card today-card">
-          <div class="today-banner" aria-hidden="true"></div>
-          <div class="today-body">
-            <h1 id="todayHeading" data-i18n="todayTitle">Ready for your check-in?</h1>
-            <p class="muted" id="todaySubtitle" data-i18n="todaySub">Record how you feel, optional readings, and mission context in under 2 minutes.</p>
-
-            <div class="summary-list">
-              <div class="summary-item">
-                <span class="summary-icon" aria-hidden="true">👤</span>
-                <div>
-                  <small data-i18n="crewLabel">Crew ID</small>
-                  <strong id="todayCrewId">—</strong>
-                </div>
-              </div>
-              <div class="summary-item">
-                <span class="summary-icon" aria-hidden="true">🛰️</span>
-                <div>
-                  <small data-i18n="activeMissionLabel">Active mission</small>
-                  <strong id="todayMission">—</strong>
-                </div>
-              </div>
-              <div class="summary-item">
-                <span class="summary-icon" aria-hidden="true">layers</span>
-                <div>
-                  <small data-i18n="phaseLabel">Mission phase</small>
-                  <strong id="todayPhase">Preflight</strong>
-                </div>
-              </div>
-              <div class="summary-item">
-                <span class="summary-icon" aria-hidden="true">📅</span>
-                <div>
-                  <small data-i18n="dayLabel">Mission day</small>
-                  <strong id="todayDay">—</strong>
-                </div>
-              </div>
-              <div class="summary-item">
-                <span class="summary-icon" aria-hidden="true">🕒</span>
-                <div>
-                  <small data-i18n="lastCheckinLabel">Last saved check-in</small>
-                  <strong id="todayLastCheckin" data-i18n="noCheckinYet">No check-in saved yet</strong>
-                </div>
-              </div>
+        <div class="card today-card console-hero">
+          <div class="console-heading">
+            <div>
+              <p class="console-mission"><strong id="todayMission"></strong><span aria-hidden="true">·</span><span id="todayDay"></span></p>
+              <h1 id="todayHeading"><span data-i18n="helloCrew">Hello,</span> <span id="todayCrewId"></span></h1>
+              <p id="todaySubtitle" class="muted" data-i18n="todaySub">Record how you feel, optional readings, and mission context.</p>
             </div>
-
-            <div class="offline-note">
-              <span class="status-pill offline-ok">✓ <span data-i18n="worksOffline">Works offline</span></span>
-              <span class="muted" data-i18n="todayOfflineDesc">Records stay on this device until you export a report.</span>
-            </div>
-
-            <div class="stack-actions">
-              <button type="button" id="todayPrimaryCta" class="btn-primary btn-lg" data-i18n="startCheckin">Start check-in →</button>
-              <button type="button" id="todayHistoryBtn" class="btn-outline btn-lg" data-i18n="viewHistory">View mission history</button>
-              <button type="button" id="todayPlanningBtn" class="btn-ghost" data-i18n="openPlanningLink">Organize mission tasks (Task Planning) →</button>
-            </div>
+            <button type="button" id="todayPrimaryCta" class="btn-primary btn-lg" data-i18n="startCheckin">Start check-in →</button>
           </div>
-        </div>
-        <div class="routine-strip card">
-          <div><strong id="routinePoints">0</strong><span data-i18n="routinePoints">Routine points</span></div>
-          <div><strong id="routineDays">0</strong><span data-i18n="routineDays">Days logged</span></div>
-          <button type="button" class="btn-outline" id="openActivity" data-i18n="navActivity">Crew Activity</button>
-          <button type="button" class="btn-outline" id="openGuide" data-i18n="navGuide">Health Guide</button>
+          <dl class="console-stats">
+            <div><dt data-i18n="routineDays">Days logged</dt><dd id="routineDays">0</dd></div>
+            <div><dt data-i18n="routinePoints">Routine points</dt><dd id="routinePoints">0</dd></div>
+            <div><dt data-i18n="phaseLabel">Mission phase</dt><dd id="todayPhase">—</dd></div>
+            <div><dt data-i18n="lastCheckinLabel">Last saved check-in</dt><dd id="todayLastCheckin">—</dd></div>
+          </dl>
         </div>
         <section class="reading-deck" aria-labelledby="readingDeckTitle">
-          <h2 id="readingDeckTitle" data-i18n="readingDeck">Latest readings</h2>
+          <div class="console-section-head">
+            <h2 id="readingDeckTitle" data-i18n="readingDeck">Latest readings</h2>
+            <button type="button" id="todayHistoryBtn" class="btn-link" data-i18n="viewHistory">View mission history</button>
+          </div>
           <p class="muted" data-i18n="readingDeckHint">Open a card to see recent entries and your preflight reference.</p>
           <div id="readingDeck" class="reading-deck-grid"></div>
+        </section>
+        <section class="card console-guide" aria-labelledby="todayGuideHeading">
+          <h2 id="todayGuideHeading" data-i18n="todayGuidance">Guidance for today</h2>
+          <p class="muted" data-i18n="todayGuidanceCopy">Use the check-in to record what changed. Follow your mission procedures if you need to raise a concern.</p>
+          <div class="console-links">
+            <button type="button" class="btn-outline" id="openGuide" data-i18n="navGuide">Health Guide</button>
+            <button type="button" class="btn-outline" id="openActivity" data-i18n="navActivity">Crew Activity</button>
+            <button type="button" class="btn-outline" id="todayPlanningBtn" data-i18n="navPlanning">Task Planning</button>
+          </div>
         </section>
       </section>
 
