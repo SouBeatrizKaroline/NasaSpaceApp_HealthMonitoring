@@ -1,7 +1,29 @@
+#![forbid(unsafe_code)]
 //! AstroCare-Q | Spaceflight-Grade Clinical Triage & QUBO Optimizer (Rust)
 //!
-//! Zero external dependencies: designed for deterministic latency, memory safety
-//! without garbage collection, minimal binary footprint, and WASM/embedded portability.
+//! Compliance & Safety:
+//! - `#![forbid(unsafe_code)]` enforces strict compile-time memory safety.
+//! - Zero external crates: full SBOM transparency, zero PRC/foreign supply-chain links,
+//!   deterministic latency, and offline WASM/embedded portability.
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum GravityEnvironment {
+    Microgravity0G,
+    Lunar016G,
+    Mars038G,
+    Earth1G,
+}
+
+impl GravityEnvironment {
+    fn label(&self) -> &'static str {
+        match self {
+            GravityEnvironment::Microgravity0G => "Microgravity (0g - Transit / Station)",
+            GravityEnvironment::Lunar016G => "Lunar Gravity (0.16g - Artemis Base)",
+            GravityEnvironment::Mars038G => "Martian Gravity (0.38g - Surface / Rover)",
+            GravityEnvironment::Earth1G => "Earth Gravity (1.0g - Post-Return)",
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Severity {
@@ -25,6 +47,7 @@ struct ClinicalProtocol {
     id: &'static str,
     name: &'static str,
     nanda_code: &'static str,
+    disciplines: &'static str,
     nasa_hazard: &'static str,
     clinical_benefit: f64, // Risk reduction impact (0.0 - 10.0)
     time_minutes: u32,     // Required astronaut time
@@ -33,23 +56,33 @@ struct ClinicalProtocol {
 }
 
 struct AnamnesisInput {
+    environment: GravityEnvironment,
     blurred_vision: bool,
     sleep_hours: f32,
     high_radiation_dosimeter: bool,
     elevated_rppg_hr: bool,
+    orthostatic_dizziness: bool,
 }
 
-/// Evaluates Space Anamnesis + Multimodal inputs into NANDA-I & Medical triage candidates.
+/// Evaluates Space Anamnesis + Multimodal inputs + Gravity Environment
+/// into multidisciplinary NANDA-I & Medical triage candidates.
 fn evaluate_anamnesis(input: &AnamnesisInput) -> Vec<ClinicalProtocol> {
     let mut protocols = Vec::new();
 
     if input.blurred_vision {
+        // Cephalad fluid shift in 0g elevates SANS risk priority
+        let sans_weight = if input.environment == GravityEnvironment::Microgravity0G {
+            9.5
+        } else {
+            8.2
+        };
         protocols.push(ClinicalProtocol {
             id: "P1",
-            name: "SANS Visual Screening (Amsler Grid) + Sodium Reduction",
+            name: "SANS Amsler Grid Screening + Low-Sodium Protocol",
             nanda_code: "NANDA 00204",
+            disciplines: "Nursing + Nutrition + Medicine",
             nasa_hazard: "Altered Gravity Fields",
-            clinical_benefit: 9.2,
+            clinical_benefit: sans_weight,
             time_minutes: 8,
             supply_units: 0,
             severity: Severity::Critical,
@@ -59,8 +92,9 @@ fn evaluate_anamnesis(input: &AnamnesisInput) -> Vec<ClinicalProtocol> {
     if input.sleep_hours < 5.5 {
         protocols.push(ClinicalProtocol {
             id: "P2",
-            name: "Sleep Hygiene Protocol & 4-7-8 Guided Breathing",
+            name: "Warm Cabin Lighting + 4-7-8 Breathing & Rest Pacing",
             nanda_code: "NANDA 00198",
+            disciplines: "Nursing + Psychology",
             nasa_hazard: "Isolation & Confinement",
             clinical_benefit: 6.8,
             time_minutes: 15,
@@ -72,10 +106,11 @@ fn evaluate_anamnesis(input: &AnamnesisInput) -> Vec<ClinicalProtocol> {
     if input.high_radiation_dosimeter {
         protocols.push(ClinicalProtocol {
             id: "P3",
-            name: "Shielded Module Relocation & Skin Barrier Care",
+            name: "Shielded Module Relocation + Skin Barrier & Med-Kit Potency Check",
             nanda_code: "NANDA 00046",
+            disciplines: "Nursing + Pharmacy + Medicine",
             nasa_hazard: "Space Radiation",
-            clinical_benefit: 8.7,
+            clinical_benefit: 8.9,
             time_minutes: 12,
             supply_units: 2,
             severity: Severity::Critical,
@@ -87,11 +122,26 @@ fn evaluate_anamnesis(input: &AnamnesisInput) -> Vec<ClinicalProtocol> {
             id: "P4",
             name: "Fractionated Electrolyte Rehydration + Repeat Video rPPG",
             nanda_code: "NANDA 00027",
+            disciplines: "Nursing + Nutrition",
             nasa_hazard: "Hostile Closed Environment",
-            clinical_benefit: 8.5,
+            clinical_benefit: 8.4,
             time_minutes: 10,
             supply_units: 1,
             severity: Severity::Attention,
+        });
+    }
+
+    if input.orthostatic_dizziness && input.environment != GravityEnvironment::Microgravity0G {
+        protocols.push(ClinicalProtocol {
+            id: "P5",
+            name: "Graded Orthostatic & Vestibular Rehab (Hold EVA)",
+            nanda_code: "NANDA 00085",
+            disciplines: "Physiotherapy + Nursing",
+            nasa_hazard: "Gravity Transition",
+            clinical_benefit: 8.6,
+            time_minutes: 10,
+            supply_units: 0,
+            severity: Severity::Critical,
         });
     }
 
@@ -100,7 +150,7 @@ fn evaluate_anamnesis(input: &AnamnesisInput) -> Vec<ClinicalProtocol> {
 
 /// Solves the QUBO formulation:
 ///   Minimize E(x) = -sum(b_i * x_i) + P * (time_excess^2 + supply_excess^2)
-/// Exact solver over binary bitmasks (ultra-fast for <= 20 protocols).
+/// Exact solver over binary bitmasks (deterministic, zero-allocation hot path).
 fn solve_qubo_triage<'a>(
     protocols: &'a [ClinicalProtocol],
     max_time: u32,
@@ -147,32 +197,34 @@ fn solve_qubo_triage<'a>(
 }
 
 fn main() {
-    // Simulated post-EVA astronaut check-in (Anamnesis + Quantum Dosimeter + Video rPPG)
     let check_in = AnamnesisInput {
+        environment: GravityEnvironment::Microgravity0G,
         blurred_vision: true,
         sleep_hours: 4.8,
         high_radiation_dosimeter: true,
         elevated_rppg_hr: true,
+        orthostatic_dizziness: false,
     };
 
     let candidates = evaluate_anamnesis(&check_in);
-
     let max_time_min = 30;
     let max_supplies = 2;
     let (prioritized, optimized_benefit) = solve_qubo_triage(&candidates, max_time_min, max_supplies);
 
     println!("=== AstroCare-Q | Spaceflight Clinical & QUBO Triage Engine (Rust) ===");
+    println!("Active Environment : {}", check_in.environment.label());
     println!(
         "Mission Constraints: Time <= {} min | Medical Supplies <= {} units\n",
         max_time_min, max_supplies
     );
-    println!("Prioritized Protocols:");
+    println!("Prioritized Multidisciplinary Protocols:");
     for p in prioritized {
         println!(
-            "  - [{}] {} ({}) | Hazard: {} | Status: {} | Benefit: {:.1} | Time: {}m | Supplies: {}",
+            "  - [{}] {} ({} | {}) | Hazard: {} | Status: {} | Benefit: {:.1} | Time: {}m | Supplies: {}",
             p.id,
             p.name,
             p.nanda_code,
+            p.disciplines,
             p.nasa_hazard,
             p.severity.label(),
             p.clinical_benefit,

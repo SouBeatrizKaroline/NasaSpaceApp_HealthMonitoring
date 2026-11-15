@@ -1,10 +1,12 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "project": "AstroCare-Q",
+  "compliance": "NASA-STD-3001 aligned | Zero PRC dependencies | Offline-first",
   "clinical_rules": [
     {
       "id": "RULE_SANS_01",
       "nasa_hazard": "Altered Gravity Fields",
+      "gravity_context": ["0g"],
       "body_zone": "head_neuro_ocular",
       "anamnesis_triggers": ["blurred_vision", "morning_headache", "ocular_pressure"],
       "multimodal_inputs": ["facial_edema_photo", "amsler_grid_test"],
@@ -12,27 +14,38 @@
         "code": "00204",
         "label": "Ineffective peripheral tissue perfusion / Neuro-ocular risk"
       },
+      "allied_health_actions": {
+        "nursing": "Perform Amsler grid visual test and log cephalad fluid-shift symptoms.",
+        "nutrition": "Reduce dietary sodium to mitigate intracranial fluid retention.",
+        "physiotherapy": "Execute scheduled lower-body negative pressure / aerobic session."
+      },
       "medical_hypothesis": "Suspected SANS (Spaceflight Associated Neuro-ocular Syndrome)",
       "severity": "red",
-      "immediate_action": "Perform Amsler grid visual test, reduce sodium intake, and transmit SOAP summary to Flight Surgeon."
+      "immediate_action": "Run Amsler grid test, cut sodium intake, and transmit SOAP summary to Flight Surgeon."
     },
     {
       "id": "RULE_SLEEP_02",
       "nasa_hazard": "Isolation and Confinement",
+      "gravity_context": ["0g", "0.16g", "0.38g"],
       "body_zone": "head_neuro_ocular",
       "anamnesis_triggers": ["insomnia", "irritability", "cognitive_fatigue"],
-      "multimodal_inputs": ["slow_vocal_cadence", "sleep_hours_under_5"],
+      "multimodal_inputs": ["slow_vocal_cadence", "sleep_hours_under_5_5"],
       "nanda_diagnosis": {
         "code": "00198",
         "label": "Disturbed sleep pattern"
       },
+      "allied_health_actions": {
+        "nursing": "Switch cabin lighting to warm spectrum and log sleep duration.",
+        "psychology": "Run 4-7-8 guided breathing and schedule async family check-in."
+      },
       "medical_hypothesis": "Sleep deprivation / Cabin circadian misalignment",
       "severity": "amber",
-      "immediate_action": "Switch cabin lighting to warm spectrum, run 4-7-8 breathing protocol, and adjust rest schedule."
+      "immediate_action": "Dim blue light, execute 4-7-8 breathing protocol, and adjust rest schedule."
     },
     {
       "id": "RULE_RAD_SKIN_03",
       "nasa_hazard": "Space Radiation",
+      "gravity_context": ["0g", "0.16g", "0.38g"],
       "body_zone": "skin_immune",
       "anamnesis_triggers": ["erythema", "pruritus", "post_eva_fatigue"],
       "multimodal_inputs": ["skin_lesion_photo", "high_quantum_dosimeter_reading"],
@@ -40,13 +53,19 @@
         "code": "00046",
         "label": "Impaired skin integrity"
       },
+      "allied_health_actions": {
+        "nursing": "Relocate to shielded spacecraft module and apply moisturizing barrier.",
+        "pharmacy": "Verify medical kit radiation exposure before administering topical/oral agents.",
+        "nutrition": "Increase antioxidant-rich ration intake."
+      },
       "medical_hypothesis": "Acute skin reaction or elevated cumulative radiation exposure",
       "severity": "red",
-      "immediate_action": "Relocate to shielded spacecraft module, apply moisturizing barrier, and capture follow-up photo in 12h."
+      "immediate_action": "Move to shielded module, verify med-kit potency, and capture follow-up skin photo in 12h."
     },
     {
       "id": "RULE_CARDIO_HYDRATION_04",
       "nasa_hazard": "Hostile Closed Environments",
+      "gravity_context": ["0g", "0.16g", "0.38g"],
       "body_zone": "thorax_cardio",
       "anamnesis_triggers": ["dizziness", "palpitations", "intense_thirst"],
       "multimodal_inputs": ["video_rppg_elevated_hr", "low_blood_pressure"],
@@ -54,9 +73,32 @@
         "code": "00027",
         "label": "Deficient fluid volume"
       },
-      "medical_hypothesis": "Dehydration or orthostatic intolerance",
+      "allied_health_actions": {
+        "nutrition": "Consume 500mL fractionated electrolyte solution to prevent renal calculi.",
+        "nursing": "Repeat contactless webcam rPPG pulse check in 30 minutes."
+      },
+      "medical_hypothesis": "Dehydration or cardiovascular deconditioning",
       "severity": "amber",
-      "immediate_action": "Consume 500mL electrolyte solution in small sips and repeat webcam rPPG pulse check in 30 minutes."
+      "immediate_action": "Sip 500mL electrolyte solution and repeat video rPPG check in 30 minutes."
+    },
+    {
+      "id": "RULE_ORTHOSTATIC_05",
+      "nasa_hazard": "Gravity Fields Transition",
+      "gravity_context": ["0.16g", "0.38g", "1g"],
+      "body_zone": "musculoskeletal",
+      "anamnesis_triggers": ["standing_dizziness", "gait_instability", "leg_weakness"],
+      "multimodal_inputs": ["post_landing_hr_spike", "vestibular_check"],
+      "nanda_diagnosis": {
+        "code": "00085",
+        "label": "Impaired physical mobility"
+      },
+      "allied_health_actions": {
+        "physiotherapy": "Perform graded seated-to-standing protocol and vestibular gaze stabilization.",
+        "nursing": "Monitor orthostatic blood pressure and hold EVA clearance until nominal."
+      },
+      "medical_hypothesis": "Post-microgravity orthostatic intolerance / Vestibular readaptation",
+      "severity": "red",
+      "immediate_action": "Remain seated, begin graded physiotherapy readaptation, and hold EVA clearance."
     }
   ]
 }
