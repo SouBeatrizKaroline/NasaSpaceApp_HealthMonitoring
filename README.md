@@ -21,6 +21,8 @@ Open `web/index.html` in a modern browser. No server, account, external API, or 
 
 ## Crew history across mission stages
 
+Choose **Open sample mission** to explore three fictional check-ins for a lunar mission. The history opens with the example selected. Filter by stage, expand a record to read its details, or export the selection as JSON.
+
 Open or create a local astronaut profile with a fictional code. Re-enter the same code in the same browser to reopen the profile and its mission histories. The most recently saved mission code is prefilled. Use **Switch profile** on a shared device. The code is not a credential and profiles do not synchronize across devices.
 
 Use fictional astronaut and mission codes (for example, `CRW-01` and `DEMO-01`). Use the same pair before, during, and after the mission to keep the preflight reference, in-flight observations, and recovery reports together. Use a new mission code for a subsequent mission.

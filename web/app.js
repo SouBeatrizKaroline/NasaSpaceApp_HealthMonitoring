@@ -31,6 +31,7 @@ function applyLanguage(code){
   document.documentElement.lang=lang;
   localStorage.setItem("crew-health-check.language",lang);
   $("language").value=lang;
+  $("exampleMission").textContent = {en:"Open sample mission",pt:"Abrir missão de exemplo",es:"Abrir misión de ejemplo",fr:"Ouvrir la mission de démonstration"}[lang];
   document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;el.textContent=t(key)});
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{el.placeholder=t(el.dataset.i18nPlaceholder)});
   updateStage(false);
@@ -103,17 +104,32 @@ function renderRecords(){
  rows.slice().reverse().forEach(row=>{
   const card=document.createElement("article");card.className="record-card";
   const header=document.createElement("header"),date=document.createElement("span"),kind=document.createElement("strong");
-  date.textContent=new Date(row.recordedAt).toLocaleString(lang);kind.textContent=row.reviewPreference;header.append(date,kind);
+  date.textContent=new Date(row.recordedAt).toLocaleString(lang);kind.textContent=row.sample ? {en:"Fictional sample",pt:"Exemplo fictício",es:"Ejemplo ficticio",fr:"Exemple fictif"}[lang] : row.reviewPreference;header.append(date,kind);
   const ctx=document.createElement("p");ctx.textContent=[row.stage ? t(stageKeys[row.stage]) : null,row.mission?.phase,row.mission?.gravity,row.reason].filter(Boolean).join(" · ");
   const body=document.createElement("p");body.textContent=row.description||"";
   const foot=document.createElement("small");foot.textContent=row.privateFollowUp?t("private"):"";
   const disclosure = document.createElement("details");
   const summary = document.createElement("summary");
   summary.textContent = t("details");
-  const report = document.createElement("pre");
-  report.style.whiteSpace = "pre-wrap";
-  report.style.overflowWrap = "anywhere";
-  report.textContent = JSON.stringify(row, null, 2);
+  const report = document.createElement("dl");
+  const fields = {
+    crewCode: row.astronautCode, missionCode: row.missionCode, onset: row.onset,
+    pattern: row.pattern, associated: row.associatedChanges, elapsed: row.mission?.timeSinceTransition,
+    functionTitle: (row.functionChanges || []).join(", "), sleepHours: row.wellbeing?.sleepHours,
+    mood: row.wellbeing?.mood, stress: row.wellbeing?.stress,
+    measurementSource: row.measurementSource, measurementTime: row.measurementTime
+  };
+  for (const [key, reading] of Object.entries(row.measurements || {})) {
+    fields[key] = reading.value + " " + reading.unit;
+  }
+  for (const [key, value] of Object.entries(fields)) {
+    if (value == null || value === "") continue;
+    const label = document.createElement("dt");
+    const detail = document.createElement("dd");
+    label.textContent = t(key);
+    detail.textContent = value;
+    report.append(label, detail);
+  }
   disclosure.append(summary, report);
   card.append(header,ctx,body,foot,disclosure);host.append(card);
  });
@@ -130,6 +146,7 @@ function saveProfile(code, lastMission) {
 function showProfile() {
   const opened = Boolean(activeCode);
   $("profileForm").hidden = opened;
+  $("exampleMission").hidden = opened;
   $("activeProfile").hidden = !opened;
   $("profileWorkspace").hidden = !opened;
   $("profileQuickNav").hidden = !opened;
@@ -152,6 +169,45 @@ $("profileForm").addEventListener("submit", event => {
     profileDirty = false;
     showProfile();
     $("missionCode").focus();
+  } catch {
+    showToast(t("profileError"));
+  }
+});
+$("exampleMission").addEventListener("click", () => {
+  const code = "DEMO-CREW";
+  const missionCode = "LUNAR-DEMO";
+  const snapshots = [
+    ["pre", "Pre-mission preparation", "Earth gravity", "Baseline: routine walking and exercise felt normal.", "8"],
+    ["during", "Surface operations", "Lunar gravity", "Walking and turning felt different six hours after landing.", "6"],
+    ["post", "Post-mission recovery", "Earth gravity", "Walking felt steadier one day after returning to Earth.", "7"]
+  ];
+  try {
+    const rows = readRecords();
+    const existing = new Set(rows.map(row => row.id));
+    const examples = snapshots.map(([stage, phase, gravity, description, sleepHours], index) => ({
+      id: "lunar-demo-" + stage,
+      sample: true,
+      astronautCode: code,
+      missionCode,
+      stage,
+      recordedAt: new Date(Date.UTC(2026, 0, 1 + index * 7, 12)).toISOString(),
+      mission: {phase, gravity},
+      reason: "Routine check-in",
+      description,
+      wellbeing: {sleepHours},
+      functionChanges: stage === "during" ? ["Mobility or balance"] : [],
+      measurements: {},
+      reviewPreference: "Routine entry",
+      mediaStored: false
+    }));
+    writeRecords([...rows, ...examples.filter(row => !existing.has(row.id))]);
+    saveProfile(code, missionCode);
+    activeCode = code;
+    $("missionCode").value = missionCode;
+    showProfile();
+    $("historyScope").value = code + " / " + missionCode;
+    renderRecords();
+    $("historyScope").focus();
   } catch {
     showToast(t("profileError"));
   }
