@@ -2,7 +2,7 @@
 
 > **2026 NASA Space Apps Challenge** · *Create Health Monitoring Software for Astronauts on Space Missions*
 
-**AstroCare-Q** is a lean, spaceflight-grade autonomous health monitoring platform built for astronauts on long-duration missions (Lunar/Artemis, orbital stations, rovers, and Mars). The core engine is written in **Rust** (`#![forbid(unsafe_code)]`, zero external dependencies) for deterministic performance, memory safety without garbage collection, and full **supply-chain sovereignty**—capable of running natively on flight hardware or compiling to **WebAssembly (WASM)** for offline cabin execution.
+**AstroCare-Q** is a lean, spaceflight-grade autonomous health monitoring platform built for astronauts on long-duration missions (Lunar/Artemis, orbital stations, rovers, and Mars). The core engine is written in **Rust** (`#![forbid(unsafe_code)]`, zero external dependencies) and paired with a **zero-dependency offline-first Web UI** (`web/`) ready for instant Vercel deployment.
 
 ---
 
@@ -15,17 +15,15 @@ On deep-space missions (with up to 22-minute one-way communication delays to Mar
    - 100% offline-first with **zero PRC-linked hardware, cloud APIs, AI models, or third-party dependencies**, aligning with the [Wolf Amendment](https://casrai.org/guides/wolf-amendment-nasa-funding-china-collaboration) and U.S. federal research security rules.
 2. **Gravity-Aware Multidisciplinary Clinical Engine:**
    - **Anamnesis (SOAP) + Gravity Calibration (`0g`, `0.16g`, `0.38g`, `1g`):** Accounts for how microgravity alters physiology (~2,000 mL cephalad fluid shift, SANS, ~1–1.5%/month bone loss) and interferes with diagnostic devices.
-   - **Nursing Diagnoses (NANDA-I) + Allied Health:** Combines NANDA-I self-care interventions with **Physiotherapy** (bone/vestibular countermeasures), **Clinical Nutrition** (sodium/electrolyte control), **Psychology** (isolation/sleep), and **Space Pharmacy** (radiation med-kit potency).
+   - **Nursing Diagnoses (NANDA-I) + Allied Health:** Combines NANDA-I self-care interventions with **Physiotherapy**, **Clinical Nutrition**, **Psychology**, and **Space Pharmacy**.
    - **Medical Triage:** Evaluates acute vital risk and packages structured SOAP summaries for Ground Flight Surgeons.
-3. **Lightweight Multimodal Analysis (No Heavy Hardware Required):**
-   - **Video (Webcam rPPG):** Contactless heart rate and HRV estimation in 15–30 seconds.
-   - **Photo / Image:** Visual assessment of skin lesions, facial edema (*puffy face*), or test strips.
-   - **Voice:** Hands-free spoken anamnesis transcription plus vocal fatigue indicators.
-4. **Quantum Computing, Engineering & Science (Feasible with Limited Resources):**
+3. **Lightweight Multimodal Analysis:**
+   - **Video (Webcam rPPG)**, **Photo/Image**, and **Voice** dictation via native browser APIs.
+4. **Quantum Computing, Engineering & Science:**
    - **Quantum Computing (QUBO):** Deterministic combinatorial triage optimization under tight crew time and medical supply limits.
    - **Quantum Engineering & Science:** Architecture ready for contactless quantum magnetometry (NV-centers/OPMs), quantum radiation dosimetry, and post-quantum cryptography (PQC).
 5. **Lean Design (Low Cognitive Load):**
-   - Strictly **3 core views** with zero visual clutter: *Interactive Body Dashboard*, *Multimodal Check-in*, and *Mission Routine*.
+   - Strictly **3 core views**: *Body Dashboard*, *Multimodal Check-in*, and *Mission Routine*.
 
 ---
 
@@ -34,6 +32,10 @@ On deep-space missions (with up to 22-minute one-way communication delays to Mar
 ```text
 NasaSpaceApp_HealthMonitoring/
 ├── README.md                          # Project overview and system architecture
+├── web/                               # Zero-dependency Web UI (Ready for Vercel)
+│   ├── index.html
+│   ├── styles.css
+│   └── app.js
 ├── docs/
 │   ├── NASA_COMPLIANCE_AND_GRAVITY.md # Wolf Amendment, NASA-STD-3001 & 0g/Partial-G effects
 │   ├── PRODUCT_MANAGEMENT.md          # Product strategy, MVP scope, personas & feasibility
@@ -50,17 +52,17 @@ NasaSpaceApp_HealthMonitoring/
 
 ---
 
-## 🚀 Running the Rust Core Prototype (MVP)
+## ▲ Deploying the Web UI on Vercel
 
-No external dependencies or internet access required:
+1. Go to [vercel.com/new](https://vercel.com/new) and import `SouBeatrizKaroline/NasaSpaceApp_HealthMonitoring`.
+2. Set **Root Directory** to `web`.
+3. Leave Framework Preset as **Other** (zero build step required) and click **Deploy**.
+
+---
+
+## 🚀 Running the Rust Core Prototype (CLI)
 
 ```bash
 cd mvp
 cargo run --release
-```
-
-Or compile directly with `rustc`:
-
-```bash
-rustc mvp/src/main.rs -O -o astrocare_q && ./astrocare_q
 ```

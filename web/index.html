@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AstroCare-Q | Astronaut Health Monitoring</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="status-dot nominal" id="globalStatusDot"></span>
+      <div>
+        <h1>AstroCare-Q</h1>
+        <p class="subtitle">NASA-STD-3001 Aligned · Offline-First · Zero External Dependencies</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label class="env-label" for="gravitySelect">Environment</label>
+      <select id="gravitySelect" aria-label="Mission Gravity Environment">
+        <option value="0g">Spacecraft / Station (0g Microgravity)</option>
+        <option value="0.16g">Lunar Base (0.16g Artemis)</option>
+        <option value="0.38g">Mars Surface / Rover (0.38g)</option>
+        <option value="1g">Earth Return (1.0g)</option>
+      </select>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Primary Views">
+    <button class="tab-btn active" data-view="dashboard">1. Body Dashboard</button>
+    <button class="tab-btn" data-view="checkin">2. Multimodal Check-in</button>
+    <button class="tab-btn" data-view="routine">3. Mission Routine</button>
+  </nav>
+
+  <main class="container">
+    <!-- VIEW 1: BODY DASHBOARD -->
+    <section id="view-dashboard" class="view active">
+      <div class="dashboard-grid">
+        <div class="card body-panel">
+          <div class="card-header">
+            <h2>Interactive Body Map</h2>
+            <span class="badge" id="envBadge">0g Microgravity</span>
+          </div>
+          <p class="hint">Select an anatomical zone to inspect spaceflight risks and indicators.</p>
+
+          <div class="svg-wrapper">
+            <svg viewBox="0 0 220 420" class="body-svg" role="img" aria-label="Interactive astronaut body map">
+              <!-- Silhouette base -->
+              <g fill="#162033" stroke="#2d3b55" stroke-width="2">
+                <circle cx="110" cy="48" r="28" />
+                <rect x="72" y="84" width="76" height="115" rx="18" />
+                <rect x="38" y="88" width="26" height="105" rx="12" />
+                <rect x="156" y="88" width="26" height="105" rx="12" />
+                <rect x="76" y="206" width="28" height="175" rx="12" />
+                <rect x="116" y="206" width="28" height="175" rx="12" />
+              </g>
+
+              <!-- Clickable Zone 1: Head & Neuro-Ocular -->
+              <circle cx="110" cy="48" r="24" class="zone-node status-amber" data-zone="head" />
+              <text x="110" y="52" text-anchor="middle" class="zone-label">HEAD</text>
+
+              <!-- Clickable Zone 2: Thorax & Cardiovascular -->
+              <rect x="82" y="96" width="56" height="44" rx="10" class="zone-node status-nominal" data-zone="thorax" />
+              <text x="110" y="122" text-anchor="middle" class="zone-label">CARDIO</text>
+
+              <!-- Clickable Zone 3: Metabolism & Nutrition -->
+              <rect x="82" y="148" width="56" height="40" rx="10" class="zone-node status-nominal" data-zone="metabolism" />
+              <text x="110" y="172" text-anchor="middle" class="zone-label">METAB</text>
+
+              <!-- Clickable Zone 4: Skin & Immune -->
+              <rect x="158" y="102" width="22" height="58" rx="8" class="zone-node status-nominal" data-zone="skin" />
+              <text x="169" y="135" text-anchor="middle" class="zone-label small">SKIN</text>
+
+              <!-- Clickable Zone 5: Musculoskeletal -->
+              <rect x="79" y="224" width="22" height="90" rx="8" class="zone-node status-amber" data-zone="musculoskeletal" />
+              <text x="90" y="272" text-anchor="middle" class="zone-label small">BONE</text>
+            </svg>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot nominal"></i> Nominal</span>
+            <span><i class="dot amber"></i> Attention (NANDA-I)</span>
+            <span><i class="dot red"></i> Critical (Flight Surgeon)</span>
+          </div>
+        </div>
+
+        <div class="detail-stack">
+          <div class="card" id="zoneDetailCard">
+            <div class="card-header">
+              <h2 id="zoneTitle">Head &amp; Neuro-Ocular</h2>
+              <span class="pill amber" id="zoneStatusPill">AMBER · Self-Care</span>
+            </div>
+            <p class="zone-why" id="zoneWhy"></p>
+            <div class="metrics-row" id="zoneMetrics"></div>
+            <div class="action-box">
+              <strong>NANDA-I &amp; Allied Health Guidance:</strong>
+              <p id="zoneGuidance"></p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>7-Day Trend</h2>
+              <span class="hint" id="trendLabel">Resting HR (bpm) &amp; Sleep (h)</span>
+            </div>
+            <svg id="trendChart" viewBox="0 0 400 110" class="trend-svg" aria-label="7-day health trend chart"></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: MULTIMODAL CHECK-IN -->
+    <section id="view-checkin" class="view">
+      <div class="checkin-grid">
+        <div class="card">
+          <div class="card-header">
+            <h2>Step 1 · Space Anamnesis (SOAP)</h2>
+            <button type="button" class="btn-secondary" id="voiceBtn">🎤 Voice Dictation</button>
+          </div>
+          <p class="hint" id="voiceStatus">Speak how you feel or tap active symptoms below.</p>
+
+          <textarea id="anamnesisNotes" rows="3" placeholder="Chief complaint (e.g., 'Morning headache and mild blurred vision after sleep')..."></textarea>
+
+          <div class="symptom-chips" id="symptomChips">
+            <button type="button" class="chip" data-symptom="blurred_vision">Blurred Vision / Ocular Pressure</button>
+            <button type="button" class="chip" data-symptom="poor_sleep">Sleep &lt; 5.5h / Fatigue</button>
+            <button type="button" class="chip" data-symptom="radiation_skin">Skin Erythema / High Dosimeter</button>
+            <button type="button" class="chip" data-symptom="dehydration">Dizziness / Intense Thirst</button>
+            <button type="button" class="chip" data-symptom="orthostatic">Standing Instability (Post-G)</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Step 2 · Multimodal &amp; Quantum Telemetry</h2>
+            <button type="button" class="btn-secondary" id="cameraBtn">📷 Start Camera (rPPG / Photo)</button>
+          </div>
+          <div class="media-box">
+            <video id="webcamPreview" autoplay playsinline muted class="hidden"></video>
+            <div id="mediaPlaceholder" class="media-placeholder">
+              Camera idle. Use webcam for 15s contactless rPPG pulse or skin photo.
+            </div>
+          </div>
+          <div class="vitals-inputs">
+            <label>
+              rPPG / HR (bpm)
+              <input type="number" id="inputHr" value="78" min="40" max="190" />
+            </label>
+            <label>
+              Sleep (hours)
+              <input type="number" id="inputSleep" value="6.5" min="0" max="14" step="0.5" />
+            </label>
+            <label>
+              Quantum Dosimeter (mSv/day)
+              <input type="number" id="inputDose" value="0.45" min="0" max="20" step="0.05" />
+            </label>
+            <label>
+              Available Crew Time (min)
+              <input type="number" id="inputMaxTime" value="30" min="5" max="120" />
+            </label>
+          </div>
+          <button type="button" class="btn-primary full-width" id="runTriageBtn">
+            Run Clinical &amp; QUBO Triage
+          </button>
+        </div>
+      </div>
+
+      <div class="card result-card hidden" id="triageResultCard">
+        <div class="card-header">
+          <h2>Step 3 · Prioritized Action Plan (NANDA-I + QUBO + Medical)</h2>
+          <button type="button" class="btn-secondary" id="exportSoapBtn">Copy SOAP for Flight Surgeon</button>
+        </div>
+        <div id="triageResults"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: MISSION ROUTINE -->
+    <section id="view-routine" class="view">
+      <div class="card routine-card">
+        <div class="card-header">
+          <h2>Daily Preventive Countermeasures</h2>
+          <span class="pill nominal" id="readinessBadge">Readiness: 50%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="readinessBar" style="width: 50%"></div>
+        </div>
+        <p class="hint">Aligned with NASA-STD-3001 preventive care for bone, cardiovascular, ocular, and behavioral health.</p>
+
+        <ul class="checklist" id="routineList">
+          <li>
+            <label><input type="checkbox" checked /> <strong>Physiotherapy:</strong> Resistive Exercise (ARED) — 45 min (Bone &amp; Muscle Countermeasure)</label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked /> <strong>Nutrition:</strong> 2.5L Electrolyte Hydration (Kidney Stone &amp; Orthostatic Prevention)</label>
+          </li>
+          <li>
+            <label><input type="checkbox" /> <strong>Nursing / SANS:</strong> Amsler Grid Visual Self-Check (Neuro-Ocular Monitoring)</label>
+          </li>
+          <li>
+            <label><input type="checkbox" /> <strong>Psychology:</strong> Evening Warm-Light Mode &amp; Sleep Log (Circadian Alignment)</label>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
