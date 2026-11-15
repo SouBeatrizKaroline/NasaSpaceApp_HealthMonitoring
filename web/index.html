@@ -81,6 +81,8 @@
         <button type="button" id="switchProfileBtn" class="btn-outline btn-sm" data-i18n="switchProfile">Switch profile</button>
       </div>
 
+      <aside class="mission-sidebar">
+      <div class="sidebar-brand"><img src="favicon.svg" width="36" height="36" alt=""><strong>Crew Health Check</strong></div>
       <nav class="nav-tabs" aria-label="Primary Navigation">
         <button type="button" class="nav-tab active" data-view="today" data-i18n="navToday">Today</button>
         <button type="button" class="nav-tab" data-view="checkin" data-i18n="navCheckin">Check-in</button>
@@ -88,6 +90,7 @@
         <button type="button" class="nav-tab" data-view="ground" data-i18n="navGround">Ground Review</button>
         <button type="button" class="nav-tab" data-view="planning" data-i18n="navPlanning">Task Planning</button>
       </nav>
+      </aside>
 
       <!-- VIEW 1: TODAY -->
       <section id="view-today" class="view active" aria-labelledby="todayHeading">
@@ -291,7 +294,7 @@
               <input id="mediaInput" type="file" accept="image/*,video/*,audio/*" />
             </label>
             <div id="mediaPreview" class="media-preview"></div></details></div>
-            <section class="reading-guide"><h3 data-i18n="readingHelpTitle">No readings?</h3><p data-i18n="step3Sub">Copy any readings from your device. Leave the other fields blank and continue to review.</p></section></div>
+            <section class="reading-guide"><div class="reading-horizon" aria-hidden="true"></div><div class="reading-help"><h3 data-i18n="readingHelpTitle">No readings?</h3><p data-i18n="step3Sub">Copy any readings from your device. Leave the other fields blank and continue to review.</p></div></section></div>
 
             <div class="wizard-actions">
               <button type="button" id="step3Back" class="btn-outline" data-i18n="backBtn">Back</button>

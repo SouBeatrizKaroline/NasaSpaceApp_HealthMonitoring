@@ -20,3 +20,112 @@
   .reading-layout { display: flex; flex-direction: column-reverse; gap: 12px; }
   .reading-layout > * { width: 100%; }
 }
+
+/* Desktop mission console and compact mobile workspace. */
+:root {
+  --header-bg: #102f38;
+  --bg: #f6f3ee;
+  --ink: #142b34;
+  --muted: #4c6168;
+  --green: #09543f;
+  --green-hover: #063f30;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+}
+
+.sidebar-brand { display: none; }
+.nav-tab, .wizard-actions button, .today-body button { min-height: 44px; }
+#view-checkin h2 {
+  font-size: clamp(1.65rem, 3vw, 2.8rem);
+  line-height: 1.13;
+  letter-spacing: -.04em;
+}
+.today-banner, .reading-horizon {
+  background:
+    radial-gradient(ellipse at 72% 162%, #beced4 0%, #54768d 45%, #3988b7 49%, #9bc9df 50%, #1c567a 52%, #071a2e 55%, #060f1c 100%);
+}
+.reading-guide {
+  background: transparent;
+  padding: 0;
+}
+.reading-horizon {
+  min-height: 138px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+.reading-help {
+  background: #def0e6;
+  padding: 18px 20px;
+  border-radius: 12px;
+}
+.reading-fields .field-row {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  background: var(--surface);
+}
+#view-checkin .wizard-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+@media (min-width: 1000px) {
+  .shell, .topbar-inner { width: min(100% - 40px, 1450px); max-width: none; }
+  #appWorkspace {
+    display: grid;
+    grid-template-columns: 228px minmax(0, 1fr);
+    gap: clamp(18px, 3vw, 42px);
+    align-items: start;
+  }
+  .mission-sidebar {
+    min-height: 480px;
+    align-self: stretch;
+    padding: 24px 14px;
+    background: #102f38;
+    color: #fff;
+    border-radius: 16px;
+  }
+  .sidebar-brand {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 0 8px 24px;
+  }
+  .mission-sidebar .nav-tabs {
+    display: grid;
+    overflow: visible;
+    border: 0;
+    margin: 0;
+  }
+  .mission-sidebar .nav-tab { text-align: left; color: #e4f0ee; }
+  .mission-sidebar .nav-tab:hover,
+  .mission-sidebar .nav-tab.active { background: #215660; color: #fff; }
+  #appWorkspace > :not(.mission-sidebar) { grid-column: 2; min-width: 0; }
+  .reading-layout .field-row { grid-template-columns: minmax(0,1fr); }
+}
+
+@media (max-width: 999px) {
+  .reading-layout { display: flex; flex-direction: column-reverse; gap: 12px; }
+  .reading-layout > * { width: 100%; }
+  .reading-horizon { display: none; }
+}
+@media (max-width: 600px) {
+  .today-banner { height: 124px; }
+  .today-body .stack-actions button { width: 100%; }
+  .topbar .brand small { display: none; }
+  #view-checkin .wizard-card { padding-inline: 4px; }
+}
+
+@media (min-width: 1000px) {
+  .mission-sidebar { grid-area: 1 / 1 / span 2 / 2; }
+  #view-checkin .stepper { gap: 6px; }
+  #view-checkin .step-line { display: none; }
+  #view-checkin .step-dot {
+    flex: 1;
+    width: auto;
+    height: 6px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 0;
+  }
+}
