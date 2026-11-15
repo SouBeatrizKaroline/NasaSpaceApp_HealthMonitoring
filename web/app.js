@@ -15,6 +15,13 @@ const gravityLabels = ["compare","micro","moon","mars","earthNote","microNote","
 for (const [code, labels] of Object.entries({"en":["Compare gravity environments","Microgravity / free fall","Moon","Mars","Record your baseline before flight or note changes in balance and mobility after return.","Free fall reduces apparent weight. Note changes in orientation, movement or exercise.","Partial gravity changes how movement and equipment feel. Note gait, balance or task changes after landing.","Note changes in walking, balance and surface tasks after the transition to partial gravity.","Record when the gravity environment changed and which activities were affected.","NASA · Human body in space","Check-in"],"pt":["Compare os ambientes gravitacionais","Microgravidade / queda livre","Lua","Marte","Registre seu estado habitual antes do voo ou mudanças no equilíbrio e na mobilidade após o retorno.","A queda livre reduz o peso aparente. Registre mudanças de orientação, movimento ou exercício.","A gravidade parcial muda a sensação ao se mover e usar equipamentos. Registre mudanças na marcha, no equilíbrio ou nas tarefas.","Registre mudanças na caminhada, no equilíbrio e nas tarefas de superfície após a transição.","Registre quando a gravidade mudou e quais atividades foram afetadas.","NASA · O corpo humano no espaço","Registro"],"es":["Compara los entornos gravitatorios","Microgravedad / caída libre","Luna","Marte","Registra tu estado habitual antes del vuelo o cambios de equilibrio y movilidad después del regreso.","La caída libre reduce el peso aparente. Registra cambios de orientación, movimiento o ejercicio.","La gravedad parcial cambia cómo se perciben el movimiento y los equipos. Registra cambios de marcha, equilibrio o tareas.","Registra cambios al caminar, mantener el equilibrio o trabajar en superficie tras la transición.","Registra cuándo cambió la gravedad y qué actividades se vieron afectadas.","NASA · El cuerpo humano en el espacio","Registro"],"fr":["Comparez les environnements gravitationnels","Microgravité / chute libre","Lune","Mars","Consignez votre état habituel avant le vol ou les changements d’équilibre et de mobilité au retour.","La chute libre réduit le poids apparent. Notez les changements d’orientation, de mouvement ou d’exercice.","La gravité partielle modifie la perception des mouvements et des équipements. Notez les changements de marche, d’équilibre ou d’activité.","Notez les changements de marche, d’équilibre et de tâches en surface après la transition.","Notez quand la gravité a changé et quelles activités ont été touchées.","NASA · Le corps humain dans l’espace","Suivi"]})) {
   gravityLabels.forEach((key, index) => { strings[code][key] = labels[index]; });
 }
+const profileLabels = ["profileTitle","profilePrivacy","openProfile","signedIn","switchProfile","confirmSwitch","profileError"];
+for (const [code, labels] of Object.entries({"en":["Astronaut profile","Use a fictional code. This profile stays in this browser and the code is not a password.","Open or create profile","Active profile","Switch profile","Switch profiles and discard the current unsaved form?","Profile could not be saved in this browser."],"pt":["Perfil do astronauta","Use um código fictício. O perfil fica neste navegador e o código não é uma senha.","Abrir ou criar perfil","Perfil ativo","Trocar de perfil","Trocar de perfil e descartar o formulário atual sem salvar?","Não foi possível salvar o perfil neste navegador."],"es":["Perfil del astronauta","Usa un código ficticio. El perfil se queda en este navegador y el código no es una contraseña.","Abrir o crear perfil","Perfil activo","Cambiar de perfil","¿Cambiar de perfil y descartar el formulario actual sin guardar?","No se pudo guardar el perfil en este navegador."],"fr":["Profil de l’astronaute","Utilisez un code fictif. Le profil reste dans ce navigateur et le code ne sert pas de mot de passe.","Ouvrir ou créer un profil","Profil actif","Changer de profil","Changer de profil et abandonner le formulaire actuel sans l’enregistrer ?","Impossible d’enregistrer le profil dans ce navigateur."]})) {
+  profileLabels.forEach((key, index) => { strings[code][key] = labels[index]; });
+}
+const PROFILE_KEY = "crew-health-check.profiles.v1";
+let activeCode = "";
+let profileDirty = false;
 let lang = localStorage.getItem("crew-health-check.language") || "en";
 let previewUrls = [];
 const $ = (id) => document.getElementById(id);
@@ -37,7 +44,7 @@ function collect(){
  const measurements={};
  [["heartRate","bpm"],["temperature","°C"],["oxygen","%"],["bp","mmHg"]].forEach(([id,unit])=>{const v=getValue(id);if(v!=="")measurements[id]={value:v,unit}});
  const selected = document.querySelector('input[name="review"]:checked');
- return {astronautCode:getValue("crewCode").toUpperCase(),missionCode:getValue("missionCode").toUpperCase(),stage:$("stage").value,id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),recordedAt:new Date().toISOString(),mission:{phase:$("phase").value,gravity:$("gravity").value,timeSinceTransition:getValue("elapsed")||null},reason:$("reason").value,onset:getValue("onset")||null,description:getValue("description"),pattern:getValue("pattern")||null,associatedChanges:getValue("associated")||null,functionChanges:[...document.querySelectorAll('input[name="function"]:checked')].map(x=>x.value),wellbeing:{sleepHours:getValue("sleepHours")||null,mood:getValue("mood")||null,stress:getValue("stress")||null},measurements,measurementSource:getValue("measurementSource")||null,measurementTime:getValue("measurementTime")||null,reviewPreference:selected?selected.value:"Routine entry",privateFollowUp:$("privateNote").checked,mediaStored:false};
+ return {astronautCode:activeCode,missionCode:getValue("missionCode").toUpperCase(),stage:$("stage").value,id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),recordedAt:new Date().toISOString(),mission:{phase:$("phase").value,gravity:$("gravity").value,timeSinceTransition:getValue("elapsed")||null},reason:$("reason").value,onset:getValue("onset")||null,description:getValue("description"),pattern:getValue("pattern")||null,associatedChanges:getValue("associated")||null,functionChanges:[...document.querySelectorAll('input[name="function"]:checked')].map(x=>x.value),wellbeing:{sleepHours:getValue("sleepHours")||null,mood:getValue("mood")||null,stress:getValue("stress")||null},measurements,measurementSource:getValue("measurementSource")||null,measurementTime:getValue("measurementTime")||null,reviewPreference:selected?selected.value:"Routine entry",privateFollowUp:$("privateNote").checked,mediaStored:false};
 }
 const stageKeys = {pre:"pre", during:"during", post:"post"};
 const gravityNotes = {
@@ -74,12 +81,13 @@ function scopeOf(row) {
 function filteredRecords() {
   const scope = $("historyScope").value;
   const stage = $("stageFilter").value;
-  return readRecords().filter(row => scopeOf(row) === scope && (!stage || row.stage === stage));
+  return readRecords().filter(row => activeCode && row.astronautCode === activeCode && scopeOf(row) === scope && (!stage || row.stage === stage));
 }
 function updateHistoryScopes() {
   const selector = $("historyScope");
   const selected = selector.value;
-  const scopes = [...new Set(readRecords().map(scopeOf))].sort();
+  const rows = readRecords().filter(row => activeCode && row.astronautCode === activeCode);
+  const scopes = [...new Set(rows.map(scopeOf))].sort();
   selector.replaceChildren(new Option(t("pickScope"), ""));
   scopes.forEach(scope => selector.add(new Option(scope === "legacy" ? t("legacy") : scope, scope)));
   selector.value = scopes.includes(selected) ? selected : "";
@@ -110,6 +118,58 @@ function renderRecords(){
   card.append(header,ctx,body,foot,disclosure);host.append(card);
  });
 }
+function saveProfile(code, lastMission) {
+  const profiles = JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}");
+  const profile = Object.hasOwn(profiles, code) ? profiles[code] : {};
+  if (lastMission !== undefined) profile.lastMission = lastMission;
+  profiles[code] = profile;
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profiles));
+  return profile;
+}
+
+function showProfile() {
+  const opened = Boolean(activeCode);
+  $("profileForm").hidden = opened;
+  $("activeProfile").hidden = !opened;
+  $("profileWorkspace").hidden = !opened;
+  $("profileQuickNav").hidden = !opened;
+  $("profileBadge").textContent = activeCode;
+  $("historyScope").value = "";
+  $("stageFilter").value = "";
+  renderRecords();
+}
+
+$("profileWorkspace").addEventListener("input", event => {
+  if (event.target.closest("#checkin, #mission")) profileDirty = true;
+});
+$("profileForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const code = getValue("profileCode").toUpperCase();
+  try {
+    const profile = saveProfile(code);
+    activeCode = code;
+    $("missionCode").value = profile.lastMission || "";
+    profileDirty = false;
+    showProfile();
+    $("missionCode").focus();
+  } catch {
+    showToast(t("profileError"));
+  }
+});
+$("switchProfile").addEventListener("click", () => {
+  if (profileDirty && !confirm(t("confirmSwitch"))) return;
+  $("checkin").reset();
+  $("media").dispatchEvent(new Event("change"));
+  $("missionCode").value = "";
+  $("elapsed").value = "";
+  $("stage").value = "pre";
+  updateStage(true);
+  activeCode = "";
+  profileDirty = false;
+  showProfile();
+  $("profileCode").value = "";
+  $("profileCode").focus();
+});
 $("gravity").addEventListener("change", updateGravity);
 document.querySelectorAll("[data-gravity]").forEach(card => {
   card.addEventListener("click", () => {
@@ -121,9 +181,11 @@ $("stage").addEventListener("change", () => updateStage(true));
 $("historyScope").addEventListener("change", renderRecords);
 $("stageFilter").addEventListener("change", renderRecords);
 $("language").addEventListener("change",e=>applyLanguage(e.target.value));
-$("checkin").addEventListener("submit",e=>{e.preventDefault();const record=collect();if(!record.description && record.reason==="Routine check-in" && !Object.keys(record.measurements).length && !record.functionChanges.length && !Object.values(record.wellbeing).some(Boolean)){showToast(t("required"));$("description").focus();return}try{const rows=readRecords();rows.push(record);writeRecords(rows);updateHistoryScopes();$("historyScope").value=scopeOf(record);$("stageFilter").value="";renderRecords();showToast(t("saved"))}catch{showToast("Storage is unavailable. Export or clear browser data.")}});
+$("checkin").addEventListener("submit",e=>{e.preventDefault();if(!activeCode)return;const record=collect();if(!record.description && record.reason==="Routine check-in" && !Object.keys(record.measurements).length && !record.functionChanges.length && !Object.values(record.wellbeing).some(Boolean)){showToast(t("required"));$("description").focus();return}try{const rows=readRecords();rows.push(record);writeRecords(rows);profileDirty=false;
+ try { saveProfile(activeCode, record.missionCode); } catch { /* The check-in has already been saved. */ }
+ updateHistoryScopes();$("historyScope").value=scopeOf(record);$("stageFilter").value="";renderRecords();showToast(t("saved"))}catch{showToast("Storage is unavailable. Export or clear browser data.")}});
 $("export").addEventListener("click",()=>{const records=filteredRecords();if(!records.length){showToast(t("noExport"));return}const blob=new Blob([JSON.stringify({format:"crew-health-check-demo-v3",exportedAt:new Date().toISOString(),records},null,2)],{type:"application/json"});const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="crew-health-check-records.json";link.click();URL.revokeObjectURL(link.href);showToast(t("exported"))});
-$("clear").addEventListener("click",()=>{const scope=$("historyScope").value;if(!scope||!confirm(t("confirmScoped")))return;writeRecords(readRecords().filter(row=>scopeOf(row)!==scope));renderRecords();showToast(t("cleared"))});
+$("clear").addEventListener("click",()=>{const scope=$("historyScope").value;if(!activeCode||!scope||!confirm(t("confirmScoped")))return;writeRecords(readRecords().filter(row=>scopeOf(row)!==scope));renderRecords();showToast(t("cleared"))});
 $("media").addEventListener("change",e=>{previewUrls.forEach(URL.revokeObjectURL);previewUrls=[];const host=$("mediaPreview");host.replaceChildren();[...e.target.files].forEach(file=>{const url=URL.createObjectURL(file);previewUrls.push(url);let el;if(file.type.startsWith("image/")){el=document.createElement("img");el.alt=file.name;el.src=url}else if(file.type.startsWith("video/")){el=document.createElement("video");el.controls=true;el.src=url}else if(file.type.startsWith("audio/")){el=document.createElement("audio");el.controls=true;el.src=url}else return;host.append(el)});});
 window.addEventListener("pagehide",()=>previewUrls.forEach(URL.revokeObjectURL));
 applyLanguage(lang);renderRecords();

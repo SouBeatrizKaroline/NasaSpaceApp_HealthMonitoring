@@ -151,3 +151,10 @@ a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 @media (min-width: 851px) {
   .quick-nav { display: none; }
 }
+
+.profile-panel [hidden], .workspace[hidden], .quick-nav[hidden] { display: none; }
+.profile-panel { margin-bottom: 24px; }
+.profile-panel h2 { margin: 0 0 8px; }
+.profile-panel p { color: var(--muted); }
+.profile-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.profile-controls strong { color: var(--cyan); margin-left: 8px; }

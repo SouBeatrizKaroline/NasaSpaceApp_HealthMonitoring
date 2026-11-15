@@ -21,9 +21,11 @@ Open `web/index.html` in a modern browser. No server, account, external API, or 
 
 ## Crew history across mission stages
 
+Open or create a local astronaut profile with a fictional code. Re-enter the same code in the same browser to reopen the profile and its mission histories. The most recently saved mission code is prefilled. Use **Switch profile** on a shared device. The code is not a credential and profiles do not synchronize across devices.
+
 Use fictional astronaut and mission codes (for example, `CRW-01` and `DEMO-01`). Use the same pair before, during, and after the mission to keep the preflight reference, in-flight observations, and recovery reports together. Use a new mission code for a subsequent mission.
 
-In the history, select an astronaut and mission pair and optionally filter by stage. Open a record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without codes remain available in their own history.
+In the history, select an astronaut and mission pair and optionally filter by stage. Open a record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without an astronaut code remain in browser storage and are not assigned to a profile.
 
 Codes group local records. They provide no sign-in or access control. Use fictional data only.
 

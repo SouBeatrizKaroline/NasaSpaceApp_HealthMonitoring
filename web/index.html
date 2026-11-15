@@ -18,13 +18,25 @@
       <div class="eyebrow" data-i18n="eyebrow">CREW WELLNESS / PRIVATE CHECK-IN</div>
       <h1 data-i18n="title">A clear picture of how you are doing.</h1>
       <p data-i18n="lead">Record what changed, what you notice, and how it affects your mission tasks. You are in control of what you enter.</p>
-      <nav class="quick-nav"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav>
+      <nav class="quick-nav" id="profileQuickNav" hidden><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav>
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
-    <div class="workspace"><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
+    <section class="panel profile-panel" aria-labelledby="profileTitle">
+      <h2 id="profileTitle" tabindex="-1" data-i18n="profileTitle">Astronaut profile</h2>
+      <p data-i18n="profilePrivacy">Use a fictional code. This profile stays in this browser and the code is not a password.</p>
+      <form id="profileForm" class="profile-controls">
+        <label><span data-i18n="crewCode">Astronaut code</span><input id="profileCode" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" autocomplete="off" placeholder="CRW-01"></label>
+        <button class="primary" type="submit" data-i18n="openProfile">Open or create profile</button>
+      </form>
+      <div id="activeProfile" class="profile-controls" hidden>
+        <p><span data-i18n="signedIn">Active profile</span> <strong id="profileBadge"></strong></p>
+        <button id="switchProfile" class="secondary" type="button" data-i18n="switchProfile">Switch profile</button>
+      </div>
+    </section>
+    <div class="workspace" id="profileWorkspace" hidden><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
       <h2 data-i18n="contextTitle">Mission context</h2>
       <div class="grid three">
-        <label><span data-i18n="crewCode"></span><input id="crewCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
+        
         <label><span data-i18n="missionCode"></span><input id="missionCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="DEMO-01"></label>
         <label><span data-i18n="stage"></span><select id="stage"><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
       </div>
