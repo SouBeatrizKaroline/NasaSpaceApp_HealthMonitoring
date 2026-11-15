@@ -54,7 +54,9 @@ def main():
             "Install optional packages from mvp/requirements-quantum.txt"
         ) from exc
 
-    problem = QuadraticProgram("synthetic_task_schedule")
+    # Keep only the public task contract; extra input fields are never exported.
+    tasks = [{"name": task["name"].strip(), "duration": task["duration"], "value": task["value"]} for task in tasks]
+    problem = QuadraticProgram("operational_task_schedule")
     for index in range(len(tasks)):
         problem.binary_var(name=f"x{index}")
     problem.maximize(
@@ -72,6 +74,7 @@ def main():
             sampler=StatevectorSampler(seed=7),
             optimizer=COBYLA(maxiter=80),
             reps=1,
+            initial_point=[0.4, 0.8],
         )
     )
     result = solver.solve(problem)
@@ -86,3 +89,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

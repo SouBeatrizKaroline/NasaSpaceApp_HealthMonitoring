@@ -1,60 +1,75 @@
 # Crew Health Check
 
-An independent, offline-first prototype for astronaut self-check-ins during long-duration missions. It organizes reported symptoms, functional changes, optional measurements, and supporting media into a reviewable record.
+**A clear next step for crew health, before, during, and after a mission.**
 
-> **Prototype status:** This project is an educational demonstration. It is not a medical device, diagnostic service, treatment guide, flight-qualified system, or NASA product. Do not enter real personal health information.
+An independent Space Apps prototype for recording observations onboard and preparing a structured review on the ground. The workspace starts empty: the presenter enters observations during the demonstration. There is no preloaded mission or invented patient history.
 
-## What it demonstrates
+## Run the demo
 
-- English-first interface with English, Spanish, French, and Portuguese UI options.
-- Mission context: mission phase, gravity environment, and time in mission.
-- Structured self-check-in covering symptoms, sleep, well-being, function, and optional observations.
-- Optional vital measurements with units and source; blank values stay blank.
-- Session-only photo, video, and audio attachments for human review. Files are not interpreted or uploaded.
-- Local browser record, JSON export, and clear-data control.
-- A lightweight Rust example for deterministic status handling.
-- An operational task planner accepts user-entered tasks, calculates an exact schedule, and imports a result from the local Qiskit simulator.
+No build or runtime packages are required. From the repository root:
 
-## Run the interface
+```sh
+python -m http.server 8000 --directory web
+```
 
-Open `web/index.html` in a modern browser. No server, account, external API, or network connection is required. Saved text check-ins stay in that browser's local storage. Attachments are temporary and disappear when the page is closed or refreshed.
+Open **http://localhost:8000**. For hosting, publish `web/` on HTTPS (use `web` as the Vercel root directory). The interface uses only local assets and system fonts. Wait for the offline-ready message after the first online load, then reload once before disconnecting. First-time remote access cannot work without downloading the application. Browser storage and cached assets must be retained.
 
-## Crew history across mission stages
+Opening `web/index.html` directly can display the interface, but file-origin persistence is browser-dependent and service-worker caching is unavailable. Use localhost or HTTPS for acceptance testing.
 
-Choose **Open sample mission** to explore three fictional check-ins for a lunar mission. The history opens with the example selected. Filter by stage, expand a record to read its details, or export the selection as JSON.
+## The mission journey
 
-Open or create a local astronaut profile with a fictional code. Re-enter the same code in the same browser to reopen the profile and its mission histories. The most recently saved mission code is prefilled. Use **Switch profile** on a shared device. The code is not a credential and profiles do not synchronize across devices.
+| Area | Working behavior |
+| --- | --- |
+| **Today** | Open a local Crew ID and mission; see current scope, phase, mission day when recorded, last saved entry, and Start/Continue check-in. |
+| **Check-in** | Four steps: context, observations, optional measurements, and review. Drafts are saved per crew/mission. Blank readings remain absent. |
+| **Mission History** | Latest Preflight, In flight, and Recovery references; descriptive numerical differences; missing stages; expandable records; scoped JSON export. |
+| **Ground Review** | Import the application's JSON report, validate it before display, inspect the same observations and comparisons, retry invalid imports. Imported data stays in memory. |
+| **Task Planning** | Enter operational tasks; compare exhaustive classical optimization with a browser quantum statevector simulation; export input and import a matching Qiskit result. |
 
-Use fictional astronaut and mission codes (for example, `CRW-01` and `DEMO-01`). Use the same pair before, during, and after the mission to keep the preflight reference, in-flight observations, and recovery reports together. Use a new mission code for a subsequent mission.
+English is the default. Spanish, French, and Portuguese cover the changed journeys. Report field names and units remain stable across languages; user-entered observations are not translated.
 
-In the history, select an astronaut and mission pair and optionally filter by stage. The mission comparison shows the latest saved check-in in each stage and labels missing stages. Preview and download a plain-text report from the comparison. Sharing the report requires a separate contact pathway. Open any history record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without an astronaut code remain in browser storage and are not assigned to a profile.
+## A two-minute presentation script
 
-Codes group local records. They provide no sign-in or access control. Use fictional data only.
+1. “I will enter a local Crew ID and mission code. These identify records on this browser; they are not login credentials.”
+2. “Today shows the next action. I will record a preflight observation and one measurement, leaving the other measurements blank.” Enter non-sensitive test observations chosen by the presenter.
+3. “The review step lets me check the context and source before saving. Saved onboard means the browser stored this entry.”
+4. “I will record an in-flight observation with its gravity context. Mission History compares it with the available preflight reference and explicitly shows that recovery has not been recorded.”
+5. “I will export this mission report and open that file in Ground Review. No transmission is implied: this is a manual, validated file handoff.”
+6. “Task Planning is separate. I will enter operational tasks and compare the exact classical schedule with a local quantum simulation. No health records enter the planning file.”
 
-## Public research data
+## Data and privacy
 
-The **Spaceflight sleep research** panel visualizes published Shuttle and ISS actigraphy statistics and computes differences from each cohort’s early preflight mean. See the [source and interpretation notes](docs/AWARDS_AND_SUBMISSION.md#public-spaceflight-dataset-in-the-demo).
+Crew IDs group **local browser profiles**, not authenticated accounts. Anyone with access to this browser profile can open them. Records and drafts are unencrypted local storage; there is no identity verification, server, synchronization, telemetry, or medical record service. Use non-sensitive test observations only. Clearing site storage removes local history. Export before clearing it.
+
+Two Crew IDs and two mission codes have separate histories. The active selection and drafts survive reload. Earlier records with IDs remain compatible; older unassigned records are preserved and can be downloaded as a legacy archive, which is not a Ground Review report.
+
+Photos, video, and audio can be previewed during the measurement step. They are temporary, are not interpreted, and are not included in saved records or exports. Reports preserve values, units, source, measurement time, gravity context, and observations. `Saved onboard`, `Ready to export`, and `Report exported` describe local workflow actions; the app does not claim ground delivery or receipt.
+
+## Verification
+
+```sh
+node --test tests/core.test.cjs
+node tests/browser.cjs
+```
+
+The second command requires Microsoft Edge on Windows, free localhost ports 8176/9336, and permission to connect to its local debugging endpoint. It uses a separate browser profile and writes test artifacts under ignored `test-output/`. See [validation results and remaining checks](docs/VALIDATION.md) for what actually ran in this delivery.
+
+## Implemented and future work
+
+Implemented: local capture, drafts, scoped history, structured export/import, four interface languages, browser simulation, and a Qiskit input/result adapter. The optional Python Qiskit environment must be installed and verified separately.
+
+Future: authenticated access, encryption and audit trails, approved ground synchronization, sensor integration, durable media storage, clinician-reviewed terminology, and mission-specific procedures. The Rust example is separate from the browser application. This prototype does not diagnose, prescribe treatment, infer health from media, or provide medical clearance. It is not flight-qualified or clinically validated, and is not a NASA product or endorsement.
 
 ## Documentation
 
-- [Challenge evidence and source register](docs/CHALLENGE_EVIDENCE.md)
-- [Clinical workflow](docs/CLINICAL_WORKFLOW.md)
+- [Visual identity and interaction decisions](docs/DESIGN_UX_UI.md)
+- [Architecture and record contract](docs/TECHNICAL_ARCHITECTURE.md)
+- [Qiskit reproduction and simulation scope](docs/QUANTUM_QISKIT.md)
+- [Validation record](docs/VALIDATION.md)
+- [Challenge evidence](docs/CHALLENGE_EVIDENCE.md)
+- [Gravity and operations](docs/GRAVITY_AND_OPERATIONS.md)
 - [Classification scope and permissions](docs/CLASSIFICATIONS_AND_SCOPE.md)
-- [Gravity and mission operations](docs/GRAVITY_AND_OPERATIONS.md)
-- [Safety, privacy, and validation plan](docs/SAFETY_PRIVACY_VALIDATION.md)
-- [Technical architecture](docs/TECHNICAL_ARCHITECTURE.md)
-- [Qiskit task planning](docs/QUANTUM_QISKIT.md)
-- [Product plan](docs/PRODUCT_MANAGEMENT.md)
-- [Interface rationale](docs/DESIGN_UX_UI.md)
+- [Clinical workflow](docs/CLINICAL_WORKFLOW.md)
+- [Submission considerations and published sleep research](docs/AWARDS_AND_SUBMISSION.md)
 
-## Important boundaries
-
-The prototype records user-entered information; it does not infer conditions from text, measurements, images, video, or voice. Status labels are workflow prompts only and never indicate medical clearance. Mission-specific warning thresholds and responses must come from approved clinical procedures and be configured by qualified mission medical staff. This repository does not embed proprietary diagnostic taxonomies or medication instructions.
-
-## Languages
-
-English is the primary project language. The interface includes English, Spanish, French, and Portuguese. Clinical wording needs review by fluent clinicians before operational use.
-
-## Rights and attribution
-
-Review applicable repository and source terms before reuse. NASA references are cited for factual context only; use of NASA names or materials does not imply endorsement. No NASA insignia is included.
+NASA references provide research context. No agency insignia or implied certification is used. Public cohort sleep statistics are separated from personal history and are not individual diagnostic thresholds.

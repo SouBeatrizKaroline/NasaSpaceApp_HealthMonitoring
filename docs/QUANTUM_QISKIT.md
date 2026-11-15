@@ -1,18 +1,28 @@
-# Onboard Task Planning with Qiskit & In-Browser QAOA
+# Operational task planning
 
-The **Onboard Task Planning** panel compares operational schedules for tasks entered by the crew. It runs **two complementary quantum modes** while keeping crew health records and personal identifiers strictly out of planning files:
+The planner selects a subset of user-entered tasks to maximize total priority within a time budget. It does not rank patients, diagnose conditions, or determine treatment. There are no preloaded tasks.
 
-1. **Live In-Browser QAOA Simulator (`web/planning.js`):** Runs a real $p=1$ Quantum Approximate Optimization Algorithm (QAOA) statevector simulation directly in the browser (up to 8 qubits / 256 basis states) with a live probability histogram of the top measured `|bitstring⟩` states, comparing the quantum schedule against the exact classical optimum with zero backend required.
-2. **Local Qiskit Aer Verification (`mvp/quantum_task_scheduling.py`):** Exports `plan.json` so you can run the full Qiskit Optimization QAOA pipeline locally and import `result.json` back into the web interface.
+## Three explicitly named methods
 
-## Reproduce with Local Qiskit Aer
+1. **Classical exhaustive search:** enumerates all subsets of 1–8 tasks. This is the exact benchmark for the entered objective.
+2. **Browser statevector simulation:** `web/planner-core.js` simulates a single alternating cost/mixer layer with 1–8 task qubits. It searches 25 angle pairs and chooses the most probable feasible state. The cost is negative priority plus a squared excess-time penalty, normalized before evolution. This is classical computation simulating a quantum state, not hardware execution. No speedup or improvement over an exact optimum is claimed.
+3. **Imported Qiskit QAOA result:** the optional Python script uses `StatevectorSampler`, QAOA with one layer, COBYLA, and `MinimumEigenOptimizer`. Qiskit converts the budget inequality into its own encoding, potentially adding slack variables. It solves the same task objective, but its circuit and search are not identical to the browser implementation. Numerical results need not coincide.
 
-1. Open **Onboard task planning** in the web interface, click **Load sample lunar tasks** (or enter up to 8 operational tasks), and click **Compare schedules**.
-2. Click **Download Qiskit input** to save `plan.json`.
-3. From the repository root, install the optional dependencies with `python -m pip install -r mvp/requirements-quantum.txt`.
-4. Run `python mvp/quantum_task_scheduling.py plan.json result.json`.
-5. Open `result.json` in the planning panel to verify the Qiskit Aer output against the exact classical optimum.
+## Reproduce
 
-Keep medical records, crew identifiers, and sensitive operational details out of planning files. The schedule is an advisory comparison for operational tasks, and no quantum advantage is claimed for small instances.
+Enter an integer budget from 1–240 minutes and 1–8 task lines in **Task Planning**. Each line is `name, duration, priority`; duration is 1–240 minutes and priority is 1–100. Names may not contain commas. Select **Compare schedules**, then **Export Qiskit input**.
 
-Reference: [IBM Quantum QAOA tutorial](https://quantum.cloud.ibm.com/docs/en/tutorials/quantum-approximate-optimization-algorithm).
+In a compatible Python environment:
+
+```sh
+python -m venv .venv
+# Activate the environment using your operating system's command.
+python -m pip install -r mvp/requirements-quantum.txt
+python mvp/quantum_task_scheduling.py task-plan.json result.json
+```
+
+Choose **Import Qiskit result** in the same plan. The result must contain `method: "qiskit-qaoa"`, matching `plan` tasks/budget, and one binary value per task in `bits`. The UI recomputes the score and flags an over-budget imported result rather than treating it as feasible. Changing an input invalidates displayed results. Package versions should be recorded when reproducing; installation and execution of this optional environment were not verified in this delivery.
+
+Exports contain only the budget and task name/duration/priority fields. No crew ID or health record is read. Do not enter sensitive information in task names. Neither mode needs an IBM account or an API key; no hardware job is submitted.
+
+Reference: [IBM Quantum QAOA documentation](https://quantum.cloud.ibm.com/docs/en/tutorials/quantum-approximate-optimization-algorithm). The linked hardware tutorial is background, not a description of this app's backend.

@@ -1,196 +1,71 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f3f6f4">
-  <title>Crew Health Check — Mission Self-Check-In</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f35"><title>Crew Health Check · Mission workspace</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+<script defer src="i18n.js"></script><script defer src="ui-text.js"></script><script defer src="core.js"></script><script defer src="planner-core.js"></script><script defer src="app.js"></script><script defer src="planning.js"></script></head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="Crew Health Check home"><span class="brand-mark">CH</span><span><strong>Crew Health Check</strong><small data-i18n="independent">Independent educational prototype</small></span></a>
-    <label class="language"><span data-i18n="language">Language</span><select id="language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="pt">Português</option></select></label>
-  </header>
-  <a class="skip-link" href="#profileTitle">Skip to profile</a>
-  <main class="layout">
-  <div class="welcome-grid">
-    <section class="intro">
-      
-      <div class="eyebrow" data-i18n="eyebrow">CREW HEALTH / EVERY MISSION STAGE</div>
-      <h1 data-i18n="title">Your health, across the mission.</h1>
-      <p data-i18n="lead">Record what changed, what you notice, and how it affects your mission tasks. You are in control of what you enter.</p>
-      <nav class="quick-nav" id="profileQuickNav" hidden><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav>
-
-      <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
-    </section>
-    <section class="panel profile-panel" aria-labelledby="profileTitle">
-      <h2 id="profileTitle" tabindex="-1" data-i18n="profileTitle">Astronaut profile</h2>
-      <p data-i18n="profilePrivacy">Use a fictional code. This profile stays in this browser and the code is not a password.</p>
-      <form id="profileForm" class="profile-controls">
-        <label><span data-i18n="crewCode">Astronaut code</span><input id="profileCode" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" autocomplete="off" placeholder="CRW-01"></label>
-        <button class="primary" type="submit" data-i18n="openProfile">Open or create profile</button>
+<a class="skip-link" href="#pageTitle" data-i18n="skip"></a>
+<aside class="sidebar">
+  <a class="brand" href="#today"><img src="favicon.svg" alt="" width="40" height="40"><span>Crew Health<span class="brand-sub">CHECK</span></span></a>
+  <nav aria-label="Main navigation">
+    <a href="#today" data-page="today"><span aria-hidden="true">◉</span><span data-i18n="today"></span></a>
+    <a href="#checkin" data-page="checkin"><span aria-hidden="true">＋</span><span data-i18n="checkin"></span></a>
+    <a href="#history" data-page="history"><span aria-hidden="true">▤</span><span data-i18n="history"></span></a>
+    <a href="#ground" data-page="ground"><span aria-hidden="true">⇩</span><span data-i18n="ground"></span></a>
+    <a href="#planning" data-page="planning"><span aria-hidden="true">◇</span><span data-i18n="planning"></span></a>
+  </nav>
+  <div class="sidebar-foot"><p data-i18n="independent"></p><p id="sideCrew"></p></div>
+</aside>
+<div class="app-shell">
+<header class="topbar"><div class="network"><span id="connection"></span><small id="offlineReady" role="status"></small></div><label class="language"><span data-i18n="language"></span><select id="language"><option value="en">English</option><option value="pt">Português</option><option value="es">Español</option><option value="fr">Français</option></select></label></header>
+<main id="main">
+  <div class="page-heading"><div><p class="eyebrow">CREW HEALTH CHECK</p><h1 id="pageTitle" tabindex="-1">Today</h1></div><span id="scopePill" class="pill" hidden></span></div>
+  <p id="globalError" class="notice error" role="alert" hidden></p>
+  <section id="page-today" class="page">
+    <div id="profileGate" class="welcome">
+      <div class="welcome-copy"><p class="eyebrow" data-i18n="context"></p><h2 data-i18n="welcome"></h2><p data-i18n="intro"></p><div class="stage-track"><span data-i18n="pre"></span><span data-i18n="during"></span><span data-i18n="post"></span></div></div>
+      <form id="profileForm" class="card"><h2 data-i18n="profileTitle"></h2>
+        <label><span>Crew ID</span><input id="crewId" autocomplete="off" maxlength="24" required pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
+        <label><span data-i18n="missionCode"></span><input id="initialMission" autocomplete="off" maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="MISSION-01"></label>
+        <p class="hint" data-i18n="profileLimit"></p><button class="primary" type="submit" data-i18n="open"></button>
       </form>
-      <button id="exampleMission" class="secondary" type="button">Open sample mission</button>
-      <div id="activeProfile" class="profile-controls" hidden>
-        <p><span data-i18n="signedIn">Active profile</span> <strong id="profileBadge"></strong></p>
-        <button id="switchProfile" class="secondary" type="button" data-i18n="switchProfile">Switch profile</button>
-      </div>
-    </section>
     </div>
-    <div class="workspace" id="profileWorkspace" hidden><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
-      <h2 data-i18n="contextTitle">Mission context</h2>
-      <div class="grid three">
-        
-        <label><span data-i18n="missionCode"></span><input id="missionCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="DEMO-01"></label>
-        <label><span data-i18n="stage"></span><select id="stage"><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
+    <div id="todayWorkspace" hidden>
+      <div class="today-hero card"><div><p class="eyebrow" data-i18n="missionActive"></p><h2 id="todayMission"></h2><p id="todayContext"></p><button id="startCheckin" class="primary" type="button"></button><p id="todayDraft" class="hint"></p></div><div class="mission-orbit" aria-hidden="true"><div class="orbit-line"></div><div class="orbit-center">CH</div><span class="orbit-point"></span></div></div>
+      <div class="stat-grid">
+        <article class="card"><p class="eyebrow">Crew ID</p><h3 id="todayCrew"></h3><button type="button" class="text-button" id="switchCrew" data-i18n="switch"></button></article>
+        <article class="card"><p class="eyebrow" data-i18n="day"></p><h3 id="todayDay"></h3><p id="todayStage"></p></article>
+        <article class="card"><p class="eyebrow" data-i18n="lastEntry"></p><h3 id="todayLast"></h3><a href="#history" data-i18n="viewHistory"></a></article>
       </div>
-      <p id="stageHelp"></p>
-      <p class="hint" data-i18n="codeHelp"></p>
-      <div class="grid three">
-        <label><span data-i18n="phase">Mission phase</span><select id="phase"><option value="Pre-mission preparation" data-i18n="pre"></option><option value="Post-mission recovery" data-i18n="post"></option><option value="Transit">Transit</option><option value="Surface operations">Surface operations</option><option value="EVA preparation">EVA preparation</option><option value="Return">Return</option></select></label>
-        <label><span data-i18n="gravity">Gravity environment</span><select id="gravity"><option value="Earth gravity" data-i18n="earth"></option><option value="Microgravity" data-i18n="micro">Microgravity / free fall</option><option value="Lunar gravity" data-i18n="moon">Moon</option><option value="Martian gravity" data-i18n="mars">Mars</option><option value="Partial gravity">Partial gravity</option><option value="Higher-gravity transition">Higher-gravity transition</option><option value="Not sure">Not sure</option></select></label>
-        <label><span data-i18n="elapsed">Time since transition (optional)</span><input id="elapsed" type="text" placeholder="e.g. 4 hours"></label>
-      </div>
-      <div class="gravity-console">
-        <h3 data-i18n="compare">Compare gravity environments</h3>
-        <div class="gravity-grid">
-          <button type="button" class="gravity-card earth" data-gravity="Earth gravity" aria-pressed="true"><span class="gravity-value">1.00 g</span><strong data-i18n="earth">Earth gravity</strong></button>
-          <button type="button" class="gravity-card orbit" data-gravity="Microgravity" aria-pressed="false"><span class="gravity-value">~0 g</span><strong data-i18n="micro">Microgravity / free fall</strong></button>
-          <button type="button" class="gravity-card moon" data-gravity="Lunar gravity" aria-pressed="false"><span class="gravity-value">0.17 g</span><strong data-i18n="moon">Moon</strong></button>
-          <button type="button" class="gravity-card mars" data-gravity="Martian gravity" aria-pressed="false"><span class="gravity-value">0.38 g</span><strong data-i18n="mars">Mars</strong></button>
-        </div>
-        <p id="gravityNote" aria-live="polite"></p>
-        <details class="gravity-evidence">
-          <summary data-i18n="whyGravity">Why record gravity transitions?</summary>
-          <p data-i18n="gravityEvidence">NASA describes changes in orientation, coordination, balance, and movement during gravity transitions. Record the environment and time since transition alongside changes in daily tasks so a reviewer can see the context.</p>
-          <a class="gravity-source" href="https://www.nasa.gov/hrp/hazard-gravity-fields/" data-i18n="gravityResearch">NASA Human Research Program · Gravity Fields</a>
-        </details>
-        <a class="gravity-source" href="https://www.nasa.gov/humans-in-space/the-human-body-in-space/" data-i18n="gravitySource">NASA · Human body in space</a>
-      </div>
-    </section>
-    <form id="checkin">
-      <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="reasonTitle">What brings you here?</h2></div></div>
-        <div class="grid two">
-          <label><span data-i18n="reason">Check-in reason</span><select id="reason"><option value="Routine check-in">Routine check-in</option><option value="New symptom">New symptom</option><option value="Change from baseline">Change from baseline</option><option value="Follow-up">Follow-up</option><option value="Other concern">Other concern</option></select></label>
-          <label><span data-i18n="onset">When did it begin?</span><input id="onset" type="text" placeholder="Date, mission time, or approximate duration"></label>
-        </div>
-        <label><span data-i18n="description">Describe what you noticed</span><textarea id="description" rows="4" data-i18n-placeholder="descriptionHint" placeholder="What changed? Where do you notice it? What makes it better or worse?"></textarea></label>
-        <div class="grid two">
-          <label><span data-i18n="pattern">Pattern or frequency</span><input id="pattern" type="text"></label>
-          <label><span data-i18n="associated">Other changes noticed</span><input id="associated" type="text"></label>
-        </div>
-      </section>
-      <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="functionTitle">How are mission tasks affected?</h2></div></div>
-        <p class="subtext" data-i18n="functionHelp">Select any areas that feel different from your usual baseline.</p>
-        <div class="check-grid">
-          <label class="check"><input type="checkbox" name="function" value="Mobility or balance"><span data-i18n="mobility">Mobility or balance</span></label>
-          <label class="check"><input type="checkbox" name="function" value="Vision-related tasks"><span data-i18n="vision">Vision-related tasks</span></label>
-          <label class="check"><input type="checkbox" name="function" value="Exercise or strength"><span data-i18n="exercise">Exercise or strength</span></label>
-          <label class="check"><input type="checkbox" name="function" value="Sleep or alertness"><span data-i18n="sleep">Sleep or alertness</span></label>
-          <label class="check"><input type="checkbox" name="function" value="Eating or hydration routine"><span data-i18n="nutrition">Eating or hydration routine</span></label>
-          <label class="check"><input type="checkbox" name="function" value="Work or team tasks"><span data-i18n="work">Work or team tasks</span></label>
-        </div>
-        <div class="grid three">
-          <label><span data-i18n="sleepHours">Sleep in last 24 hours (hours)</span><input id="sleepHours" type="number" min="0" max="24" step="0.25" inputmode="decimal"></label>
-          <label><span data-i18n="mood">Mood (self-rating)</span><select id="mood"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
-          <label><span data-i18n="stress">Stress (self-rating)</span><select id="stress"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
-        </div>
-        <p class="hint" data-i18n="scaleHint">Self-rating: 1 = low, 5 = high. This is not a clinical scale.</p>
-      </section>
-      <section class="panel">
-        <div class="section-heading"><div><h2 id="observations" data-i18n="measureTitle">Optional measurements</h2></div></div>
-        <p class="subtext" data-i18n="measureHelp">Enter a reading only if you have it. Include its unit and source; leave unknown values blank.</p>
-        <div class="grid four">
-          <label><span data-i18n="heartRate">Heart rate (bpm)</span><input id="heartRate" type="number" min="0" inputmode="decimal"></label>
-          <label><span data-i18n="temperature">Temperature (°C)</span><input id="temperature" type="number" step="0.1" inputmode="decimal"></label>
-          <label><span data-i18n="oxygen">Oxygen saturation (%)</span><input id="oxygen" type="number" min="0" max="100" inputmode="decimal"></label>
-          <label><span data-i18n="bp">Blood pressure (mmHg)</span><input id="bp" type="text" placeholder="e.g. 118/76"></label>
-        </div>
-        <div class="grid two">
-          <label><span data-i18n="measurementSource">Measurement source / method</span><input id="measurementSource" type="text"></label>
-          <label><span data-i18n="measurementTime">Measurement time</span><input id="measurementTime" type="datetime-local"></label>
-        </div>
-      </section>
-      <section class="panel">
-        <div class="section-heading"><div><h2 data-i18n="evidenceTitle">Optional supporting media</h2></div><span class="tag" data-i18n="sessionOnly">SESSION ONLY</span></div>
-        <p class="subtext" data-i18n="mediaHelp">Choose a photo, video, or audio clip to preview it for a human reviewer. The demo does not analyze or upload files.</p>
-        <label class="upload"><span class="upload-icon">＋</span><span><strong data-i18n="chooseMedia">Choose media</strong><small data-i18n="mediaTypes">Image, video, or audio</small></span><input id="media" type="file" accept="image/*,video/*,audio/*" multiple></label>
-        <div id="mediaPreview" class="media-preview" aria-live="polite"></div>
-      </section>
-      <section class="panel review-panel">
-        <div class="section-heading"><div><h2 data-i18n="reviewTitle">What would you like to do?</h2></div></div>
-        <div class="radio-list">
-          <label class="radio"><input type="radio" name="review" value="Routine entry" checked><span><strong data-i18n="routine">Save this check-in</strong><small data-i18n="routineHelp">Record only. This is not a health clearance.</small></span></label>
-          <label class="radio"><input type="radio" name="review" value="Review requested"><span><strong data-i18n="requestReview">Request professional review</strong><small data-i18n="reviewHelp">Use your mission's approved contact pathway.</small></span></label>
-          <label class="radio"><input type="radio" name="review" value="Mission procedure selected"><span><strong data-i18n="procedure">I am following a mission procedure</strong><small data-i18n="procedureHelp">Follow the approved procedure and contact pathway for your mission.</small></span></label>
-        </div>
-        <label class="consent check"><input id="privateNote" type="checkbox"><span data-i18n="privateNote">Mark this entry as needing a private follow-up</span></label>
-      </section>
-      <div class="actions"><button class="primary" type="submit" data-i18n="save">Save check-in</button></div>
-    </form>
-    <section class="panel records" id="history">
-      <div class="section-heading"><div><h2 data-i18n="recordsTitle">Saved on this device</h2></div><span class="tag" id="recordCount">0</span></div>
-      <p class="subtext" data-i18n="recordsHelp">Text entries stay in this browser until exported or cleared. Media previews are not stored.</p>
-      <div class="grid two">
-        <label><span data-i18n="historyScope"></span><select id="historyScope"></select></label>
-        <label><span data-i18n="stageFilter"></span><select id="stageFilter"><option value="" data-i18n="allStages"></option><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
-      </div>
-      <div class="actions history-actions"><button class="secondary" id="export" type="button" data-i18n="export">Export records</button><button class="quiet" id="clear" type="button" data-i18n="clear">Delete selected history</button></div>
-      <section id="missionComparison" hidden aria-labelledby="comparisonTitle">
-        <h3 id="comparisonTitle" data-i18n="comparisonTitle">Mission comparison</h3>
-        <p data-i18n="comparisonHelp">Latest check-in per stage. The history filter does not change this comparison.</p>
-        <div id="stageCards" class="comparison-grid"></div>
-        <p><a class="gravity-source" href="#sleep-research" lang="en">Explore published spaceflight sleep research</a></p>
-        <details id="missionReport">
-          <summary data-i18n="reportTitle">Preview mission report</summary>
-          <p data-i18n="reportLocal">The report stays on this device until you share it.</p>
-          <button type="button" class="secondary" id="saveReport" data-i18n="saveReport">Download report (.txt)</button>
-          <pre id="reportText"></pre>
-        </details>
-      </section>
-      <div id="recordList" class="record-list" aria-live="polite"></div>
-    </section>
-    </div></div>
-    <details class="resource-panel" id="planningResource"><summary>Mission operations <span>Task planning with Qiskit</span></summary><section class="panel" id="planning" lang="en" aria-labelledby="planningTitle">
-      <h2 id="planningTitle">Onboard task planning</h2>
-      <p>Enter operational tasks and compare an exact schedule with a Qiskit simulator result. Keep crew and health data out of planning files.</p>
-      <form id="planningForm">
-        <label><span>Available minutes</span><input id="planningBudget" type="number" required min="1" max="240"></label>
-        <label><span>Tasks (up to 8)</span><textarea id="planningTasks" rows="5" required aria-describedby="planningFormat"></textarea></label>
-        <p id="planningFormat">One task per line: task name | minutes (1–240) | priority points (1–100).</p>
-        <div class="actions"><button class="primary" type="submit">Compare schedules</button><button id="planningDownload" class="secondary" type="button" disabled>Download Qiskit input</button></div>
-      </form>
-      <p>Run <code>python mvp/quantum_task_scheduling.py plan.json result.json</code> locally, then open the result below.</p>
-      <label><span>Qiskit result file</span><input type="file" id="planningResult" accept=".json,application/json" disabled></label>
-      <p id="planningStatus" role="status"></p>
-      <p id="planningExact"></p>
-      <p id="planningQuantum"></p>
-    </section>
-    </details><details class="resource-panel" id="researchResource"><summary>Research library <span>Published spaceflight sleep data</span></summary><section class="panel" id="sleep-research" lang="en" aria-labelledby="sleepResearchTitle">
-      <h2 id="sleepResearchTitle">Spaceflight sleep research</h2>
-      <p>Explore published group averages measured by wrist actigraphy across Shuttle and International Space Station missions.</p>
-      <label for="researchCohort"><span>Study cohort</span></label>
-      <select id="researchCohort"><option value="iss">International Space Station</option><option value="shuttle">Space Shuttle</option></select>
-      <p id="researchSample" aria-live="polite"></p>
-      <div class="research-table">
-        <table>
-          <caption>Mean hours of sleep per night by study period</caption>
-          <thead><tr><th scope="col">Study period</th><th scope="col">Mean (h)</th><th scope="col">SD (h)</th><th scope="col">Change from earliest preflight mean (h)</th></tr></thead>
-          <tbody id="researchRows"></tbody>
-        </table>
-      </div>
-      <p class="subtext">These historical group averages provide research context. They are not personal targets or clinical thresholds. The study used actigraphy, while the check-in records self-reports.</p>
-      <p><a class="gravity-source" href="https://pubmed.ncbi.nlm.nih.gov/25127232/">Barger et al. (2014) · Original study</a> · <a class="gravity-source" href="https://www.nasa.gov/wp-content/uploads/2023/03/sleep-accomodations-technical-brief-ochmo.pdf">NASA · Sleep Accommodations technical brief</a></p>
-    </section>
-  </details>
-  </main>
-  <footer><span data-i18n="footer">Independent educational prototype · No clinical interpretation · No agency endorsement</span></footer>
-  <div id="toast" role="status" aria-live="polite"></div>
-  <script src="app.js"></script>
-  <script src="design.js"></script>
-  <script src="sleep-research.js"></script>
-  <script src="planning.js"></script>
+      <form class="card mission-form" id="missionForm"><label><span data-i18n="missionActive"></span><input id="missionChoice" list="knownMissions" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" autocomplete="off"><datalist id="knownMissions"></datalist></label><button class="secondary" data-i18n="openMission"></button></form>
+      <div class="two-grid"><a href="#ground" class="card action-card"><span class="eyebrow" data-i18n="ground"></span><h3 data-i18n="groundLabel"></h3><span aria-hidden="true">↗</span></a><a href="#planning" class="card action-card"><span class="eyebrow" data-i18n="planning"></span><h3 data-i18n="planLabel"></h3><span aria-hidden="true">↗</span></a></div>
+      <p class="hint" data-i18n="profileLimit"></p>
+    </div>
+    <div id="legacyNotice" class="notice" hidden><p data-i18n="legacyNotice"></p><button id="legacyExport" type="button" class="secondary" data-i18n="legacyExport"></button></div>
+  </section>
+  <section id="page-checkin" class="page" hidden>
+    <div id="checkinGate" class="empty card"><p data-i18n="profileRequired"></p><a href="#today" data-i18n="today"></a></div>
+    <div id="checkinWorkspace" hidden>
+      <div id="saveSuccess" class="notice success" role="status" hidden><strong data-i18n="savedOnboard"></strong><p data-i18n="savedHelp"></p><a href="#history" data-i18n="openSaved"></a></div>
+      <div id="wizardProgress" class="progress" aria-label="Check-in progress"></div>
+      <form id="checkinForm" class="card" novalidate><h2 id="stepTitle" tabindex="-1"></h2><div id="wizardFields"></div><p id="formMessage" class="notice error" role="alert" hidden></p><div class="form-actions"><button id="previousStep" class="secondary" type="button" data-i18n="back"></button><button id="nextStep" class="primary" type="submit" data-i18n="next"></button></div></form>
+      <div class="draft-bar"><p id="draftStatus" role="status"></p><button type="button" id="discardDraft" class="text-button" data-i18n="clearDraft"></button></div>
+    </div>
+  </section>
+  <section id="page-history" class="page" hidden>
+    <div id="historyGate" class="empty card"><p data-i18n="profileRequired"></p><a href="#today" data-i18n="today"></a></div>
+    <div id="historyWorkspace" hidden>
+      <div class="toolbar card"><label><span data-i18n="missionActive"></span><select id="historyMission"></select></label><div><span id="exportState" class="pill"></span><button id="exportReport" class="primary" type="button" data-i18n="exportReport"></button></div></div>
+      <p class="hint" data-i18n="exportHelp"></p><div id="historyComparison"></div><h2 data-i18n="allEntries"></h2><div id="historyRecords"></div>
+      <details class="card research"><summary data-i18n="research"></summary><p data-i18n="researchHelp"></p><div id="researchTable"></div><a href="https://pubmed.ncbi.nlm.nih.gov/25127232/" rel="noreferrer">Barger et al. (2014) · PMID 25127232</a></details>
+    </div>
+  </section>
+  <section id="page-ground" class="page" hidden>
+    <div class="card import-card"><div><p class="eyebrow" data-i18n="ground"></p><h2 data-i18n="groundLabel"></h2><p data-i18n="groundIntro"></p></div><label class="file-label"><span data-i18n="chooseReport"></span><input id="groundFile" type="file" accept=".json,application/json"></label><p class="hint" data-i18n="groundLocal"></p><p id="importMessage" role="status"></p></div>
+    <div id="groundEmpty" class="empty card"><p data-i18n="importEmpty"></p></div>
+    <div id="groundReport" hidden><div class="toolbar"><h2 id="groundScope"></h2><button id="closeReport" class="secondary" data-i18n="clearReview" type="button"></button></div><div id="groundComparison"></div><h2 data-i18n="allEntries"></h2><div id="groundRecords"></div></div>
+  </section>
+  <section id="page-planning" class="page" hidden><div id="planningMount"></div></section>
+  <footer data-i18n="independent"></footer>
+</main></div>
+<div id="toast" role="status" class="toast" hidden></div>
 </body></html>
+
