@@ -13,7 +13,7 @@ An independent, offline-first prototype for astronaut self-check-ins during long
 - Session-only photo, video, and audio attachments for human review. Files are not interpreted or uploaded.
 - Local browser record, JSON export, and clear-data control.
 - A lightweight Rust example for deterministic status handling.
-- An optional Qiskit scheduling experiment using synthetic tasks only.
+- An operational task planner accepts user-entered tasks, calculates an exact schedule, and imports a result from the local Qiskit simulator.
 
 ## Run the interface
 
@@ -39,7 +39,7 @@ Codes group local records. They provide no sign-in or access control. Use fictio
 - [Gravity and mission operations](docs/GRAVITY_AND_OPERATIONS.md)
 - [Safety, privacy, and validation plan](docs/SAFETY_PRIVACY_VALIDATION.md)
 - [Technical architecture](docs/TECHNICAL_ARCHITECTURE.md)
-- [Qiskit experiment](docs/QUANTUM_QISKIT.md)
+- [Qiskit task planning](docs/QUANTUM_QISKIT.md)
 - [Product plan](docs/PRODUCT_MANAGEMENT.md)
 - [Interface rationale](docs/DESIGN_UX_UI.md)
 

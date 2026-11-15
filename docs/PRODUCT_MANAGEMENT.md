@@ -1,31 +1,23 @@
-# Product Plan
+# Product Review and Roadmap
 
-## Current milestone: educational demo
+## Product direction
 
-- English-first, four-language interface.
-- Structured self-check-in and optional measurements.
-- Session-only media preview.
-- Local demo records, JSON export, and deletion.
-- Clear limits on interpretation, privacy, and clinical use.
-- Research-only synthetic scheduling experiment.
+Crew Health Check helps a crew member record what changed, compare it with their own preflight baseline, and prepare a report for review when communications are limited. The crew member is the primary user. An authorized reviewer is a downstream reader of a report.
 
-## Next milestone: reviewed concept
+The browser prototype provides local profiles, check-ins across three mission stages, gravity context, and per-mission history. A code selects a profile in the current browser. It provides no authentication. The current follow-up preference is saved locally and does not send a report.
 
-1. Interview users and clinical stakeholders about mission routines and workload.
-2. Define intended use, clinical governance, privacy, and hazard controls.
-3. Co-design task and function vocabulary with nursing, behavioral health, rehabilitation, medical, and human-factors specialists.
-4. Create mission-specific procedure configuration outside the demo.
-5. Prototype approved sensor interfaces and validate against reference devices.
-6. Conduct accessibility, language, usability, offline, and environmental evaluations.
-7. Complete legal, licensing, security, and software-assurance review.
+## Priorities
 
-## Success measures for a future study
+| Priority | Product decision | Acceptance criterion |
+| --- | --- | --- |
+| P0 | Make the crew journey the main entry point | From a fresh browser, a user can open a profile, save a check-in, reopen the profile, and retrieve that check-in through the mission history. |
+| P0 | Make baseline comparison visible | A single mission view places the latest available preflight, in-flight, and recovery observations together, labels missing stages, and displays gravity context alongside each entry. |
+| P0 | Make the handoff explicit | The interface distinguishes recording a follow-up preference from sending a report. The user can preview and export a readable summary for an approved external contact pathway. |
+| P0 | Verify the demonstration end to end | Use two profiles and multiple missions to verify separation, reload persistence, stage filters, exports, keyboard access, and mobile layout. Verify behavior with network access disabled and confirm that records with incomplete observations remain intelligible. |
+| P1 | Give operational planning a clear place | Keep planning accessible as a mission operations tool. The user enters their own tasks. Compare the exact result with a Qiskit result imported for the same plan. A failed import leaves the classical result available. |
+| P1 | Align documentation and language coverage | The README describes the same workflow as the interface. Translate planning labels and validation messages consistently with the four supported interface languages. |
+| Future | Evaluate operational use | Establish clinical ownership, review access controls, validate measurements and language, and document approved review pathways with the responsible authorities. |
 
-- Time required to complete a check-in.
-- Missing or misunderstood fields.
-- User ability to distinguish self-reported information from professional findings.
-- Successful retrieval of the correct prior record under offline conditions.
-- Comprehension of workflow labels and privacy status.
-- Performance across language, accessibility, and mission-context scenarios.
+## Release signals
 
-Metrics should be assessed with a defined protocol and representative participants. Do not claim clinical benefit from a prototype demonstration.
+Track time to complete the first check-in, the share of users who retrieve the correct prior entry without help, and whether participants can explain what saving and exporting actually do. Compare results across desktop, mobile, keyboard-only use, and supported languages. Evaluate the planning workflow independently by checking whether users can compare two results for the same plan. These are proposed evaluation criteria, not measured outcomes.
