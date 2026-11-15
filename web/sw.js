@@ -1,5 +1,5 @@
-const CACHE_NAME = "crew-health-check-v2";
-const ASSETS = [
+const CACHE_NAME = "crew-health-check-v3";
+const ASSETS = ["./guided.css",
   "./",
   "./index.html",
   "./styles.css",

@@ -12,6 +12,10 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    readingHelpTitle: "No readings?",
+    mediaDetails: "Preview a photo, video or audio clip (optional)",
+    activityDetails: "Add what was harder to do (optional)",
+    phaseHint: "Choose the option that describes where you are now.",
     appTitle: "Crew Health Check",
     appSub: "Onboard Mission Wellness & Ground Handoff",
     worksOffline: "Works offline",
@@ -61,7 +65,7 @@ const I18N = {
     continueBtn: "Continue →",
     continueReview: "Continue to review →",
     step2Title: "What feels different today?",
-    step2Sub: "Describe what you noticed and when it started.",
+    step2Sub: "Describe what you noticed and when it started. If nothing changed, you can say so.",
     dictateBtn: "Dictate (Voice)",
     funcAffects: "Affected mission functions (optional)",
     fnMobility: "Mobility or balance",
@@ -71,7 +75,7 @@ const I18N = {
     fnSleep: "Sleep",
     fnMood: "Mood",
     step3Title: "Add readings, if you have them",
-    step3Sub: "All measurements are optional. Leave any field blank if you did not measure it.",
+    step3Sub: "Copy any readings from your device. Leave the other fields blank and continue to review.",
     hrLabel: "Heart rate (bpm)",
     bpLabel: "Blood pressure (mmHg)",
     tempLabel: "Body temperature (°C)",
@@ -114,6 +118,10 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    readingHelpTitle: "Sem medições?",
+    mediaDetails: "Visualize uma foto, vídeo ou áudio (opcional)",
+    activityDetails: "Conte o que ficou mais difícil de fazer (opcional)",
+    phaseHint: "Escolha a opção que descreve em que etapa você está.",
     appTitle: "Crew Health Check",
     appSub: "Monitoramento de Bordo e Revisão em Solo",
     worksOffline: "Funciona offline",
@@ -163,7 +171,7 @@ const I18N = {
     continueBtn: "Continuar →",
     continueReview: "Ir para revisão →",
     step2Title: "O que está diferente hoje?",
-    step2Sub: "Descreva o que percebeu e quando começou.",
+    step2Sub: "Conte o que percebeu e quando começou. Se nada mudou, pode dizer isso.",
     dictateBtn: "Ditar por voz",
     funcAffects: "Funções afetadas na missão (opcional)",
     fnMobility: "Mobilidade ou equilíbrio",
@@ -173,7 +181,7 @@ const I18N = {
     fnSleep: "Sono",
     fnMood: "Humor",
     step3Title: "Adicione medições, se tiver",
-    step3Sub: "Todas as medições são opcionais. Deixe em branco o que não foi medido.",
+    step3Sub: "Copie os valores do aparelho. Deixe os outros campos em branco e continue para a revisão.",
     hrLabel: "Frequência cardíaca (bpm)",
     bpLabel: "Pressão arterial (mmHg)",
     tempLabel: "Temperatura corporal (°C)",

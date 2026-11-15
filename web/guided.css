@@ -1,0 +1,22 @@
+.reading-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.reading-guide {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: #def0e6;
+  color: #153f33;
+}
+.reading-guide h3 { margin: 0 0 6px; }
+.reading-guide p { margin: 0; }
+#view-checkin .helper-box summary { padding-block: 6px; }
+#view-checkin .wizard-actions { gap: 12px; flex-wrap: wrap; }
+@media (max-width: 860px) {
+  .reading-layout { display: flex; flex-direction: column-reverse; gap: 12px; }
+  .reading-layout > * { width: 100%; }
+}

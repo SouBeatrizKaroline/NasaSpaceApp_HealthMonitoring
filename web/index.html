@@ -6,6 +6,7 @@
   <title>Crew Health Check · Onboard Mission Monitor</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="guided.css">
 </head>
 <body>
   <header class="topbar">
@@ -167,6 +168,7 @@
           <!-- STEP 1: MISSION CONTEXT -->
           <div id="step-1" class="wizard-step active">
             <h2 id="checkinHeading" data-i18n="step1Title">Where are you in the mission?</h2>
+            <p class="muted" data-i18n="phaseHint">Choose the option that describes where you are now.</p>
             <div class="radio-cards">
               <label class="radio-card">
                 <input type="radio" name="stage" value="pre" checked />
@@ -233,6 +235,7 @@
               <span id="voiceStatus" class="muted small-text"></span>
             </div>
 
+            <details class="helper-box"><summary data-i18n="activityDetails">Add what was harder to do (optional)</summary>
             <p class="field-label" data-i18n="funcAffects">Affected mission functions (optional)</p>
             <div class="chip-grid">
               <label class="chip-check"><input type="checkbox" name="function" value="Mobility or balance" /> <span data-i18n="fnMobility">Mobility or balance</span></label>
@@ -242,6 +245,7 @@
               <label class="chip-check"><input type="checkbox" name="function" value="Sleep" /> <span data-i18n="fnSleep">Sleep</span></label>
               <label class="chip-check"><input type="checkbox" name="function" value="Mood" /> <span data-i18n="fnMood">Mood</span></label>
             </div>
+            </details>
 
             <div class="wizard-actions">
               <button type="button" id="step2Back" class="btn-outline" data-i18n="backBtn">Back</button>
@@ -252,7 +256,7 @@
           <!-- STEP 3: OPTIONAL MEASUREMENTS -->
           <div id="step-3" class="wizard-step">
             <h2 data-i18n="step3Title">Add readings, if you have them</h2>
-            <p class="muted" data-i18n="step3Sub">All measurements are optional. Leave any field blank if you did not measure it.</p>
+            <div class="reading-layout"><div class="reading-fields">
 
             <div class="field-row two-col">
               <label>
@@ -281,11 +285,13 @@
               </label>
             </div>
 
+            <details class="helper-box"><summary data-i18n="mediaDetails">Preview a photo, video or audio clip (optional)</summary>
             <label class="media-upload">
               <span data-i18n="mediaOptLabel">Optional photo / audio clip (session preview only, not stored)</span>
               <input id="mediaInput" type="file" accept="image/*,video/*,audio/*" />
             </label>
-            <div id="mediaPreview" class="media-preview"></div>
+            <div id="mediaPreview" class="media-preview"></div></details></div>
+            <section class="reading-guide"><h3 data-i18n="readingHelpTitle">No readings?</h3><p data-i18n="step3Sub">Copy any readings from your device. Leave the other fields blank and continue to review.</p></section></div>
 
             <div class="wizard-actions">
               <button type="button" id="step3Back" class="btn-outline" data-i18n="backBtn">Back</button>
