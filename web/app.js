@@ -12,6 +12,19 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    questHeading: "Mission challenges",
+    questIntro: "Build a record you can review throughout the mission. Every saved day counts, even with no measurements.",
+    questToday: "Daily check-in",
+    questTodayCopy: "Save an entry today (UTC).",
+    questBaseline: "Preflight reference",
+    questBaselineCopy: "Save a check-in during the preflight phase.",
+    questPhases: "Mission timeline",
+    questPhasesCopy: "Log an entry in each phase: preflight, in flight, and recovery.",
+    questDone: "Complete",
+    questOpen: "In progress",
+    questGo: "Open check-in",
+    questTrend: "Recent trend",
+    questTrendHint: "Older to newer · recorded values only",
     navAvatar: "Avatar",
     avatarTitle: "Your mission avatar",
     avatarIntro: "Save check-ins to unlock helmet colors for this profile and mission.",
@@ -164,6 +177,19 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    questHeading: "Desafios da missão",
+    questIntro: "Monte um histórico para consultar durante a missão. Cada dia registrado conta, mesmo sem medições.",
+    questToday: "Check-in diário",
+    questTodayCopy: "Salve um registro hoje (UTC).",
+    questBaseline: "Referência pré-voo",
+    questBaselineCopy: "Salve um check-in na fase pré-voo.",
+    questPhases: "Trajetória da missão",
+    questPhasesCopy: "Registre as três fases: pré-voo, em voo e recuperação.",
+    questDone: "Concluído",
+    questOpen: "Em andamento",
+    questGo: "Abrir check-in",
+    questTrend: "Evolução recente",
+    questTrendHint: "Do mais antigo ao mais recente · apenas valores registrados",
     navAvatar: "Avatar",
     avatarTitle: "Seu avatar da missão",
     avatarIntro: "Salve check-ins para desbloquear cores de capacete para este perfil e missão.",
@@ -526,6 +552,8 @@ function renderReadingDeck(rows, latest) {
         item.append(date, reading);
         list.append(item);
       }
+      const chart = createReadingTrend(samples, key);
+      if (chart) body.append(chart);
       body.append(heading, list);
     } else {
       const empty = document.createElement("p");
@@ -895,8 +923,96 @@ function countRoutineDays(rows) {
   })).size;
 }
 
+
+function getMissionQuestProgress(rows, today = new Date().toISOString().slice(0, 10)) {
+  const phases = new Set(rows.map(row => row.stage).filter(stage => ["pre", "during", "post"].includes(stage)));
+  return [
+    { title: "questToday", description: "questTodayCopy",
+      count: Number(rows.some(row => {
+        const date = new Date(row.recordedAt);
+        return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === today;
+      })), total: 1 },
+    { title: "questBaseline", description: "questBaselineCopy", count: Number(phases.has("pre")), total: 1 },
+    { title: "questPhases", description: "questPhasesCopy", count: phases.size, total: 3 }
+  ];
+}
+
+function renderMissionQuests(rows) {
+  const container = $("missionQuests");
+  container.replaceChildren();
+  for (const quest of getMissionQuestProgress(rows)) {
+    const article = document.createElement("article");
+    article.className = "quest-tile";
+    const completed = quest.count === quest.total;
+    article.dataset.complete = String(completed);
+    const title = document.createElement("h3");
+    title.textContent = t(quest.title);
+    const description = document.createElement("p");
+    description.textContent = t(quest.description);
+    const progress = document.createElement("progress");
+    progress.value = quest.count;
+    progress.max = quest.total;
+    progress.setAttribute("aria-label", t(quest.title));
+    const status = document.createElement("strong");
+    status.textContent = (completed ? "✓ " + t("questDone") : t("questOpen")) + " · " + quest.count + "/" + quest.total;
+    article.append(title, description, progress, status);
+    if (!completed) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn-outline";
+      button.textContent = t("questGo");
+      button.addEventListener("click", () => {
+        $("todayPrimaryCta").click();
+        const heading = document.querySelector(".wizard-step.active h2");
+        if (heading) { heading.tabIndex = -1; heading.focus(); }
+      });
+      article.append(button);
+    }
+    container.append(article);
+  }
+}
+
+function getTrendPoints(samples, key) {
+  const entries = [...samples].reverse().map(row => row.measurements[key])
+    .filter(reading => reading && typeof reading.value === "number" && Number.isFinite(reading.value));
+  if (entries.length < 2 || !entries.every(reading => reading.unit === entries[0].unit)) return [];
+  const values = entries.map(reading => reading.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  return values.map((value, index) => ({
+    x: 12 + index * 216 / (values.length - 1),
+    y: max === min ? 32 : 52 - (value - min) * 40 / (max - min)
+  }));
+}
+
+function createReadingTrend(samples, key) {
+  const points = getTrendPoints(samples, key);
+  if (!points.length) return null;
+  const svgNode = name => document.createElementNS("http://www.w3.org/2000/svg", name);
+  const figure = document.createElement("figure");
+  figure.className = "reading-trend";
+  const caption = document.createElement("figcaption");
+  caption.textContent = t("questTrend") + " · " + t("questTrendHint");
+  const svg = svgNode("svg");
+  svg.setAttribute("viewBox", "0 0 240 64");
+  svg.setAttribute("aria-hidden", "true");
+  const line = svgNode("polyline");
+  line.setAttribute("points", points.map(point => point.x + "," + point.y).join(" "));
+  svg.append(line);
+  for (const point of points) {
+    const dot = svgNode("circle");
+    dot.setAttribute("cx", point.x);
+    dot.setAttribute("cy", point.y);
+    dot.setAttribute("r", 3);
+    svg.append(dot);
+  }
+  figure.append(caption, svg);
+  return figure;
+}
+
 function renderRoutine(rows) {
   const days = countRoutineDays(rows);
+  renderMissionQuests(rows);
   $("routineDays").textContent = days;
   $("routinePoints").textContent = days * 10;
   $("routineGoal").value = Math.min(days, 3);
@@ -933,6 +1049,7 @@ function renderHealthGuide() {
   for (const [title, copy] of topics) {
     const topic = document.createElement("details");
     topic.className = "card care-panel";
+    topic.setAttribute("name", "health-guide-topics");
     const label = document.createElement("summary");
     label.textContent = title;
     const description = document.createElement("p");
