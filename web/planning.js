@@ -11,47 +11,71 @@ if ("serviceWorker" in navigator) {
 const planningI18n = {
   en: {
     title: "Onboard task planning",
-    lead: "Enter operational tasks and compare an exact schedule with an in-browser QAOA simulator and local Qiskit Aer. Keep crew and health data out of planning files.",
+    lead: "Balance operational tasks against available crew time using an exact baseline and a live QAOA quantum simulator. Health data stays out of planning files.",
     budget: "Available minutes",
-    tasks: "Tasks (up to 8)",
-    format: "One task per line: task name | minutes (1–240) | priority points (1–100).",
+    tasks: "Operational tasks (up to 8)",
+    placeholder: "Inspect airlock seal | 15 | 40\nCalibrate radiation dosimeter | 10 | 35\nClean CO2 scrubber filter | 20 | 45",
+    format: "Format: task name | minutes (1–240) | priority points (1–100)",
     compare: "Compare schedules",
-    download: "Download Qiskit input",
-    sample: "Load sample lunar tasks",
-    resultLabel: "Qiskit result file"
+    sample: "Load lunar sample",
+    advancedSummary: "Advanced: Verify with local Python Qiskit Aer (CLI)",
+    advancedLead: "Export plan.json, run the Qiskit script locally, and import result.json to compare with the in-browser simulator:",
+    download: "Download plan.json",
+    resultLabel: "Import Qiskit result.json",
+    exactTitle: "Exact Classical Baseline",
+    quantumTitle: "Quantum QAOA Simulator",
+    histTitle: "Top Measured Quantum States (|bitstring⟩)"
   },
   pt: {
     title: "Planejamento de tarefas a bordo",
-    lead: "Informe tarefas operacionais e compare o cronograma exato com o simulador QAOA no navegador e o Qiskit Aer local. Mantenha dados de saúde e tripulação fora dos arquivos de planejamento.",
+    lead: "Equilibre tarefas operacionais dentro do tempo disponível usando uma linha de base exata e um simulador quântico QAOA ao vivo. Dados de saúde ficam fora destes arquivos.",
     budget: "Minutos disponíveis",
-    tasks: "Tarefas (até 8)",
-    format: "Uma tarefa por linha: nome da tarefa | minutos (1–240) | pontos de prioridade (1–100).",
+    tasks: "Tarefas operacionais (até 8)",
+    placeholder: "Inspecionar escotilha | 15 | 40\nCalibrar dosímetro de radiação | 10 | 35\nLimpar filtro de CO2 | 20 | 45",
+    format: "Formato: nome da tarefa | minutos (1–240) | pontos de prioridade (1–100)",
     compare: "Comparar cronogramas",
-    download: "Baixar entrada Qiskit",
-    sample: "Carregar tarefas lunares",
-    resultLabel: "Arquivo de resultado Qiskit"
+    sample: "Carregar exemplo lunar",
+    advancedSummary: "Avançado: Verificar com Python Qiskit Aer local (CLI)",
+    advancedLead: "Baixe o plan.json, execute o script Qiskit localmente e importe o result.json para comparar com o simulador do navegador:",
+    download: "Baixar plan.json",
+    resultLabel: "Importar result.json do Qiskit",
+    exactTitle: "Linha de Base Clássica (Ótimo)",
+    quantumTitle: "Simulador Quântico QAOA",
+    histTitle: "Estados Quânticos Mais Prováveis (|bitstring⟩)"
   },
   es: {
     title: "Planificación de tareas a bordo",
-    lead: "Ingresa tareas operativas y compara el horario exacto con el simulador QAOA en el navegador y Qiskit Aer local. Mantén los datos de salud fuera de estos archivos.",
+    lead: "Equilibra tareas operativas dentro del tiempo disponible con una línea base exacta y un simulador cuántico QAOA en vivo. Los datos de salud quedan fuera.",
     budget: "Minutos disponibles",
-    tasks: "Tareas (hasta 8)",
-    format: "Una tarea por línea: nombre | minutos (1–240) | puntos de prioridad (1–100).",
+    tasks: "Tareas operativas (hasta 8)",
+    placeholder: "Inspeccionar esclusa | 15 | 40\nCalibrar dosímetro | 10 | 35\nLimpiar filtro de CO2 | 20 | 45",
+    format: "Formato: nombre | minutos (1–240) | puntos de prioridad (1–100)",
     compare: "Comparar horarios",
-    download: "Descargar entrada Qiskit",
-    sample: "Cargar tareas lunares",
-    resultLabel: "Archivo de resultado Qiskit"
+    sample: "Cargar ejemplo lunar",
+    advancedSummary: "Avanzado: Verificar con Python Qiskit Aer local (CLI)",
+    advancedLead: "Descarga plan.json, ejecuta el script Qiskit localmente e importa result.json para comparar:",
+    download: "Descargar plan.json",
+    resultLabel: "Importar result.json de Qiskit",
+    exactTitle: "Referencia Clásica Exacta",
+    quantumTitle: "Simulador Cuántico QAOA",
+    histTitle: "Estados Cuánticos Más Probables (|bitstring⟩)"
   },
   fr: {
     title: "Planification des tâches à bord",
-    lead: "Saisissez des tâches opérationnelles et comparez le planning exact avec le simulateur QAOA intégré et Qiskit Aer local. Gardez les données de santé hors de ces fichiers.",
+    lead: "Équilibrez les tâches opérationnelles selon le temps disponible via une référence exacte et un simulateur quantique QAOA en direct. Aucune donnée de santé incluse.",
     budget: "Minutes disponibles",
-    tasks: "Tâches (jusqu'à 8)",
-    format: "Une tâche par ligne : nom | minutes (1–240) | points de priorité (1–100).",
+    tasks: "Tâches opérationnelles (jusqu'à 8)",
+    placeholder: "Inspecter le sas | 15 | 40\nCalibrer le dosimètre | 10 | 35\nNettoyer le filtre CO2 | 20 | 45",
+    format: "Format : nom | minutes (1–240) | points de priorité (1–100)",
     compare: "Comparer les plannings",
-    download: "Télécharger l'entrée Qiskit",
-    sample: "Charger tâches lunaires",
-    resultLabel: "Fichier résultat Qiskit"
+    sample: "Charger exemple lunaire",
+    advancedSummary: "Avancé : Vérifier avec Python Qiskit Aer local (CLI)",
+    advancedLead: "Téléchargez plan.json, exécutez le script Qiskit localement et importez result.json :",
+    download: "Télécharger plan.json",
+    resultLabel: "Importer result.json Qiskit",
+    exactTitle: "Référence Classique Exacte",
+    quantumTitle: "Simulateur Quantique QAOA",
+    histTitle: "États Quantiques les Plus Probables (|bitstring⟩)"
   }
 };
 
@@ -62,10 +86,12 @@ const resultFile = document.getElementById("planningResult");
 const statusLine = document.getElementById("planningStatus");
 const exactLine = document.getElementById("planningExact");
 const quantumLine = document.getElementById("planningQuantum");
+const budgetInput = document.getElementById("planningBudget");
+const tasksInput = document.getElementById("planningTasks");
 let plan;
 let optimum;
 
-// Enhance #planning DOM non-destructively while keeping all existing IDs intact
+// Restructure #planning cleanly into a logical, low-clutter layout
 const planningHeader = document.createElement("div");
 planningHeader.className = "section-heading";
 const planningTitleEl = document.getElementById("planningTitle");
@@ -77,15 +103,37 @@ planningSection.insertBefore(planningHeader, planningTitleEl);
 titleWrap.append(planningTitleEl);
 planningHeader.append(titleWrap, qTag);
 
+// Compact top row: Available minutes (short input) + Load lunar sample button right beside it
+const budgetLabel = budgetInput.closest("label");
 const sampleBtn = document.createElement("button");
 sampleBtn.type = "button";
-sampleBtn.className = "quiet";
+sampleBtn.className = "secondary";
 sampleBtn.id = "planningSample";
-sampleBtn.textContent = "Load sample lunar tasks";
 
-const formActions = planningForm.querySelector(".actions");
-formActions.append(sampleBtn);
+const topRow = document.createElement("div");
+topRow.className = "planning-top-row";
+planningForm.insertBefore(topRow, budgetLabel);
+topRow.append(budgetLabel, sampleBtn);
 
+// Move CLI/file-upload controls into a clean collapsible <details> so the main UI stays uncluttered
+const cliParagraph = Array.from(planningSection.querySelectorAll(":scope > p")).find((p) => p.querySelector("code"));
+const resultLabel = resultFile.closest("label");
+
+const advancedDetails = document.createElement("details");
+advancedDetails.className = "advanced-qiskit";
+const advancedSummary = document.createElement("summary");
+const advancedLead = document.createElement("p");
+advancedLead.className = "hint";
+const advancedControls = document.createElement("div");
+advancedControls.className = "advanced-controls";
+const codeTag = cliParagraph ? cliParagraph.querySelector("code") : document.createElement("code");
+if (!cliParagraph) codeTag.textContent = "python mvp/quantum_task_scheduling.py plan.json result.json";
+if (cliParagraph) cliParagraph.remove();
+
+advancedControls.append(download, resultLabel);
+advancedDetails.append(advancedSummary, advancedLead, codeTag, advancedControls);
+
+// Comparison cards & histogram
 const comparisonGrid = document.createElement("div");
 comparisonGrid.className = "planning-grid";
 comparisonGrid.hidden = true;
@@ -93,13 +141,11 @@ comparisonGrid.hidden = true;
 const exactCard = document.createElement("div");
 exactCard.className = "planning-card";
 const exactTitle = document.createElement("strong");
-exactTitle.textContent = "Exact Classical Baseline";
 exactCard.append(exactTitle, exactLine);
 
 const quantumCard = document.createElement("div");
 quantumCard.className = "planning-card quantum";
 const quantumTitle = document.createElement("strong");
-quantumTitle.textContent = "Quantum QAOA (Statevector / Qiskit)";
 const circuitMeta = document.createElement("p");
 circuitMeta.className = "hint";
 quantumCard.append(quantumTitle, quantumLine, circuitMeta);
@@ -110,30 +156,36 @@ const histogramBox = document.createElement("div");
 histogramBox.className = "quantum-histogram";
 histogramBox.hidden = true;
 const histTitle = document.createElement("h3");
-histTitle.textContent = "Top Measured Quantum States (|bitstring⟩)";
 const histBars = document.createElement("div");
 histBars.className = "quantum-bars";
 histogramBox.append(histTitle, histBars);
 
-planningSection.append(comparisonGrid, histogramBox);
+planningSection.append(comparisonGrid, histogramBox, advancedDetails);
 
 function applyPlanningLang(code) {
   const dict = planningI18n[code] || planningI18n.en;
   planningTitleEl.textContent = dict.title;
   const leadP = planningSection.querySelector(":scope > p");
   if (leadP) leadP.textContent = dict.lead;
-  const budgetSpan = document.getElementById("planningBudget")?.previousElementSibling;
+  const budgetSpan = budgetInput?.previousElementSibling;
   if (budgetSpan) budgetSpan.textContent = dict.budget;
-  const tasksSpan = document.getElementById("planningTasks")?.previousElementSibling;
+  const tasksSpan = tasksInput?.previousElementSibling;
   if (tasksSpan) tasksSpan.textContent = dict.tasks;
+  if (tasksInput) tasksInput.placeholder = dict.placeholder;
+  if (budgetInput) budgetInput.placeholder = "45";
   const formatEl = document.getElementById("planningFormat");
   if (formatEl) formatEl.textContent = dict.format;
   const submitBtn = planningForm.querySelector('button[type="submit"]');
   if (submitBtn) submitBtn.textContent = dict.compare;
-  download.textContent = dict.download;
   sampleBtn.textContent = dict.sample;
+  advancedSummary.textContent = dict.advancedSummary;
+  advancedLead.textContent = dict.advancedLead;
+  download.textContent = dict.download;
   const resSpan = resultFile?.previousElementSibling;
   if (resSpan) resSpan.textContent = dict.resultLabel;
+  exactTitle.textContent = dict.exactTitle;
+  quantumTitle.textContent = dict.quantumTitle;
+  histTitle.textContent = dict.histTitle;
 }
 
 const langSelect = document.getElementById("language");
@@ -142,7 +194,7 @@ if (langSelect) {
   langSelect.addEventListener("change", (e) => applyPlanningLang(e.target.value));
 }
 
-// 3. Interactive Body Reference & WHO ICF Functional Selector (Visual Challenge Requirement)
+// 3. Interactive Body Reference & WHO ICF Functional Selector
 const checkGrid = document.querySelector(".check-grid");
 if (checkGrid) {
   const bodyConsole = document.createElement("div");
@@ -165,7 +217,7 @@ if (checkGrid) {
     </svg>
     <div class="icf-info">
       <h3 id="icfZoneTitle">Interactive Body &amp; WHO ICF Map</h3>
-      <p id="icfZoneDesc">Click a body region on the figure to highlight its spaceflight function and toggle the corresponding mission task domain below.</p>
+      <p id="icfZoneDesc">Click a body region on the figure to inspect its spaceflight function and toggle the matching task domain below.</p>
       <div class="icf-badges" id="icfZoneBadges">
         <span class="icf-badge">WHO ICF b210 · Vision</span>
         <span class="icf-badge">WHO ICF d410 · Mobility</span>
@@ -194,7 +246,7 @@ if (checkGrid) {
   });
 }
 
-// 4. Hands-Free Voice Dictation for Description & Media Upload Size Guard
+// 4. Hands-Free Voice Dictation & Media Size Guard
 const descInput = document.getElementById("description");
 if (descInput) {
   const voiceBar = document.createElement("div");
@@ -240,7 +292,7 @@ if (mediaInput) {
   }, true);
 }
 
-// 5. Optional Radiation & Space Pharmacy Fields + Interoperable FHIR/LOINC/ICF Export + PIN Encryption
+// 5. Optional Radiation & Pharmacy Fields + FHIR/LOINC/ICF Export + PIN Backup
 const obsHeading = document.getElementById("observations");
 const obsPanel = obsHeading?.closest("section.panel");
 if (obsPanel) {
@@ -400,7 +452,7 @@ function score(bits) {
 }
 
 function describe(result) {
-  return result.minutes + " min / " + result.points + " points — " + (result.names.join(", ") || "No tasks selected");
+  return result.minutes + " min / " + result.points + " pts — " + (result.names.join(", ") || "No tasks selected");
 }
 
 function runBrowserQaoa(tasks, budget) {
@@ -529,8 +581,8 @@ function renderHistogram(topStates) {
 }
 
 sampleBtn.addEventListener("click", () => {
-  document.getElementById("planningBudget").value = "45";
-  document.getElementById("planningTasks").value = [
+  budgetInput.value = "45";
+  tasksInput.value = [
     "Inspect airlock seal | 15 | 40",
     "Calibrate radiation dosimeter | 10 | 35",
     "Clean CO2 scrubber filter | 20 | 45",
@@ -538,7 +590,7 @@ sampleBtn.addEventListener("click", () => {
     "Verify EVA suit battery | 18 | 38"
   ].join("\n");
   planningForm.dispatchEvent(new Event("input"));
-  statusLine.textContent = "Sample lunar operational tasks loaded. Click 'Compare schedules'.";
+  statusLine.textContent = "Lunar sample loaded. Click 'Compare schedules'.";
 });
 
 planningForm.addEventListener("input", () => {
@@ -551,7 +603,7 @@ planningForm.addEventListener("input", () => {
 
 planningForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const lines = document.getElementById("planningTasks").value.split(/\r?\n/).filter((line) => line.trim());
+  const lines = tasksInput.value.split(/\r?\n/).filter((line) => line.trim());
   const tasks = [];
   for (const line of lines) {
     const parts = line.split("|").map((part) => part.trim());
@@ -568,7 +620,7 @@ planningForm.addEventListener("submit", (event) => {
     return;
   }
 
-  plan = { budget: +document.getElementById("planningBudget").value, tasks };
+  plan = { budget: +budgetInput.value, tasks };
   optimum = score([]);
   for (let mask = 1; mask < 2 ** tasks.length; mask++) {
     const candidate = score(tasks.map((_, index) => (mask >> index) & 1));
@@ -582,15 +634,15 @@ planningForm.addEventListener("submit", (event) => {
     ? "exceeds budget"
     : gap === 0
       ? "matches exact optimum"
-      : gap + " points below exact optimum";
+      : gap + " pts below exact optimum";
 
   exactLine.textContent = describe(optimum);
-  quantumLine.textContent = "In-browser QAOA (p=1): " + describe(qaoaResult) + " (" + matchNote + ").";
-  circuitMeta.textContent = `Circuit: ${tasks.length} qubits · 1 QAOA layer (γ=${qaoa.gamma.toFixed(2)}, β=${qaoa.beta.toFixed(2)}) · 2^${tasks.length} = ${1 << tasks.length} states`;
+  quantumLine.textContent = describe(qaoaResult) + " (" + matchNote + ")";
+  circuitMeta.textContent = `${tasks.length} qubits · QAOA p=1 (γ=${qaoa.gamma.toFixed(2)}, β=${qaoa.beta.toFixed(2)}) · ${1 << tasks.length} states`;
   comparisonGrid.hidden = false;
   renderHistogram(qaoa.topStates);
 
-  statusLine.textContent = "Live QAOA comparison ready. Optionally download plan.json to verify on local Qiskit Aer.";
+  statusLine.textContent = "Comparison complete.";
   download.disabled = resultFile.disabled = false;
 });
 
@@ -618,8 +670,8 @@ resultFile.addEventListener("change", async () => {
     const result = score(output.bits);
     const comparison = result.minutes > plan.budget ? "exceeds available time" :
       result.points === optimum.points ? "matches the exact optimum" :
-      (optimum.points - result.points) + " points below the exact optimum";
-    quantumLine.textContent = "Imported Qiskit QAOA result: " + describe(result) + " (" + comparison + ").";
+      (optimum.points - result.points) + " pts below exact optimum";
+    quantumLine.textContent = describe(result) + " (" + comparison + ")";
     circuitMeta.textContent = "Source: Local Python Qiskit Aer simulator (result.json)";
     statusLine.textContent = "Qiskit verification complete.";
   } catch {
