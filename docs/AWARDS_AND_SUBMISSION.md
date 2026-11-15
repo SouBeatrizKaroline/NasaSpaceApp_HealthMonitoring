@@ -1,4 +1,4 @@
-| Best Use of Data | Demonstrable | Switch study cohorts, trace the published sleep measurements, and show the calculated changes from preflight group means. |n and Award Alignment
+# Space Apps Submission and Award Alignment
 
 Crew Health Check addresses [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/). The strongest demonstration is a crew member recording a change, comparing it with their own preflight baseline, and preparing a readable report for later review.
 
@@ -12,7 +12,7 @@ The descriptions below use the [published 2025 Global Awards](https://www.spacea
 | Best Use of Science | Strong | Connect [NASA's gravity-field research](https://www.nasa.gov/hrp/hazard-gravity-fields/) to recording time since transition, balance, and mobility. Explain what is self-reported and what is established by published research. |
 | Best Use of Technology | Secondary | Demonstrate profile-scoped histories and report generation. If there is time, run the same operational plan with exact enumeration and Qiskit and show both results with their limits. |
 | Galactic Impact | Secondary | Present an intended benefit under constrained connectivity. Verify retrieval and report preparation tasks before citing measured outcomes. |
-| Best Use of Data | Conditional | Link public spaceflight research to specific interface decisions. Stronger alignment would require a suitable public dataset, documented provenance, and a demonstrable transformation that helps users understand it. |
+| Best Use of Data | Demonstrable | Switch study cohorts, inspect published sleep measurements, and compare changes from preflight group means. |
 | Best Use of Storytelling | Supporting | Connect one reported change across preflight, flight, and recovery. A clear pitch supports presentation. Strong alignment with this award would also require storytelling grounded in open data. |
 | Art & Technology | Supporting | Make the gravity selection and stage comparison communicate information through readable visual hierarchy, contrast, and responsive layout. |
 | Global Connection | Conditional | Show the available languages and explain the difference between localization and demonstrated international collaboration. |
