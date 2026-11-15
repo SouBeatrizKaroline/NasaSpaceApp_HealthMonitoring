@@ -31,6 +31,10 @@ In the history, select an astronaut and mission pair and optionally filter by st
 
 Codes group local records. They provide no sign-in or access control. Use fictional data only.
 
+## Public research data
+
+The **Spaceflight sleep research** panel visualizes published Shuttle and ISS actigraphy statistics and computes differences from each cohort’s early preflight mean. See the [source and interpretation notes](docs/AWARDS_AND_SUBMISSION.md#public-spaceflight-dataset-in-the-demo).
+
 ## Documentation
 
 - [Challenge evidence and source register](docs/CHALLENGE_EVIDENCE.md)

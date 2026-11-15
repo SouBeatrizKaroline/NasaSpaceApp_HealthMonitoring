@@ -318,3 +318,10 @@ footer { text-align: center; color: #7c91b0; font-size: 0.76rem; padding: 24px 1
 .gravity-evidence { margin: 10px 0; }
 .gravity-evidence summary { color: var(--cyan); cursor: pointer; width: fit-content; padding: 6px 0; }
 .gravity-evidence p { color: var(--muted); margin-block: 6px; }
+
+.research-table { overflow-x: auto; margin-bottom: 20px; }
+.research-table table { width: 100%; border-collapse: collapse; text-align: left; }
+.research-table caption { text-align: left; padding: 12px 0; color: var(--text); }
+.research-table th, .research-table td { border-bottom: 1px solid var(--line); padding: 10px; }
+.research-table meter { display: block; width: 100%; min-width: 65px; accent-color: var(--cyan); }
+#sleep-research .subtext { margin-top: 0; }

@@ -140,6 +140,7 @@
         <h3 id="comparisonTitle" data-i18n="comparisonTitle">Mission comparison</h3>
         <p data-i18n="comparisonHelp">Latest check-in per stage. The history filter does not change this comparison.</p>
         <div id="stageCards" class="comparison-grid"></div>
+        <p><a class="gravity-source" href="#sleep-research" lang="en">Explore published spaceflight sleep research</a></p>
         <details id="missionReport">
           <summary data-i18n="reportTitle">Preview mission report</summary>
           <p data-i18n="reportLocal">The report stays on this device until you share it.</p>
@@ -165,9 +166,26 @@
       <p id="planningExact"></p>
       <p id="planningQuantum"></p>
     </section>
+    <section class="panel" id="sleep-research" lang="en" aria-labelledby="sleepResearchTitle">
+      <h2 id="sleepResearchTitle">Spaceflight sleep research</h2>
+      <p>Explore published group averages measured by wrist actigraphy across Shuttle and International Space Station missions.</p>
+      <label for="researchCohort"><span>Study cohort</span></label>
+      <select id="researchCohort"><option value="iss">International Space Station</option><option value="shuttle">Space Shuttle</option></select>
+      <p id="researchSample" aria-live="polite"></p>
+      <div class="research-table">
+        <table>
+          <caption>Mean hours of sleep per night by study period</caption>
+          <thead><tr><th scope="col">Study period</th><th scope="col">Mean (h)</th><th scope="col">SD (h)</th><th scope="col">Change from earliest preflight mean (h)</th></tr></thead>
+          <tbody id="researchRows"></tbody>
+        </table>
+      </div>
+      <p class="subtext">These historical group averages provide research context. They are not personal targets or clinical thresholds. The study used actigraphy, while the check-in records self-reports.</p>
+      <p><a class="gravity-source" href="https://pubmed.ncbi.nlm.nih.gov/25127232/">Barger et al. (2014) · Original study</a> · <a class="gravity-source" href="https://www.nasa.gov/wp-content/uploads/2023/03/sleep-accomodations-technical-brief-ochmo.pdf">NASA · Sleep Accommodations technical brief</a></p>
+    </section>
   </main>
   <footer><span data-i18n="footer">Independent educational prototype · No clinical interpretation · No agency endorsement</span></footer>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
+  <script src="sleep-research.js"></script>
   <script src="planning.js"></script>
 </body></html>

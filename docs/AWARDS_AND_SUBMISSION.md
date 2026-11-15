@@ -1,4 +1,4 @@
-# Space Apps Submission and Award Alignment
+| Best Use of Data | Demonstrable | Switch study cohorts, trace the published sleep measurements, and show the calculated changes from preflight group means. |n and Award Alignment
 
 Crew Health Check addresses [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/). The strongest demonstration is a crew member recording a change, comparing it with their own preflight baseline, and preparing a readable report for later review.
 
@@ -40,4 +40,10 @@ Aim for 30 seconds or up to seven slides as described in the [2026 community sub
 
 - **Science:** Open **Why record gravity transitions?** below the gravity selector. It links the NASA Human Research Program's findings on orientation, coordination, balance, and movement to the check-in fields.
 - **Mission concept and storytelling:** Select one astronaut and mission. The history shows the latest record in each stage and the reported sleep difference from the latest preflight check-in, when both values are present. The same information is included in the downloadable report.
-- **Interpretation:** A difference in reported sleep is descriptive and does not establish a cause. Crew-entered observations are distinct from NASA research. The current interface does not import a mission health dataset.
+- **Interpretation:** A difference in reported sleep is descriptive and does not establish a cause. Crew-entered observations are distinct from published group measurements.
+
+## Public spaceflight dataset in the demo
+
+The [original observational study](https://pubmed.ncbi.nlm.nih.gov/25127232/) by Barger et al. (2014), funded by NASA, reports actigraphy-derived group mean sleep duration and standard deviations during four study periods. NASA reproduces the results in its [Sleep Accommodations technical brief](https://www.nasa.gov/wp-content/uploads/2023/03/sleep-accomodations-technical-brief-ochmo.pdf). The bundled subset in `web/sleep-research.js` contains only aggregate statistics. It works without network access.
+
+In **Spaceflight sleep research**, switch between the Shuttle and ISS cohorts to view the published values and the calculated change from each cohort's earliest preflight mean. Differences are descriptive, computed from rounded published means. They do not establish a causal effect of gravity and are not comparable as personal targets. The panel is linked from mission comparison and keeps public research distinct from crew self-reports.
