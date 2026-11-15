@@ -20,10 +20,17 @@
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
     <section class="context panel">
+      <div class="grid three">
+        <label><span data-i18n="crewCode"></span><input id="crewCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
+        <label><span data-i18n="missionCode"></span><input id="missionCode" form="checkin" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="DEMO-01"></label>
+        <label><span data-i18n="stage"></span><select id="stage"><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
+      </div>
+      <p id="stageHelp"></p>
+      <p class="hint" data-i18n="codeHelp"></p>
       <div class="section-heading"><div><span class="step">01</span><h2 data-i18n="contextTitle">Mission context</h2></div><span class="tag" data-i18n="editable">EDITABLE</span></div>
       <div class="grid three">
-        <label><span data-i18n="phase">Mission phase</span><select id="phase"><option value="Transit">Transit</option><option value="Surface operations">Surface operations</option><option value="EVA preparation">EVA preparation</option><option value="Return">Return</option></select></label>
-        <label><span data-i18n="gravity">Gravity environment</span><select id="gravity"><option value="Microgravity">Microgravity / free fall</option><option value="Partial gravity">Partial gravity</option><option value="Higher-gravity transition">Higher-gravity transition</option><option value="Not sure">Not sure</option></select></label>
+        <label><span data-i18n="phase">Mission phase</span><select id="phase"><option value="Pre-mission preparation" data-i18n="pre"></option><option value="Post-mission recovery" data-i18n="post"></option><option value="Transit">Transit</option><option value="Surface operations">Surface operations</option><option value="EVA preparation">EVA preparation</option><option value="Return">Return</option></select></label>
+        <label><span data-i18n="gravity">Gravity environment</span><select id="gravity"><option value="Earth gravity" data-i18n="earth"></option><option value="Microgravity">Microgravity / free fall</option><option value="Partial gravity">Partial gravity</option><option value="Higher-gravity transition">Higher-gravity transition</option><option value="Not sure">Not sure</option></select></label>
         <label><span data-i18n="elapsed">Time since transition (optional)</span><input id="elapsed" type="text" placeholder="e.g. 4 hours"></label>
       </div>
     </section>
@@ -92,6 +99,10 @@
     <section class="panel records">
       <div class="section-heading"><div><span class="step">↳</span><h2 data-i18n="recordsTitle">Saved on this device</h2></div><span class="tag" id="recordCount">0</span></div>
       <p class="subtext" data-i18n="recordsHelp">Text entries stay in this browser until exported or cleared. Media previews are not stored.</p>
+      <div class="grid two">
+        <label><span data-i18n="historyScope"></span><select id="historyScope"></select></label>
+        <label><span data-i18n="stageFilter"></span><select id="stageFilter"><option value="" data-i18n="allStages"></option><option value="pre" data-i18n="pre"></option><option value="during" data-i18n="during"></option><option value="post" data-i18n="post"></option></select></label>
+      </div>
       <div id="recordList" class="record-list" aria-live="polite"></div>
     </section>
   </main>

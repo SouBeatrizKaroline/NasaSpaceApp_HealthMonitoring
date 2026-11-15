@@ -19,6 +19,14 @@ An independent, offline-first prototype for astronaut self-check-ins during long
 
 Open `web/index.html` in a modern browser. No server, account, external API, or network connection is required. Saved text check-ins stay in that browser's local storage. Attachments are temporary and disappear when the page is closed or refreshed.
 
+## Crew history across mission stages
+
+Use fictional astronaut and mission codes (for example, `CRW-01` and `DEMO-01`). Use the same pair before, during, and after the mission to keep the preflight reference, in-flight observations, and recovery reports together. Use a new mission code for a subsequent mission.
+
+In the history, select an astronaut and mission pair and optionally filter by stage. Open a record to see its full details. JSON export includes only the selected and filtered records. Deleting a selected history removes all its stages. Earlier records without codes remain available in their own history.
+
+Codes group local records. They provide no sign-in or access control. Use fictional data only.
+
 ## Documentation
 
 - [Challenge evidence and source register](docs/CHALLENGE_EVIDENCE.md)

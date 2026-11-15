@@ -1,22 +1,146 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "3.0",
   "purpose": "Generic self-reported check-in fields for a demonstration; not a diagnosis engine.",
   "language": "en",
   "fields": [
-    {"id":"mission_phase","type":"select","required":true,"options":["transit","surface_operations","eva_preparation","return"]},
-    {"id":"gravity_environment","type":"select","required":true,"options":["microgravity","partial_gravity","higher_gravity_transition","unknown"]},
-    {"id":"checkin_reason","type":"select","required":true,"options":["routine","new_symptom","change_from_baseline","follow_up","other_concern"]},
-    {"id":"onset","type":"text","required":false},
-    {"id":"description","type":"text","required":false,"prompt":"What changed, where do you notice it, and what affects it?"},
-    {"id":"pattern","type":"text","required":false},
-    {"id":"associated_changes","type":"text","required":false},
-    {"id":"functional_effects","type":"multi_select","required":false,"options":["mobility_balance","vision_related_tasks","exercise_strength","sleep_alertness","eating_hydration_routine","work_team_tasks"]},
-    {"id":"sleep_hours","type":"number","unit":"hours","required":false,"minimum":0,"maximum":24},
-    {"id":"mood_self_rating","type":"integer","scale":"1-5 self-rating; not a clinical scale","required":false},
-    {"id":"stress_self_rating","type":"integer","scale":"1-5 self-rating; not a clinical scale","required":false},
-    {"id":"measurements","type":"object","required":false,"properties":["heart_rate_bpm","temperature_celsius","oxygen_saturation_percent","blood_pressure_mmhg"],"capture_source_and_time":true},
-    {"id":"review_preference","type":"select","required":true,"options":["routine_entry","review_requested","mission_procedure_selected"]},
-    {"id":"private_follow_up","type":"boolean","required":false}
+    {
+      "id": "astronaut_code",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "mission_code",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "stage",
+      "type": "select",
+      "required": true,
+      "options": [
+        "pre",
+        "during",
+        "post"
+      ]
+    },
+    {
+      "id": "mission_phase",
+      "type": "select",
+      "required": true,
+      "options": [
+        "transit",
+        "surface_operations",
+        "eva_preparation",
+        "return",
+        "pre_mission_preparation",
+        "post_mission_recovery"
+      ]
+    },
+    {
+      "id": "gravity_environment",
+      "type": "select",
+      "required": true,
+      "options": [
+        "earth_gravity",
+        "microgravity",
+        "partial_gravity",
+        "higher_gravity_transition",
+        "unknown"
+      ]
+    },
+    {
+      "id": "checkin_reason",
+      "type": "select",
+      "required": true,
+      "options": [
+        "routine",
+        "new_symptom",
+        "change_from_baseline",
+        "follow_up",
+        "other_concern"
+      ]
+    },
+    {
+      "id": "onset",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "description",
+      "type": "text",
+      "required": false,
+      "prompt": "What changed, where do you notice it, and what affects it?"
+    },
+    {
+      "id": "pattern",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "associated_changes",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "functional_effects",
+      "type": "multi_select",
+      "required": false,
+      "options": [
+        "mobility_balance",
+        "vision_related_tasks",
+        "exercise_strength",
+        "sleep_alertness",
+        "eating_hydration_routine",
+        "work_team_tasks"
+      ]
+    },
+    {
+      "id": "sleep_hours",
+      "type": "number",
+      "unit": "hours",
+      "required": false,
+      "minimum": 0,
+      "maximum": 24
+    },
+    {
+      "id": "mood_self_rating",
+      "type": "integer",
+      "scale": "1-5 self-rating; not a clinical scale",
+      "required": false
+    },
+    {
+      "id": "stress_self_rating",
+      "type": "integer",
+      "scale": "1-5 self-rating; not a clinical scale",
+      "required": false
+    },
+    {
+      "id": "measurements",
+      "type": "object",
+      "required": false,
+      "properties": [
+        "heart_rate_bpm",
+        "temperature_celsius",
+        "oxygen_saturation_percent",
+        "blood_pressure_mmhg"
+      ],
+      "capture_source_and_time": true
+    },
+    {
+      "id": "review_preference",
+      "type": "select",
+      "required": true,
+      "options": [
+        "routine_entry",
+        "review_requested",
+        "mission_procedure_selected"
+      ]
+    },
+    {
+      "id": "private_follow_up",
+      "type": "boolean",
+      "required": false
+    }
   ],
   "data_rules": {
     "missing_is_not_zero": true,
