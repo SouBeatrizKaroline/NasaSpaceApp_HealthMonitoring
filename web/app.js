@@ -12,6 +12,12 @@ const DRAFT_KEY = "crew-health-check.draft.v4";
 
 const I18N = {
   en: {
+    readingDeck: "Latest readings",
+    readingDeckHint: "Open a card to see recent entries and your preflight reference.",
+    readingAbsent: "No readings in the latest check-in",
+    readingBaseline: "Preflight reference",
+    readingRecent: "Recent entries",
+    readingNoHistory: "No entries for this reading yet",
     themeDark: "Dark mode",
     gateFormTitle: "Open a mission workspace",
     progressContext: "Context",
@@ -124,6 +130,12 @@ const I18N = {
     footerText: "Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only"
   },
   pt: {
+    readingDeck: "Últimas medições",
+    readingDeckHint: "Abra um cartão para ver os registros recentes e a referência pré-voo.",
+    readingAbsent: "Sem medição no último check-in",
+    readingBaseline: "Referência pré-voo",
+    readingRecent: "Registros recentes",
+    readingNoHistory: "Ainda não há registros para esta medição",
     themeDark: "Modo escuro",
     gateFormTitle: "Abrir espaço da missão",
     progressContext: "Contexto",
@@ -365,10 +377,74 @@ function hasDraftInProgress() {
   );
 }
 
+function renderReadingDeck(rows, latest) {
+  const deck = $("readingDeck");
+  const openKeys = new Set([...deck.querySelectorAll("details[open]")].map(card => card.dataset.metric));
+  deck.replaceChildren();
+  const metrics = [
+    ["heartRate", "hrLabel", "pulse"],
+    ["bloodPressure", "bpLabel", "pulse"],
+    ["temperature", "tempLabel", "thermal"],
+    ["bloodGlucose", "glucoseLabel", "glucose"],
+    ["sleepHours", "sleepLabel", "sleep"]
+  ];
+  const newestFirst = [...rows].sort((a, b) => Date.parse(b.recordedAt) - Date.parse(a.recordedAt));
+  const dateFormat = new Intl.DateTimeFormat(lang, { dateStyle: "medium", timeStyle: "short" });
+  const format = reading => reading ? `${reading.value} ${reading.unit}` : t("readingAbsent");
+  for (const [key, label, accent] of metrics) {
+    const card = document.createElement("details");
+    card.className = "reading-tile";
+    card.dataset.metric = key;
+    card.dataset.accent = accent;
+    card.open = openKeys.has(key);
+    const summary = document.createElement("summary");
+    const title = document.createElement("span");
+    title.className = "reading-label";
+    title.textContent = t(label);
+    const value = document.createElement("strong");
+    const current = latest?.measurements?.[key];
+    value.className = current ? "reading-value" : "reading-missing";
+    value.textContent = format(current);
+    summary.append(title, value);
+    const body = document.createElement("div");
+    body.className = "reading-tile-body";
+    const baseline = newestFirst.find(row => row.stage === "pre" && row.measurements?.[key]);
+    const reference = document.createElement("p");
+    reference.textContent = baseline
+      ? `${t("readingBaseline")}: ${format(baseline.measurements[key])}`
+      : `${t("readingBaseline")}: —`;
+    const samples = newestFirst.filter(row => row.measurements?.[key] && Number.isFinite(Date.parse(row.recordedAt))).slice(0, 5);
+    body.append(reference);
+    if (samples.length) {
+      const heading = document.createElement("strong");
+      heading.textContent = t("readingRecent");
+      const list = document.createElement("ul");
+      for (const row of samples) {
+        const item = document.createElement("li");
+        const date = document.createElement("time");
+        date.dateTime = row.recordedAt;
+        date.textContent = dateFormat.format(new Date(row.recordedAt));
+        const reading = document.createElement("span");
+        reading.textContent = format(row.measurements[key]);
+        item.append(date, reading);
+        list.append(item);
+      }
+      body.append(heading, list);
+    } else {
+      const empty = document.createElement("p");
+      empty.textContent = t("readingNoHistory");
+      body.append(empty);
+    }
+    card.append(summary, body);
+    deck.append(card);
+  }
+}
+
 function renderToday() {
   if (!activeProfile) return;
   const rows = getProfileRecords();
-  const latest = rows[rows.length - 1] || null;
+  const latest = [...rows].sort((a, b) => Date.parse(b.recordedAt) - Date.parse(a.recordedAt))[0] || null;
+  renderReadingDeck(rows, latest);
   $("todayCrewId").textContent = activeProfile.crewId;
   $("todayMission").textContent = activeProfile.missionCode;
   $("todayPhase").textContent = latest ? STAGE_NAMES[latest.stage] : "Preflight";
