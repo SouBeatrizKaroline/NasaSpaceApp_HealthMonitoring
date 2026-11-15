@@ -1,8 +1,8 @@
 [package]
-name = "astrocare_q"
-version = "0.1.0"
+name = "crew_health_check_core"
+version = "0.2.0"
 edition = "2021"
-description = "Spaceflight-grade clinical anamnesis, NANDA-I nursing triage, and QUBO optimization engine for astronauts."
+description = "Deterministic demonstration of self-reported check-in workflow states"
 
-# Zero external dependencies for maximum reliability, offline compilation, and minimal binary footprint.
+# Standard library only. This example is not flight-qualified.
 [dependencies]
