@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "project": "AstroCare-Q",
+  "clinical_rules": [
+    {
+      "id": "RULE_SANS_01",
+      "nasa_hazard": "Altered Gravity Fields",
+      "body_zone": "head_neuro_ocular",
+      "anamnesis_triggers": ["visao_turva", "cefaleia_matinal", "pressao_ocular"],
+      "multimodal_inputs": ["foto_edema_facial", "teste_amsler"],
+      "nanda_diagnosis": {
+        "code": "00204",
+        "label": "Perfusão tissular periférica ineficaz / Risco neuro-ocular"
+      },
+      "medical_hypothesis": "Suspeita de SANS (Spaceflight Associated Neuro-ocular Syndrome)",
+      "severity": "red",
+      "immediate_action": "Realizar teste de grade de Amsler, reduzir ingestão de sódio e encaminhar pacote SOAP ao Flight Surgeon."
+    },
+    {
+      "id": "RULE_SLEEP_02",
+      "nasa_hazard": "Isolation and Confinement",
+      "body_zone": "head_neuro_ocular",
+      "anamnesis_triggers": ["insonia", "irritabilidade", "fadiga_cognitiva"],
+      "multimodal_inputs": ["voz_cadencia_lenta", "horas_sono_menor_5"],
+      "nanda_diagnosis": {
+        "code": "00198",
+        "label": "Padrão de sono prejudicado"
+      },
+      "medical_hypothesis": "Privação de sono / Desregulação circadiana em cabine",
+      "severity": "amber",
+      "immediate_action": "Ativar modo de iluminação quente na cabine, executar protocolo de respiração 4-7-8 e ajustar escala de descanso."
+    },
+    {
+      "id": "RULE_RAD_SKIN_03",
+      "nasa_hazard": "Space Radiation",
+      "body_zone": "skin_immune",
+      "anamnesis_triggers": ["eritema", "prurido", "fadiga_pos_eva"],
+      "multimodal_inputs": ["foto_lesao_pele", "dosimetro_quantico_alto"],
+      "nanda_diagnosis": {
+        "code": "00046",
+        "label": "Integridade da pele prejudicada"
+      },
+      "medical_hypothesis": "Reação cutânea ou exposição cumulativa elevada à radiação",
+      "severity": "red",
+      "immediate_action": "Deslocar-se para área com maior blindagem da nave, aplicar barreira hidratante e registrar imagem comparativa em 12h."
+    },
+    {
+      "id": "RULE_CARDIO_HYDRATION_04",
+      "nasa_hazard": "Hostile Closed Environments",
+      "body_zone": "thorax_cardio",
+      "anamnesis_triggers": ["tontura", "palpitacao", "sede_intensa"],
+      "multimodal_inputs": ["video_rppg_fc_alta", "pa_baixa"],
+      "nanda_diagnosis": {
+        "code": "00027",
+        "label": "Volume de líquidos deficiente"
+      },
+      "medical_hypothesis": "Desidratação ou intolerância ortostática",
+      "severity": "amber",
+      "immediate_action": "Ingerir 500ml de solução eletrolítica de forma fracionada e repetir leitura rPPG por vídeo em 30 minutos."
+    }
+  ]
+}
