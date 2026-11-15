@@ -23,7 +23,7 @@ const ZONES = {
       { label: "Blood Pressure", value: "116/74" },
       { label: "HRV", value: "Nominal" }
     ],
-    guidance: "Nursing & Exercise: Maintain daily aerobic countermeasure and repeat 15s webcam rPPG after EVA."
+    guidance: "Nursing & Exercise: Maintain daily aerobic countermeasure and repeat 10s webcam rPPG after EVA."
   },
   metabolism: {
     title: "Metabolism & Nutrition",
@@ -73,6 +73,26 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
   });
 });
 
+function setZoneStatus(zoneKey, status, label) {
+  ZONES[zoneKey].status = status;
+  ZONES[zoneKey].statusLabel = label;
+  const svgNode = document.getElementById(`svg-zone-${zoneKey}`);
+  if (svgNode) {
+    svgNode.classList.remove("status-nominal", "status-amber", "status-red");
+    svgNode.classList.add(`status-${status}`);
+  }
+  updateGlobalStatusDot();
+}
+
+function updateGlobalStatusDot() {
+  const statuses = Object.values(ZONES).map((z) => z.status);
+  const dot = document.getElementById("globalStatusDot");
+  dot.classList.remove("nominal", "amber", "red");
+  if (statuses.includes("red")) dot.classList.add("red");
+  else if (statuses.includes("amber")) dot.classList.add("amber");
+  else dot.classList.add("nominal");
+}
+
 // Body Zone Selection
 function renderZone(zoneKey) {
   const z = ZONES[zoneKey];
@@ -106,13 +126,13 @@ document.getElementById("gravitySelect").addEventListener("change", (e) => {
 });
 
 // Lightweight 7-Day SVG Trend Chart
-function renderTrendChart() {
+function renderTrendChart(latestHr = 72) {
   const svg = document.getElementById("trendChart");
-  const hrPoints = [68, 70, 71, 74, 73, 76, 72];
+  const hrPoints = [68, 70, 71, 74, 73, 76, Math.min(120, Math.max(50, latestHr))];
   const coords = hrPoints
     .map((val, idx) => {
       const x = 25 + idx * 58;
-      const y = 95 - (val - 60) * 3;
+      const y = 95 - (val - 55) * 1.4;
       return `${x},${y}`;
     })
     .join(" ");
@@ -122,27 +142,55 @@ function renderTrendChart() {
     ${hrPoints
       .map((val, idx) => {
         const x = 25 + idx * 58;
-        const y = 95 - (val - 60) * 3;
+        const y = 95 - (val - 55) * 1.4;
         return `<circle cx="${x}" cy="${y}" r="3.5" fill="#38bdf8" />
-                <text x="${x}" y="104" text-anchor="middle" fill="#9ca3af" font-size="9">D-${6 - idx}</text>`;
+                <text x="${x}" y="106" text-anchor="middle" fill="#9ca3af" font-size="9">D-${6 - idx}</text>`;
       })
       .join("")}
   `;
 }
 
-// Symptom Chips
+// Symptom Chips + Keyword Auto-Detection
 const selectedSymptoms = new Set();
+function toggleSymptom(key, forceState = null) {
+  const chip = document.querySelector(`.chip[data-symptom="${key}"]`);
+  const shouldSelect = forceState !== null ? forceState : !selectedSymptoms.has(key);
+  if (shouldSelect) {
+    selectedSymptoms.add(key);
+    chip?.classList.add("selected");
+  } else {
+    selectedSymptoms.delete(key);
+    chip?.classList.remove("selected");
+  }
+}
+
 document.querySelectorAll(".chip").forEach((chip) => {
-  chip.addEventListener("click", () => {
-    const key = chip.dataset.symptom;
-    if (selectedSymptoms.has(key)) {
-      selectedSymptoms.delete(key);
-      chip.classList.remove("selected");
-    } else {
-      selectedSymptoms.add(key);
-      chip.classList.add("selected");
-    }
-  });
+  chip.addEventListener("click", () => toggleSymptom(chip.dataset.symptom));
+});
+
+function detectKeywords(text) {
+  const lower = text.toLowerCase();
+  if (/vision|blur|eye|headache|ocular/.test(lower)) toggleSymptom("blurred_vision", true);
+  if (/sleep|insomnia|tired|fatigue/.test(lower)) toggleSymptom("poor_sleep", true);
+  if (/rash|skin|red|burn|radiation/.test(lower)) toggleSymptom("radiation_skin", true);
+  if (/dizzy|thirst|dehydrat|heart/.test(lower)) toggleSymptom("dehydration", true);
+  if (/stand|balance|fall|faint/.test(lower)) toggleSymptom("orthostatic", true);
+}
+
+document.getElementById("anamnesisNotes").addEventListener("input", (e) => {
+  detectKeywords(e.target.value);
+});
+
+// Amsler Grid Quick Check
+document.getElementById("toggleAmslerBtn").addEventListener("click", () => {
+  document.getElementById("amslerPanel").classList.toggle("hidden");
+});
+
+document.getElementById("flagAmslerBtn").addEventListener("click", () => {
+  toggleSymptom("blurred_vision", true);
+  ZONES.head.metrics[1].value = "Distorted";
+  renderZone("head");
+  document.getElementById("flagAmslerBtn").textContent = "Distortion Flagged ✓";
 });
 
 // Voice Dictation (Web Speech API)
@@ -159,7 +207,8 @@ document.getElementById("voiceBtn").addEventListener("click", () => {
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     document.getElementById("anamnesisNotes").value = transcript;
-    statusEl.textContent = "Voice captured into SOAP Subjective field.";
+    detectKeywords(transcript);
+    statusEl.textContent = "Voice captured & keywords mapped to SOAP Subjective.";
   };
   recognition.onerror = () => {
     statusEl.textContent = "Microphone permission denied or unavailable.";
@@ -167,10 +216,11 @@ document.getElementById("voiceBtn").addEventListener("click", () => {
   recognition.start();
 });
 
-// Webcam rPPG / Photo Capture
+// Webcam rPPG Green-Channel Scan & Photo Capture
 document.getElementById("cameraBtn").addEventListener("click", async () => {
   const video = document.getElementById("webcamPreview");
   const placeholder = document.getElementById("mediaPlaceholder");
+  const actions = document.getElementById("cameraActions");
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     placeholder.textContent = "Camera unavailable. Using manual/simulated rPPG vitals.";
     return;
@@ -180,9 +230,56 @@ document.getElementById("cameraBtn").addEventListener("click", async () => {
     video.srcObject = stream;
     video.classList.remove("hidden");
     placeholder.classList.add("hidden");
+    actions.classList.remove("hidden");
   } catch {
     placeholder.textContent = "Camera access declined. Using manual/simulated rPPG vitals.";
   }
+});
+
+document.getElementById("photoSnapBtn").addEventListener("click", () => {
+  const video = document.getElementById("webcamPreview");
+  const canvas = document.getElementById("captureCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  canvas.classList.remove("hidden");
+  document.getElementById("rppgStatus").textContent = "Photo captured for SOAP record.";
+});
+
+document.getElementById("rppgScanBtn").addEventListener("click", () => {
+  const video = document.getElementById("webcamPreview");
+  const canvas = document.getElementById("captureCanvas");
+  const ctx = canvas.getContext("2d");
+  const status = document.getElementById("rppgStatus");
+  const samples = [];
+  const start = performance.now();
+  const durationMs = 6000;
+
+  status.textContent = "Scanning green-channel PPG (6s)... hold still.";
+
+  const timer = setInterval(() => {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const frame = ctx.getImageData(50, 30, 60, 60).data;
+    let greenSum = 0;
+    for (let i = 1; i < frame.length; i += 4) greenSum += frame[i];
+    samples.push(greenSum / (frame.length / 4));
+
+    if (performance.now() - start >= durationMs) {
+      clearInterval(timer);
+      // Estimate peaks above moving mean
+      const mean = samples.reduce((a, b) => a + b, 0) / samples.length;
+      let peaks = 0;
+      for (let i = 1; i < samples.length - 1; i++) {
+        if (samples[i] > mean && samples[i] > samples[i - 1] && samples[i] > samples[i + 1]) {
+          peaks++;
+        }
+      }
+      const estimatedBpm = Math.min(130, Math.max(58, Math.round((peaks / (durationMs / 1000)) * 60)));
+      document.getElementById("inputHr").value = estimatedBpm;
+      ZONES.thorax.metrics[0].value = `${estimatedBpm} bpm`;
+      renderTrendChart(estimatedBpm);
+      status.textContent = `rPPG Complete: ${estimatedBpm} bpm`;
+    }
+  }, 100);
 });
 
 // QUBO Triage Solver (Mirrors mvp/src/main.rs)
@@ -228,9 +325,11 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
   const maxTime = parseInt(document.getElementById("inputMaxTime").value, 10) || 30;
   const notes = document.getElementById("anamnesisNotes").value.trim();
 
+  renderTrendChart(hr);
   const candidates = [];
 
-  if (selectedSymptoms.has("blurred_vision") || notes.toLowerCase().includes("vision")) {
+  if (selectedSymptoms.has("blurred_vision")) {
+    setZoneStatus("head", "red", "RED · Suspected SANS");
     candidates.push({
       id: "P1",
       name: "SANS Amsler Grid Screening + Low-Sodium Protocol",
@@ -245,6 +344,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
   }
 
   if (selectedSymptoms.has("poor_sleep") || sleep < 5.5) {
+    if (!selectedSymptoms.has("blurred_vision")) setZoneStatus("head", "amber", "AMBER · Sleep Pattern");
     candidates.push({
       id: "P2",
       name: "Warm Cabin Lighting + 4-7-8 Guided Breathing",
@@ -259,6 +359,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
   }
 
   if (selectedSymptoms.has("radiation_skin") || dose > 1.0) {
+    setZoneStatus("skin", "red", "RED · Radiation Alert");
     candidates.push({
       id: "P3",
       name: "Shielded Module Relocation + Skin Barrier & Med-Kit Check",
@@ -273,6 +374,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
   }
 
   if (selectedSymptoms.has("dehydration") || hr > 100) {
+    setZoneStatus("thorax", "amber", "AMBER · Fluid / HR Alert");
     candidates.push({
       id: "P4",
       name: "Fractionated Electrolyte Rehydration + Repeat Video rPPG",
@@ -287,6 +389,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
   }
 
   if (selectedSymptoms.has("orthostatic") && env !== "0g") {
+    setZoneStatus("musculoskeletal", "red", "RED · Orthostatic Hold");
     candidates.push({
       id: "P5",
       name: "Graded Orthostatic & Vestibular Rehab (Hold EVA)",
@@ -306,7 +409,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
 
   if (candidates.length === 0) {
     resultsEl.innerHTML = `<div class="protocol-item"><strong>Nominal Status (Green):</strong> No acute triggers detected. Continue routine countermeasures.</div>`;
-    lastSoapSummary = `SOAP | Env: ${env} | HR: ${hr} bpm | Sleep: ${sleep}h | Dose: ${dose} mSv/d | Status: Nominal`;
+    lastSoapSummary = JSON.stringify({ environment: env, hr_bpm: hr, sleep_h: sleep, dosimeter_msv_day: dose, status: "Nominal" }, null, 2);
     return;
   }
 
@@ -324,6 +427,7 @@ document.getElementById("runTriageBtn").addEventListener("click", () => {
 
   lastSoapSummary = JSON.stringify(
     {
+      timestamp_utc: new Date().toISOString(),
       environment: env,
       subjective: notes || Array.from(selectedSymptoms),
       objective: { hr_bpm: hr, sleep_h: sleep, dosimeter_msv_day: dose },
@@ -340,11 +444,22 @@ document.getElementById("exportSoapBtn").addEventListener("click", async () => {
     await navigator.clipboard.writeText(lastSoapSummary);
     document.getElementById("exportSoapBtn").textContent = "Copied!";
     setTimeout(() => {
-      document.getElementById("exportSoapBtn").textContent = "Copy SOAP for Flight Surgeon";
+      document.getElementById("exportSoapBtn").textContent = "Copy SOAP";
     }, 1500);
   } catch {
     alert(lastSoapSummary);
   }
+});
+
+document.getElementById("downloadSoapBtn").addEventListener("click", () => {
+  if (!lastSoapSummary) return;
+  const blob = new Blob([lastSoapSummary], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `astrocare-q-soap-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 });
 
 // Routine Checklist Readiness Score
@@ -364,3 +479,4 @@ document.querySelectorAll('#routineList input[type="checkbox"]').forEach((box) =
 renderZone("head");
 renderTrendChart();
 updateReadiness();
+updateGlobalStatusDot();

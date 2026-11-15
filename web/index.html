@@ -9,7 +9,7 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="status-dot nominal" id="globalStatusDot"></span>
+      <span class="status-dot amber" id="globalStatusDot"></span>
       <div>
         <h1>AstroCare-Q</h1>
         <p class="subtitle">NASA-STD-3001 Aligned · Offline-First · Zero External Dependencies</p>
@@ -57,23 +57,23 @@
               </g>
 
               <!-- Clickable Zone 1: Head & Neuro-Ocular -->
-              <circle cx="110" cy="48" r="24" class="zone-node status-amber" data-zone="head" />
+              <circle cx="110" cy="48" r="24" id="svg-zone-head" class="zone-node status-amber" data-zone="head" />
               <text x="110" y="52" text-anchor="middle" class="zone-label">HEAD</text>
 
               <!-- Clickable Zone 2: Thorax & Cardiovascular -->
-              <rect x="82" y="96" width="56" height="44" rx="10" class="zone-node status-nominal" data-zone="thorax" />
+              <rect x="82" y="96" width="56" height="44" rx="10" id="svg-zone-thorax" class="zone-node status-nominal" data-zone="thorax" />
               <text x="110" y="122" text-anchor="middle" class="zone-label">CARDIO</text>
 
               <!-- Clickable Zone 3: Metabolism & Nutrition -->
-              <rect x="82" y="148" width="56" height="40" rx="10" class="zone-node status-nominal" data-zone="metabolism" />
+              <rect x="82" y="148" width="56" height="40" rx="10" id="svg-zone-metabolism" class="zone-node status-nominal" data-zone="metabolism" />
               <text x="110" y="172" text-anchor="middle" class="zone-label">METAB</text>
 
               <!-- Clickable Zone 4: Skin & Immune -->
-              <rect x="158" y="102" width="22" height="58" rx="8" class="zone-node status-nominal" data-zone="skin" />
+              <rect x="158" y="102" width="22" height="58" rx="8" id="svg-zone-skin" class="zone-node status-nominal" data-zone="skin" />
               <text x="169" y="135" text-anchor="middle" class="zone-label small">SKIN</text>
 
               <!-- Clickable Zone 5: Musculoskeletal -->
-              <rect x="79" y="224" width="22" height="90" rx="8" class="zone-node status-amber" data-zone="musculoskeletal" />
+              <rect x="79" y="224" width="22" height="90" rx="8" id="svg-zone-musculoskeletal" class="zone-node status-amber" data-zone="musculoskeletal" />
               <text x="90" y="272" text-anchor="middle" class="zone-label small">BONE</text>
             </svg>
           </div>
@@ -102,7 +102,7 @@
           <div class="card">
             <div class="card-header">
               <h2>7-Day Trend</h2>
-              <span class="hint" id="trendLabel">Resting HR (bpm) &amp; Sleep (h)</span>
+              <span class="hint" id="trendLabel">Resting HR (bpm)</span>
             </div>
             <svg id="trendChart" viewBox="0 0 400 110" class="trend-svg" aria-label="7-day health trend chart"></svg>
           </div>
@@ -118,7 +118,7 @@
             <h2>Step 1 · Space Anamnesis (SOAP)</h2>
             <button type="button" class="btn-secondary" id="voiceBtn">🎤 Voice Dictation</button>
           </div>
-          <p class="hint" id="voiceStatus">Speak how you feel or tap active symptoms below.</p>
+          <p class="hint" id="voiceStatus">Speak or type symptoms (auto-detects keywords) or tap below.</p>
 
           <textarea id="anamnesisNotes" rows="3" placeholder="Chief complaint (e.g., 'Morning headache and mild blurred vision after sleep')..."></textarea>
 
@@ -129,19 +129,51 @@
             <button type="button" class="chip" data-symptom="dehydration">Dizziness / Intense Thirst</button>
             <button type="button" class="chip" data-symptom="orthostatic">Standing Instability (Post-G)</button>
           </div>
+
+          <div class="amsler-box">
+            <div class="card-header">
+              <strong>SANS Quick Eye Check (Amsler Grid)</strong>
+              <button type="button" class="btn-secondary" id="toggleAmslerBtn">Open Grid</button>
+            </div>
+            <div id="amslerPanel" class="hidden">
+              <p class="hint">Focus on the center dot. If lines appear wavy or missing, flag distortion.</p>
+              <div class="amsler-flex">
+                <svg viewBox="0 0 120 120" class="amsler-svg" aria-label="Amsler Grid">
+                  <rect width="120" height="120" fill="#0b0f19" stroke="#38bdf8" stroke-width="1.5" />
+                  <g stroke="#4b5563" stroke-width="0.8">
+                    <line x1="20" y1="0" x2="20" y2="120" /><line x1="40" y1="0" x2="40" y2="120" />
+                    <line x1="60" y1="0" x2="60" y2="120" /><line x1="80" y1="0" x2="80" y2="120" />
+                    <line x1="100" y1="0" x2="100" y2="120" />
+                    <line x1="0" y1="20" x2="120" y2="20" /><line x1="0" y1="40" x2="120" y2="40" />
+                    <line x1="0" y1="60" x2="120" y2="60" /><line x1="0" y1="80" x2="120" y2="80" />
+                    <line x1="0" y1="100" x2="120" y2="100" />
+                  </g>
+                  <circle cx="60" cy="60" r="3" fill="#ef4444" />
+                </svg>
+                <button type="button" class="btn-secondary" id="flagAmslerBtn">Flag Visual Distortion</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="card">
           <div class="card-header">
             <h2>Step 2 · Multimodal &amp; Quantum Telemetry</h2>
-            <button type="button" class="btn-secondary" id="cameraBtn">📷 Start Camera (rPPG / Photo)</button>
+            <button type="button" class="btn-secondary" id="cameraBtn">📷 Start Camera</button>
           </div>
           <div class="media-box">
             <video id="webcamPreview" autoplay playsinline muted class="hidden"></video>
+            <canvas id="captureCanvas" width="160" height="120" class="hidden"></canvas>
             <div id="mediaPlaceholder" class="media-placeholder">
-              Camera idle. Use webcam for 15s contactless rPPG pulse or skin photo.
+              Camera idle. Start webcam for contactless rPPG pulse scan or skin photo capture.
             </div>
           </div>
+          <div class="camera-actions hidden" id="cameraActions">
+            <button type="button" class="btn-secondary" id="rppgScanBtn">❤️ 10s rPPG Pulse Scan</button>
+            <button type="button" class="btn-secondary" id="photoSnapBtn">📸 Capture Skin/Face Photo</button>
+            <span class="hint" id="rppgStatus"></span>
+          </div>
+
           <div class="vitals-inputs">
             <label>
               rPPG / HR (bpm)
@@ -169,7 +201,10 @@
       <div class="card result-card hidden" id="triageResultCard">
         <div class="card-header">
           <h2>Step 3 · Prioritized Action Plan (NANDA-I + QUBO + Medical)</h2>
-          <button type="button" class="btn-secondary" id="exportSoapBtn">Copy SOAP for Flight Surgeon</button>
+          <div class="export-actions">
+            <button type="button" class="btn-secondary" id="exportSoapBtn">Copy SOAP</button>
+            <button type="button" class="btn-secondary" id="downloadSoapBtn">Download JSON</button>
+          </div>
         </div>
         <div id="triageResults"></div>
       </div>

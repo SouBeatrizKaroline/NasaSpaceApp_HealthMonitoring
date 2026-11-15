@@ -234,3 +234,52 @@ fn main() {
     }
     println!("\nTotal Optimized Clinical Benefit: {:.1}", optimized_benefit);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_qubo_respects_time_and_supply_constraints() {
+        let input = AnamnesisInput {
+            environment: GravityEnvironment::Microgravity0G,
+            blurred_vision: true,
+            sleep_hours: 4.5,
+            high_radiation_dosimeter: true,
+            elevated_rppg_hr: true,
+            orthostatic_dizziness: false,
+        };
+        let candidates = evaluate_anamnesis(&input);
+        let (selected, benefit) = solve_qubo_triage(&candidates, 25, 2);
+
+        let total_time: u32 = selected.iter().map(|p| p.time_minutes).sum();
+        let total_supplies: u32 = selected.iter().map(|p| p.supply_units).sum();
+
+        assert!(total_time <= 25);
+        assert!(total_supplies <= 2);
+        assert!(benefit > 0.0);
+    }
+
+    #[test]
+    fn test_orthostatic_triggers_only_in_gravity() {
+        let input_0g = AnamnesisInput {
+            environment: GravityEnvironment::Microgravity0G,
+            blurred_vision: false,
+            sleep_hours: 7.0,
+            high_radiation_dosimeter: false,
+            elevated_rppg_hr: false,
+            orthostatic_dizziness: true,
+        };
+        assert!(evaluate_anamnesis(&input_0g).is_empty());
+
+        let input_mars = AnamnesisInput {
+            environment: GravityEnvironment::Mars038G,
+            blurred_vision: false,
+            sleep_hours: 7.0,
+            high_radiation_dosimeter: false,
+            elevated_rppg_hr: false,
+            orthostatic_dizziness: true,
+        };
+        assert_eq!(evaluate_anamnesis(&input_mars).len(), 1);
+    }
+}
