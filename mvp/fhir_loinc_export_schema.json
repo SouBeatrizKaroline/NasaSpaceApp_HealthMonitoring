@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Crew Wellness Interoperable Export Mapping (HL7 FHIR + LOINC + WHO ICF + NNN)",
+  "description": "Maps onboard crew check-in exports to international health standards without performing automated clinical diagnosis.",
+  "standards": {
+    "functional_classification": "WHO ICF (https://www.who.int/standards/classifications/international-classification-of-functioning-disability-and-health)",
+    "observation_coding": "LOINC (https://loinc.org/)",
+    "interoperability_model": "HL7 FHIR R5 Observation & Condition (http://hl7.org/fhir/observation.html)",
+    "nursing_taxonomy": "NANDA-I / NIC / NOC (NNN)",
+    "ground_medical_coding": "WHO ICD-11 (https://icd.who.int/) - Flight Surgeon review only"
+  },
+  "loinc_measurements": {
+    "heartRate": { "code": "8867-4", "display": "Heart rate", "unit": "beats/min" },
+    "bloodPressure": { "code": "85354-9", "display": "Blood pressure panel", "unit": "mmHg" },
+    "temperature": { "code": "8310-5", "display": "Body temperature", "unit": "Cel" },
+    "bloodGlucose": { "code": "2339-0", "display": "Glucose [Mass/volume] in Blood", "unit": "mg/dL" },
+    "sleepHours": { "code": "93832-4", "display": "Sleep duration", "unit": "h" }
+  },
+  "icf_function_mapping": {
+    "Mobility or balance": ["b760", "d410-d429"],
+    "Vision": ["b210"],
+    "Fine motor": ["d440"],
+    "Cognitive focus": ["b140"],
+    "Sleep": ["b134"],
+    "Mood": ["b152"]
+  }
+}
