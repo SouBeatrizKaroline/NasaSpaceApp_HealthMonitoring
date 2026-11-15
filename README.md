@@ -1,75 +1,54 @@
-# Crew Health Check
+# Crew Health Check — Onboard Mission Wellness & Ground Handoff
 
-**A clear next step for crew health, before, during, and after a mission.**
+> **2026 NASA Space Apps Challenge** · *Create Health Monitoring Software for Astronauts on Space Missions*
 
-An independent Space Apps prototype for recording observations onboard and preparing a structured review on the ground. The workspace starts empty: the presenter enters observations during the demonstration. There is no preloaded mission or invented patient history.
+**Crew Health Check** is a calm, offline-first onboard health logging and ground handoff prototype designed for long-duration space missions. It separates **private crew self-reporting** from **operational task planning** and avoids automated medical diagnoses.
 
-## Run the demo
+---
 
-No build or runtime packages are required. From the repository root:
+## 🎯 Core Navigation & Journey
 
-```sh
-python -m http.server 8000 --directory web
+1. **Today:** Displays the active Crew ID (local device identifier), Mission code, Mission phase, Mission day (when known), last saved check-in, and offline status (`Works offline`), with a clear primary action (**Start check-in →** or **Continue check-in →**).
+2. **Check-in (4-Step Guided Flow):**
+   - *Step 1 · Mission context:* `Preflight`, `In flight`, or `Recovery`, gravity environment (`1.00 g`, `~0 g`, `0.17 g`, `0.38 g`) with built-in guidance, and optional mission day.
+   - *Step 2 · Observations:* Free-text notes, optional hands-free voice dictation, and functional impact tags.
+   - *Step 3 · Optional measurements:* Heart rate (`bpm`), blood pressure (`mmHg`), temperature (`°C`), blood glucose (`mg/dL`), sleep (`h`), and source. Blank fields remain blank.
+   - *Step 4 · Review & Save:* Review cards with per-section **Edit** links, saving locally with **Saved onboard** confirmation.
+3. **Mission History:** Longitudinal view across `Preflight`, `In flight`, and `Recovery`, highlighting changes relative to the `Preflight` baseline, flagging missing stages/measurements, and exporting a structured JSON report (`Saved onboard` → `Ready to export` → `Report exported`).
+4. **Ground Review:** Imports and validates the exported JSON report, rendering observations, measurements, units, sources, preflight deltas, and recording gaps (with clear error handling for invalid files).
+5. **Task Planning:** Operational scheduler comparing **Exact Classical Enumeration** against an **In-Browser Quantum QAOA Simulator** (and optional local **Python Qiskit Aer** verification via `plan.json` / `result.json`), keeping crew IDs and health data strictly out of planning files.
+
+---
+
+## 🚀 Running the Demo
+
+### Option A: Open Locally or Deploy on Vercel
+- **Local:** Serve `web/` (e.g., `npx serve web` or `python -m http.server -d web 8080`) and open `http://localhost:8080`.
+- **Vercel:** Set **Root Directory** to `web` and **Framework Preset** to `Other` (zero build step required).
+
+### Option B: Verify Qiskit Locally (Optional)
+```bash
+python -m pip install -r mvp/requirements-quantum.txt
+python mvp/quantum_task_scheduling.py plan.json result.json
 ```
 
-Open **http://localhost:8000**. For hosting, publish `web/` on HTTPS (use `web` as the Vercel root directory). The interface uses only local assets and system fonts. Wait for the offline-ready message after the first online load, then reload once before disconnecting. First-time remote access cannot work without downloading the application. Browser storage and cached assets must be retained.
+---
 
-Opening `web/index.html` directly can display the interface, but file-origin persistence is browser-dependent and service-worker caching is unavailable. Use localhost or HTTPS for acceptance testing.
+## 🎤 2-Minute Jury Demo Script
 
-## The mission journey
+1. **Open Profile:** Enter `C-104` and `ARTEMIS-4` on the profile screen.
+2. **Preflight Baseline:** Complete a quick `Preflight` check-in (e.g., resting HR `68 bpm`, sleep `7.5 h`) → **Save onboard**.
+3. **In-Flight Update:** Click **Start check-in**, switch to `In flight` (`~0 g`), enter an observation (e.g., *"Mild morning headache"*), enter HR `78 bpm` (leaving other fields blank), and save.
+4. **Mission History & Export:** Open **Mission History** to inspect the Preflight delta (`+10 bpm`), missing `Recovery` flag, and click **Export structured report (JSON)** (`Report exported`).
+5. **Ground Review:** Open **Ground Review**, import the exported `.json` file, and verify all values, units, sources, and recording gaps render cleanly.
+6. **Task Planning:** Open **Task Planning**, click **Load lunar sample**, and run **Compare schedules** to view Classical vs. QAOA Quantum results.
 
-| Area | Working behavior |
-| --- | --- |
-| **Today** | Open a local Crew ID and mission; see current scope, phase, mission day when recorded, last saved entry, and Start/Continue check-in. |
-| **Check-in** | Four steps: context, observations, optional measurements, and review. Drafts are saved per crew/mission. Blank readings remain absent. |
-| **Mission History** | Latest Preflight, In flight, and Recovery references; descriptive numerical differences; missing stages; expandable records; scoped JSON export. |
-| **Ground Review** | Import the application's JSON report, validate it before display, inspect the same observations and comparisons, retry invalid imports. Imported data stays in memory. |
-| **Task Planning** | Enter operational tasks; compare exhaustive classical optimization with a browser quantum statevector simulation; export input and import a matching Qiskit result. |
+---
 
-English is the default. Spanish, French, and Portuguese cover the changed journeys. Report field names and units remain stable across languages; user-entered observations are not translated.
+## ✅ What Works Today vs. Future Integrations
 
-## A two-minute presentation script
-
-1. “I will enter a local Crew ID and mission code. These identify records on this browser; they are not login credentials.”
-2. “Today shows the next action. I will record a preflight observation and one measurement, leaving the other measurements blank.” Enter non-sensitive test observations chosen by the presenter.
-3. “The review step lets me check the context and source before saving. Saved onboard means the browser stored this entry.”
-4. “I will record an in-flight observation with its gravity context. Mission History compares it with the available preflight reference and explicitly shows that recovery has not been recorded.”
-5. “I will export this mission report and open that file in Ground Review. No transmission is implied: this is a manual, validated file handoff.”
-6. “Task Planning is separate. I will enter operational tasks and compare the exact classical schedule with a local quantum simulation. No health records enter the planning file.”
-
-## Data and privacy
-
-Crew IDs group **local browser profiles**, not authenticated accounts. Anyone with access to this browser profile can open them. Records and drafts are unencrypted local storage; there is no identity verification, server, synchronization, telemetry, or medical record service. Use non-sensitive test observations only. Clearing site storage removes local history. Export before clearing it.
-
-Two Crew IDs and two mission codes have separate histories. The active selection and drafts survive reload. Earlier records with IDs remain compatible; older unassigned records are preserved and can be downloaded as a legacy archive, which is not a Ground Review report.
-
-Photos, video, and audio can be previewed during the measurement step. They are temporary, are not interpreted, and are not included in saved records or exports. Reports preserve values, units, source, measurement time, gravity context, and observations. `Saved onboard`, `Ready to export`, and `Report exported` describe local workflow actions; the app does not claim ground delivery or receipt.
-
-## Verification
-
-```sh
-node --test tests/core.test.cjs
-node tests/browser.cjs
-```
-
-The second command requires Microsoft Edge on Windows, free localhost ports 8176/9336, and permission to connect to its local debugging endpoint. It uses a separate browser profile and writes test artifacts under ignored `test-output/`. See [validation results and remaining checks](docs/VALIDATION.md) for what actually ran in this delivery.
-
-## Implemented and future work
-
-Implemented: local capture, drafts, scoped history, structured export/import, four interface languages, browser simulation, and a Qiskit input/result adapter. The optional Python Qiskit environment must be installed and verified separately.
-
-Future: authenticated access, encryption and audit trails, approved ground synchronization, sensor integration, durable media storage, clinician-reviewed terminology, and mission-specific procedures. The Rust example is separate from the browser application. This prototype does not diagnose, prescribe treatment, infer health from media, or provide medical clearance. It is not flight-qualified or clinically validated, and is not a NASA product or endorsement.
-
-## Documentation
-
-- [Visual identity and interaction decisions](docs/DESIGN_UX_UI.md)
-- [Architecture and record contract](docs/TECHNICAL_ARCHITECTURE.md)
-- [Qiskit reproduction and simulation scope](docs/QUANTUM_QISKIT.md)
-- [Validation record](docs/VALIDATION.md)
-- [Challenge evidence](docs/CHALLENGE_EVIDENCE.md)
-- [Gravity and operations](docs/GRAVITY_AND_OPERATIONS.md)
-- [Classification scope and permissions](docs/CLASSIFICATIONS_AND_SCOPE.md)
-- [Clinical workflow](docs/CLINICAL_WORKFLOW.md)
-- [Submission considerations and published sleep research](docs/AWARDS_AND_SUBMISSION.md)
-
-NASA references provide research context. No agency insignia or implied certification is used. Public cohort sleep statistics are separated from personal history and are not individual diagnostic thresholds.
+| Capability | Works Today (MVP) | Future Integration |
+| :--- | :--- | :--- |
+| **Offline Persistence** | `localStorage` + Service Worker (`sw.js`) | Encrypted spacecraft onboard database sync |
+| **Ground Handoff** | Structured JSON export & validated **Ground Review** import | Automated DTN / Deep-Space Network transmission to Flight Surgeons |
+| **Quantum Scheduling** | In-browser $p=1$ QAOA statevector simulator + local Qiskit Aer CLI | Remote IBM Quantum hardware execution for larger operational schedules |

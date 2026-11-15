@@ -1,45 +1,247 @@
-/* Independent operational task workspace. No access to health storage. */
-(() => {
-  'use strict';
-  const {el, download, language} = window.CrewUI;
-  const P = window.CrewPlanner;
-  const copy = {
-    en: ['Plan the work ahead','Compare two methods on your own task list. No crew identifiers or health records are included.','Available time (minutes)','Tasks: one per line — name, minutes, priority','Use 1–8 tasks, 1–240 minutes per task, and priority 1–100. Do not enter personal or health information.','Compare schedules','Classical · exhaustive search','Quantum · browser statevector simulation','priority points','minutes','No tasks selected','Export Qiskit input','Import Qiskit result','Qiskit · imported QAOA result','Enter a valid task list and time budget.','The result does not match this plan or is not a valid Qiskit result. Try another file.','Local simulation, not quantum hardware. A one-layer circuit searches 25 angle pairs. The most probable feasible state is shown; improvement over the classical optimum is not claimed.','Reproduce with Qiskit','Plan inputs changed. Run the comparison again.','Over budget: this imported result is infeasible.'],
-    pt: ['Organize as próximas tarefas','Compare dois métodos com suas tarefas. Identificadores e registros de saúde não são incluídos.','Tempo disponível (minutos)','Tarefas: uma por linha — nome, minutos, prioridade','Use de 1 a 8 tarefas, 1 a 240 minutos por tarefa e prioridade de 1 a 100. Não insira informações pessoais ou de saúde.','Comparar planos','Clássico · busca exaustiva','Quântico · simulação de vetor de estado no navegador','pontos de prioridade','minutos','Nenhuma tarefa selecionada','Exportar entrada Qiskit','Importar resultado Qiskit','Qiskit · resultado QAOA importado','Insira tarefas e tempo válidos.','O resultado não corresponde ao plano ou é inválido. Tente outro arquivo.','Simulação local, sem hardware quântico. Um circuito de uma camada pesquisa 25 pares de ângulos. É exibido o estado viável mais provável; não há alegação de melhoria sobre o ótimo clássico.','Reproduzir com Qiskit','Entradas alteradas. Compare novamente.','Acima do tempo: resultado importado inviável.'],
-    es: ['Organiza las próximas tareas','Compara dos métodos con tus tareas. No se incluyen identificadores ni registros de salud.','Tiempo disponible (minutos)','Tareas: una por línea — nombre, minutos, prioridad','Usa de 1 a 8 tareas, de 1 a 240 minutos por tarea y prioridad de 1 a 100. No introduzcas información personal ni de salud.','Comparar planes','Clásico · búsqueda exhaustiva','Cuántico · simulación de vector de estado local','puntos de prioridad','minutos','Ninguna tarea seleccionada','Exportar entrada Qiskit','Importar resultado Qiskit','Qiskit · resultado QAOA importado','Introduce tareas y tiempo válidos.','El resultado no coincide con este plan o no es válido. Prueba otro archivo.','Simulación local, sin hardware cuántico. Un circuito de una capa busca 25 pares de ángulos. Se muestra el estado factible más probable; no se afirma una mejora sobre el óptimo clásico.','Reproducir con Qiskit','Entradas modificadas. Compara de nuevo.','Excede el tiempo: resultado importado no factible.'],
-    fr: ['Organiser les prochaines tâches','Comparez deux méthodes avec vos tâches. Aucun identifiant ni dossier de santé n’est inclus.','Temps disponible (minutes)','Tâches : une par ligne — nom, minutes, priorité','Utilisez 1 à 8 tâches, 1 à 240 minutes par tâche et une priorité de 1 à 100. Ne saisissez aucune information personnelle ou de santé.','Comparer les plans','Classique · recherche exhaustive','Quantique · simulation locale du vecteur d’état','points de priorité','minutes','Aucune tâche sélectionnée','Exporter les données Qiskit','Importer un résultat Qiskit','Qiskit · résultat QAOA importé','Saisissez des tâches et une durée valides.','Le résultat ne correspond pas au plan ou est invalide. Essayez un autre fichier.','Simulation locale, sans matériel quantique. Un circuit à une couche explore 25 paires d’angles. L’état réalisable le plus probable est affiché ; aucun gain sur l’optimum classique n’est annoncé.','Reproduire avec Qiskit','Données modifiées. Comparez à nouveau.','Temps dépassé : résultat importé non réalisable.']
-  };
-  let budget = '', tasks = '', plan = null, imported = null, revision = 0;
-  function render() {
-    const c = copy[language()] || copy.en, host = document.getElementById('planningMount');
-    host.replaceChildren();
-    const form = el('form',null,'card');
-    form.append(el('h2',c[0]),el('p',c[1]));
-    const timeLabel=el('label',c[2]), time=el('input'); time.id='planBudget';time.type='number';time.min=1;time.max=240;time.required=true;time.value=budget;timeLabel.append(time);
-    const taskLabel=el('label',c[3]), area=el('textarea');area.id='planTasks';area.required=true;area.value=tasks;taskLabel.append(area);
-    const run=el('button',c[5],'primary');run.type='submit';
-    const error=el('p',null,'notice error');error.hidden=true;error.setAttribute('role','alert');
-    form.append(timeLabel,taskLabel,el('p',c[4],'hint'),run,error);host.append(form);
-    const results=el('div',null,'two-grid');host.append(results);
-    const actions=el('div',null,'card');host.append(actions);actions.hidden=!plan;
-    function showResult(title,result) {
-      const card=el('article',null,'card plan-result');card.append(el('h3',title),el('strong',result.points+' '+c[8]),el('p',result.minutes+' / '+plan.budget+' '+c[9]));
-      const list=el('ul');result.names.forEach(name=>list.append(el('li',name)));card.append(result.names.length?list:el('p',c[10]));
-      if(result.minutes>plan.budget)card.append(el('p',c[19],'notice error'));results.append(card);
+"use strict";
+
+const planningForm = document.getElementById("planningForm");
+const budgetInput = document.getElementById("planningBudget");
+const tasksInput = document.getElementById("planningTasks");
+const sampleBtn = document.getElementById("planningSampleBtn");
+const statusLine = document.getElementById("planningStatus");
+const comparisonGrid = document.getElementById("planningComparison");
+const exactLine = document.getElementById("planningExact");
+const quantumLine = document.getElementById("planningQuantum");
+const circuitMeta = document.getElementById("planningCircuitMeta");
+const histBox = document.getElementById("planningHistBox");
+const histBars = document.getElementById("planningHistBars");
+const downloadBtn = document.getElementById("planningDownloadBtn");
+const resultInput = document.getElementById("planningResultInput");
+
+let plan;
+let optimum;
+
+function score(bits) {
+  return plan.tasks.reduce((total, task, index) => {
+    if (bits[index]) {
+      total.minutes += task.duration;
+      total.points += task.value;
+      total.names.push(task.name);
     }
-    if(plan){
-      showResult(c[6],P.exact(plan));const simulated=P.runBrowserQaoa(plan.tasks,plan.budget);showResult(c[7],P.scorePlan(plan,simulated.bits));
-      if(imported)showResult(c[13],imported);
-      actions.append(el('p',c[16],'hint'));
-      const exportButton=el('button',c[11],'secondary');exportButton.type='button';exportButton.onclick=()=>download(plan,'task-plan.json');
-      const label=el('label',c[12]),file=el('input');file.id='qiskitResult';file.type='file';file.accept='.json,application/json';label.append(file);
-      file.onchange=async()=>{const token=revision;try{const f=file.files[0];if(!f||f.size>100000)throw Error();const value=JSON.parse(await f.text());if(token!==revision)return;imported=P.importResult(value,plan);render();}catch{error.textContent=c[15];error.hidden=false;file.value='';}};
-      const link=el('a',c[17]);link.href='https://github.com/SouBeatrizKaroline/NasaSpaceApp_HealthMonitoring/blob/main/docs/QUANTUM_QISKIT.md';
-      actions.append(exportButton,label,link);
+    return total;
+  }, { minutes: 0, points: 0, names: [] });
+}
+
+function describe(result) {
+  return `${result.minutes} min / ${result.points} pts — ${result.names.join(", ") || "No tasks selected"}`;
+}
+
+// In-browser QAOA (p=1) Statevector Simulator for n <= 8 qubits
+function runBrowserQaoa(tasks, budget) {
+  const n = tasks.length;
+  const dim = 1 << n;
+  const penalty = 2.0;
+  const costs = new Float64Array(dim);
+  let maxAbs = 1;
+
+  for (let mask = 0; mask < dim; mask++) {
+    let mins = 0;
+    let pts = 0;
+    for (let i = 0; i < n; i++) {
+      if ((mask >> i) & 1) {
+        mins += tasks[i].duration;
+        pts += tasks[i].value;
+      }
     }
-    function invalidate(){budget=time.value;tasks=area.value;plan=null;imported=null;revision++;results.replaceChildren();actions.hidden=true;error.hidden=true;}
-    time.oninput=invalidate;area.oninput=invalidate;
-    form.onsubmit=event=>{event.preventDefault();try{plan=P.validatePlan({budget:Number(time.value),tasks:area.value.trim().split('\n').map(line=>{const parts=line.split(',');if(parts.length!==3)throw Error();return{name:parts[0].trim(),duration:Number(parts[1]),value:Number(parts[2])};})});budget=time.value;tasks=area.value;imported=null;revision++;render();}catch{error.textContent=c[14];error.hidden=false;}};
+    const excess = Math.max(0, mins - budget);
+    const c = -pts + penalty * excess * excess;
+    costs[mask] = c;
+    if (Math.abs(c) > maxAbs) maxAbs = Math.abs(c);
   }
-  window.addEventListener('crew-language',render);render();
-})();
+  for (let mask = 0; mask < dim; mask++) costs[mask] /= maxAbs;
+
+  let bestExpectation = Infinity;
+  let bestProbs = null;
+  let bestGamma = 0.8;
+  let bestBeta = 0.4;
+  const invSqrtDim = 1 / Math.sqrt(dim);
+  const re = new Float64Array(dim);
+  const im = new Float64Array(dim);
+
+  for (let gIdx = 1; gIdx <= 5; gIdx++) {
+    const gamma = gIdx * 0.45;
+    for (let bIdx = 1; bIdx <= 5; bIdx++) {
+      const beta = bIdx * 0.25;
+      for (let m = 0; m < dim; m++) {
+        const angle = -gamma * costs[m];
+        re[m] = invSqrtDim * Math.cos(angle);
+        im[m] = invSqrtDim * Math.sin(angle);
+      }
+      const cb = Math.cos(beta);
+      const sb = Math.sin(beta);
+      for (let q = 0; q < n; q++) {
+        const bit = 1 << q;
+        for (let m = 0; m < dim; m++) {
+          if ((m & bit) === 0) {
+            const m1 = m | bit;
+            const r0 = re[m], i0 = im[m], r1 = re[m1], i1 = im[m1];
+            re[m] = cb * r0 + sb * i1;
+            im[m] = cb * i0 - sb * r1;
+            re[m1] = cb * r1 + sb * i0;
+            im[m1] = cb * i1 - sb * r0;
+          }
+        }
+      }
+      let expVal = 0;
+      const probs = new Float64Array(dim);
+      for (let m = 0; m < dim; m++) {
+        const p = re[m] * re[m] + im[m] * im[m];
+        probs[m] = p;
+        expVal += p * costs[m];
+      }
+      if (expVal < bestExpectation) {
+        bestExpectation = expVal;
+        bestProbs = probs;
+        bestGamma = gamma;
+        bestBeta = beta;
+      }
+    }
+  }
+
+  const ranked = [];
+  for (let m = 0; m < dim; m++) ranked.push({ mask: m, prob: bestProbs[m] });
+  ranked.sort((a, b) => b.prob - a.prob);
+
+  let chosenMask = ranked[0].mask;
+  for (const item of ranked.slice(0, 16)) {
+    const bits = tasks.map((_, i) => (item.mask >> i) & 1);
+    if (score(bits).minutes <= budget) {
+      chosenMask = item.mask;
+      break;
+    }
+  }
+
+  return {
+    bits: tasks.map((_, i) => (chosenMask >> i) & 1),
+    gamma: bestGamma,
+    beta: bestBeta,
+    topStates: ranked.slice(0, 5).map((item) => ({
+      ket: "|" + tasks.map((_, i) => (item.mask >> i) & 1).join("") + "⟩",
+      prob: item.prob
+    }))
+  };
+}
+
+function renderHistogram(topStates) {
+  histBars.replaceChildren();
+  topStates.forEach((st) => {
+    const row = document.createElement("div");
+    row.className = "q-bar-row";
+    const label = document.createElement("code");
+    label.textContent = st.ket;
+    const track = document.createElement("div");
+    track.className = "q-bar-track";
+    const fill = document.createElement("div");
+    fill.className = "q-bar-fill";
+    fill.style.width = `${Math.min(100, st.prob * 220)}%`;
+    track.append(fill);
+    const val = document.createElement("span");
+    val.textContent = `${(st.prob * 100).toFixed(1)}%`;
+    row.append(label, track, val);
+    histBars.append(row);
+  });
+  histBox.hidden = false;
+}
+
+sampleBtn.addEventListener("click", () => {
+  budgetInput.value = "45";
+  tasksInput.value = [
+    "Inspect airlock seal | 15 | 40",
+    "Calibrate radiation dosimeter | 10 | 35",
+    "Clean CO2 scrubber filter | 20 | 45",
+    "Inventory medical kit | 12 | 25",
+    "Verify EVA suit battery | 18 | 38"
+  ].join("\n");
+  planningForm.dispatchEvent(new Event("input"));
+  statusLine.textContent = "Lunar sample loaded. Click 'Compare schedules'.";
+});
+
+planningForm.addEventListener("input", () => {
+  plan = undefined;
+  downloadBtn.disabled = resultInput.disabled = true;
+  comparisonGrid.hidden = histBox.hidden = true;
+  statusLine.textContent = exactLine.textContent = quantumLine.textContent = circuitMeta.textContent = "";
+  resultInput.value = "";
+});
+
+planningForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const lines = tasksInput.value.split(/\r?\n/).filter((l) => l.trim());
+  const tasks = [];
+  for (const line of lines) {
+    const parts = line.split("|").map((p) => p.trim());
+    const [name, duration, value] = parts;
+    if (parts.length !== 3 || !name || name.length > 100 || !/^\d+$/.test(duration) ||
+        !/^\d+$/.test(value) || +duration < 1 || +duration > 240 || +value < 1 || +value > 100) {
+      statusLine.textContent = "Check each line: name | minutes (1–240) | priority points (1–100).";
+      return;
+    }
+    tasks.push({ name, duration: +duration, value: +value });
+  }
+  if (!tasks.length || tasks.length > 8) {
+    statusLine.textContent = "Enter between 1 and 8 operational tasks.";
+    return;
+  }
+
+  plan = { budget: +budgetInput.value, tasks };
+  optimum = score([]);
+  for (let mask = 1; mask < 2 ** tasks.length; mask++) {
+    const candidate = score(tasks.map((_, i) => (mask >> i) & 1));
+    if (candidate.minutes <= plan.budget && candidate.points > optimum.points) optimum = candidate;
+  }
+
+  const qaoa = runBrowserQaoa(tasks, plan.budget);
+  const qaoaResult = score(qaoa.bits);
+  const gap = optimum.points - qaoaResult.points;
+  const note = qaoaResult.minutes > plan.budget ? "exceeds budget" :
+    gap === 0 ? "matches exact optimum" : `${gap} pts below exact optimum`;
+
+  exactLine.textContent = describe(optimum);
+  quantumLine.textContent = `${describe(qaoaResult)} (${note})`;
+  circuitMeta.textContent = `In-browser QAOA p=1 · ${tasks.length} qubits (γ=${qaoa.gamma.toFixed(2)}, β=${qaoa.beta.toFixed(2)}) · ${1 << tasks.length} states`;
+  comparisonGrid.hidden = false;
+  renderHistogram(qaoa.topStates);
+
+  statusLine.textContent = "Schedule comparison ready.";
+  downloadBtn.disabled = resultInput.disabled = false;
+});
+
+downloadBtn.addEventListener("click", () => {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(plan, null, 2)], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "plan.json";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+resultInput.addEventListener("change", async () => {
+  const file = resultInput.files[0];
+  if (!file) return;
+  const currentPlan = plan;
+  try {
+    if (file.size > 16384) throw new Error();
+    const output = JSON.parse(await file.text());
+    if (plan !== currentPlan) return;
+    if (output.method !== "qiskit-qaoa" || output.plan?.budget !== plan.budget ||
+        JSON.stringify(output.plan?.tasks) !== JSON.stringify(plan.tasks) ||
+        !Array.isArray(output.bits) || output.bits.length !== plan.tasks.length ||
+        !output.bits.every((b) => b === 0 || b === 1)) throw new Error();
+    const result = score(output.bits);
+    const note = result.minutes > plan.budget ? "exceeds available time" :
+      result.points === optimum.points ? "matches exact optimum" : `${optimum.points - result.points} pts below exact optimum`;
+    quantumLine.textContent = `${describe(result)} (${note})`;
+    circuitMeta.textContent = "Verified via local Python Qiskit Aer simulator (result.json)";
+    statusLine.textContent = "Qiskit verification complete.";
+  } catch {
+    if (plan === currentPlan) statusLine.textContent = "Invalid Qiskit result file for the current plan.";
+  } finally {
+    resultInput.value = "";
+  }
+});

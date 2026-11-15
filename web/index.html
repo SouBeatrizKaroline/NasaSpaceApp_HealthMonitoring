@@ -1,71 +1,459 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142f35"><title>Crew Health Check · Mission workspace</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
-<script defer src="i18n.js"></script><script defer src="ui-text.js"></script><script defer src="core.js"></script><script defer src="planner-core.js"></script><script defer src="app.js"></script><script defer src="planning.js"></script></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crew Health Check · Onboard Mission Monitor</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 <body>
-<a class="skip-link" href="#pageTitle" data-i18n="skip"></a>
-<aside class="sidebar">
-  <a class="brand" href="#today"><img src="favicon.svg" alt="" width="40" height="40"><span>Crew Health<span class="brand-sub">CHECK</span></span></a>
-  <nav aria-label="Main navigation">
-    <a href="#today" data-page="today"><span aria-hidden="true">◉</span><span data-i18n="today"></span></a>
-    <a href="#checkin" data-page="checkin"><span aria-hidden="true">＋</span><span data-i18n="checkin"></span></a>
-    <a href="#history" data-page="history"><span aria-hidden="true">▤</span><span data-i18n="history"></span></a>
-    <a href="#ground" data-page="ground"><span aria-hidden="true">⇩</span><span data-i18n="ground"></span></a>
-    <a href="#planning" data-page="planning"><span aria-hidden="true">◇</span><span data-i18n="planning"></span></a>
-  </nav>
-  <div class="sidebar-foot"><p data-i18n="independent"></p><p id="sideCrew"></p></div>
-</aside>
-<div class="app-shell">
-<header class="topbar"><div class="network"><span id="connection"></span><small id="offlineReady" role="status"></small></div><label class="language"><span data-i18n="language"></span><select id="language"><option value="en">English</option><option value="pt">Português</option><option value="es">Español</option><option value="fr">Français</option></select></label></header>
-<main id="main">
-  <div class="page-heading"><div><p class="eyebrow">CREW HEALTH CHECK</p><h1 id="pageTitle" tabindex="-1">Today</h1></div><span id="scopePill" class="pill" hidden></span></div>
-  <p id="globalError" class="notice error" role="alert" hidden></p>
-  <section id="page-today" class="page">
-    <div id="profileGate" class="welcome">
-      <div class="welcome-copy"><p class="eyebrow" data-i18n="context"></p><h2 data-i18n="welcome"></h2><p data-i18n="intro"></p><div class="stage-track"><span data-i18n="pre"></span><span data-i18n="during"></span><span data-i18n="post"></span></div></div>
-      <form id="profileForm" class="card"><h2 data-i18n="profileTitle"></h2>
-        <label><span>Crew ID</span><input id="crewId" autocomplete="off" maxlength="24" required pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="CRW-01"></label>
-        <label><span data-i18n="missionCode"></span><input id="initialMission" autocomplete="off" maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="MISSION-01"></label>
-        <p class="hint" data-i18n="profileLimit"></p><button class="primary" type="submit" data-i18n="open"></button>
-      </form>
-    </div>
-    <div id="todayWorkspace" hidden>
-      <div class="today-hero card"><div><p class="eyebrow" data-i18n="missionActive"></p><h2 id="todayMission"></h2><p id="todayContext"></p><button id="startCheckin" class="primary" type="button"></button><p id="todayDraft" class="hint"></p></div><div class="mission-orbit" aria-hidden="true"><div class="orbit-line"></div><div class="orbit-center">CH</div><span class="orbit-point"></span></div></div>
-      <div class="stat-grid">
-        <article class="card"><p class="eyebrow">Crew ID</p><h3 id="todayCrew"></h3><button type="button" class="text-button" id="switchCrew" data-i18n="switch"></button></article>
-        <article class="card"><p class="eyebrow" data-i18n="day"></p><h3 id="todayDay"></h3><p id="todayStage"></p></article>
-        <article class="card"><p class="eyebrow" data-i18n="lastEntry"></p><h3 id="todayLast"></h3><a href="#history" data-i18n="viewHistory"></a></article>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="favicon.svg" alt="" class="brand-icon" width="32" height="32" />
+        <div>
+          <strong data-i18n="appTitle">Crew Health Check</strong>
+          <small data-i18n="appSub">Onboard Mission Wellness &amp; Ground Handoff</small>
+        </div>
       </div>
-      <form class="card mission-form" id="missionForm"><label><span data-i18n="missionActive"></span><input id="missionChoice" list="knownMissions" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" autocomplete="off"><datalist id="knownMissions"></datalist></label><button class="secondary" data-i18n="openMission"></button></form>
-      <div class="two-grid"><a href="#ground" class="card action-card"><span class="eyebrow" data-i18n="ground"></span><h3 data-i18n="groundLabel"></h3><span aria-hidden="true">↗</span></a><a href="#planning" class="card action-card"><span class="eyebrow" data-i18n="planning"></span><h3 data-i18n="planLabel"></h3><span aria-hidden="true">↗</span></a></div>
-      <p class="hint" data-i18n="profileLimit"></p>
-    </div>
-    <div id="legacyNotice" class="notice" hidden><p data-i18n="legacyNotice"></p><button id="legacyExport" type="button" class="secondary" data-i18n="legacyExport"></button></div>
-  </section>
-  <section id="page-checkin" class="page" hidden>
-    <div id="checkinGate" class="empty card"><p data-i18n="profileRequired"></p><a href="#today" data-i18n="today"></a></div>
-    <div id="checkinWorkspace" hidden>
-      <div id="saveSuccess" class="notice success" role="status" hidden><strong data-i18n="savedOnboard"></strong><p data-i18n="savedHelp"></p><a href="#history" data-i18n="openSaved"></a></div>
-      <div id="wizardProgress" class="progress" aria-label="Check-in progress"></div>
-      <form id="checkinForm" class="card" novalidate><h2 id="stepTitle" tabindex="-1"></h2><div id="wizardFields"></div><p id="formMessage" class="notice error" role="alert" hidden></p><div class="form-actions"><button id="previousStep" class="secondary" type="button" data-i18n="back"></button><button id="nextStep" class="primary" type="submit" data-i18n="next"></button></div></form>
-      <div class="draft-bar"><p id="draftStatus" role="status"></p><button type="button" id="discardDraft" class="text-button" data-i18n="clearDraft"></button></div>
-    </div>
-  </section>
-  <section id="page-history" class="page" hidden>
-    <div id="historyGate" class="empty card"><p data-i18n="profileRequired"></p><a href="#today" data-i18n="today"></a></div>
-    <div id="historyWorkspace" hidden>
-      <div class="toolbar card"><label><span data-i18n="missionActive"></span><select id="historyMission"></select></label><div><span id="exportState" class="pill"></span><button id="exportReport" class="primary" type="button" data-i18n="exportReport"></button></div></div>
-      <p class="hint" data-i18n="exportHelp"></p><div id="historyComparison"></div><h2 data-i18n="allEntries"></h2><div id="historyRecords"></div>
-      <details class="card research"><summary data-i18n="research"></summary><p data-i18n="researchHelp"></p><div id="researchTable"></div><a href="https://pubmed.ncbi.nlm.nih.gov/25127232/" rel="noreferrer">Barger et al. (2014) · PMID 25127232</a></details>
-    </div>
-  </section>
-  <section id="page-ground" class="page" hidden>
-    <div class="card import-card"><div><p class="eyebrow" data-i18n="ground"></p><h2 data-i18n="groundLabel"></h2><p data-i18n="groundIntro"></p></div><label class="file-label"><span data-i18n="chooseReport"></span><input id="groundFile" type="file" accept=".json,application/json"></label><p class="hint" data-i18n="groundLocal"></p><p id="importMessage" role="status"></p></div>
-    <div id="groundEmpty" class="empty card"><p data-i18n="importEmpty"></p></div>
-    <div id="groundReport" hidden><div class="toolbar"><h2 id="groundScope"></h2><button id="closeReport" class="secondary" data-i18n="clearReview" type="button"></button></div><div id="groundComparison"></div><h2 data-i18n="allEntries"></h2><div id="groundRecords"></div></div>
-  </section>
-  <section id="page-planning" class="page" hidden><div id="planningMount"></div></section>
-  <footer data-i18n="independent"></footer>
-</main></div>
-<div id="toast" role="status" class="toast" hidden></div>
-</body></html>
 
+      <div class="topbar-actions">
+        <span class="status-pill offline-ok" id="networkBadge">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="networkText" data-i18n="worksOffline">Works offline</span>
+        </span>
+        <label class="lang-wrap">
+          <span class="sr-only" data-i18n="language">Language</span>
+          <select id="langSelect" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="pt">PT</option>
+            <option value="es">ES</option>
+            <option value="fr">FR</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- LOCAL PROFILE GATE -->
+    <section id="profileGate" class="card profile-gate" aria-labelledby="profileGateTitle">
+      <div class="hero-strip">
+        <span class="eyebrow" data-i18n="eyebrow">NASA SPACE APPS · ONBOARD CREW TOOL</span>
+        <h1 id="profileGateTitle" data-i18n="gateTitle">Open your onboard profile</h1>
+        <p class="muted" data-i18n="gateLead">Enter a Crew ID and Mission code to start or resume your local check-in log. Works without internet.</p>
+      </div>
+
+      <form id="profileForm" class="profile-form">
+        <div class="field-row">
+          <label>
+            <span data-i18n="crewIdLabel">Crew ID (local identifier)</span>
+            <input id="inputCrewId" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="e.g. C-104" autocomplete="off" />
+          </label>
+          <label>
+            <span data-i18n="missionCodeLabel">Mission code</span>
+            <input id="inputMissionCode" required maxlength="24" pattern="[A-Za-z0-9][A-Za-z0-9\-]{0,23}" placeholder="e.g. ARTEMIS-4" autocomplete="off" />
+          </label>
+          <label>
+            <span data-i18n="missionDayLabel">Mission day (optional)</span>
+            <input id="inputMissionDay" type="number" min="1" max="1500" placeholder="e.g. 14" />
+          </label>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn-primary" data-i18n="openProfileBtn">Open onboard workspace →</button>
+        </div>
+      </form>
+
+      <p class="notice-inline" data-i18n="localIdNote">
+        ℹ Crew ID is a local device identifier for separating mission logs in this browser. It is not an authentication credential and does not diagnose medical conditions.
+      </p>
+    </section>
+
+    <!-- ACTIVE WORKSPACE -->
+    <div id="appWorkspace" hidden>
+      <div class="profile-bar">
+        <div class="profile-meta">
+          <span class="meta-chip"><strong data-i18n="crewLabel">Crew ID:</strong> <span id="barCrewId"></span></span>
+          <span class="meta-chip"><strong data-i18n="missionLabel">Mission:</strong> <span id="barMission"></span></span>
+        </div>
+        <button type="button" id="switchProfileBtn" class="btn-outline btn-sm" data-i18n="switchProfile">Switch profile</button>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Primary Navigation">
+        <button type="button" class="nav-tab active" data-view="today" data-i18n="navToday">Today</button>
+        <button type="button" class="nav-tab" data-view="checkin" data-i18n="navCheckin">Check-in</button>
+        <button type="button" class="nav-tab" data-view="history" data-i18n="navHistory">Mission History</button>
+        <button type="button" class="nav-tab" data-view="ground" data-i18n="navGround">Ground Review</button>
+        <button type="button" class="nav-tab" data-view="planning" data-i18n="navPlanning">Task Planning</button>
+      </nav>
+
+      <!-- VIEW 1: TODAY -->
+      <section id="view-today" class="view active" aria-labelledby="todayHeading">
+        <div class="card today-card">
+          <div class="today-banner" aria-hidden="true"></div>
+          <div class="today-body">
+            <h1 id="todayHeading" data-i18n="todayTitle">Ready for your check-in?</h1>
+            <p class="muted" id="todaySubtitle" data-i18n="todaySub">Record how you feel, optional readings, and mission context in under 2 minutes.</p>
+
+            <div class="summary-list">
+              <div class="summary-item">
+                <span class="summary-icon" aria-hidden="true">👤</span>
+                <div>
+                  <small data-i18n="crewLabel">Crew ID</small>
+                  <strong id="todayCrewId">—</strong>
+                </div>
+              </div>
+              <div class="summary-item">
+                <span class="summary-icon" aria-hidden="true">🛰️</span>
+                <div>
+                  <small data-i18n="activeMissionLabel">Active mission</small>
+                  <strong id="todayMission">—</strong>
+                </div>
+              </div>
+              <div class="summary-item">
+                <span class="summary-icon" aria-hidden="true">layers</span>
+                <div>
+                  <small data-i18n="phaseLabel">Mission phase</small>
+                  <strong id="todayPhase">Preflight</strong>
+                </div>
+              </div>
+              <div class="summary-item">
+                <span class="summary-icon" aria-hidden="true">📅</span>
+                <div>
+                  <small data-i18n="dayLabel">Mission day</small>
+                  <strong id="todayDay">—</strong>
+                </div>
+              </div>
+              <div class="summary-item">
+                <span class="summary-icon" aria-hidden="true">🕒</span>
+                <div>
+                  <small data-i18n="lastCheckinLabel">Last saved check-in</small>
+                  <strong id="todayLastCheckin" data-i18n="noCheckinYet">No check-in saved yet</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="offline-note">
+              <span class="status-pill offline-ok">✓ <span data-i18n="worksOffline">Works offline</span></span>
+              <span class="muted" data-i18n="todayOfflineDesc">Records stay on this device until you export a report.</span>
+            </div>
+
+            <div class="stack-actions">
+              <button type="button" id="todayPrimaryCta" class="btn-primary btn-lg" data-i18n="startCheckin">Start check-in →</button>
+              <button type="button" id="todayHistoryBtn" class="btn-outline btn-lg" data-i18n="viewHistory">View mission history</button>
+              <button type="button" id="todayPlanningBtn" class="btn-ghost" data-i18n="openPlanningLink">Organize mission tasks (Task Planning) →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: CHECK-IN (4-STEP WIZARD) -->
+      <section id="view-checkin" class="view" aria-labelledby="checkinHeading">
+        <div class="card wizard-card">
+          <div class="wizard-top" id="wizardHeader">
+            <span class="step-caption" id="stepCaption">Step 1 of 4 · Mission context</span>
+            <div class="stepper" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="checkinStepper">
+              <span class="step-dot active">1</span>
+              <span class="step-line"></span>
+              <span class="step-dot">2</span>
+              <span class="step-line"></span>
+              <span class="step-dot">3</span>
+              <span class="step-line"></span>
+              <span class="step-dot">4</span>
+            </div>
+          </div>
+
+          <!-- STEP 1: MISSION CONTEXT -->
+          <div id="step-1" class="wizard-step active">
+            <h2 id="checkinHeading" data-i18n="step1Title">Where are you in the mission?</h2>
+            <div class="radio-cards">
+              <label class="radio-card">
+                <input type="radio" name="stage" value="pre" checked />
+                <span>
+                  <strong data-i18n="stagePre">Preflight</strong>
+                  <small data-i18n="stagePreDesc">Before launch (baseline reference)</small>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="stage" value="during" />
+                <span>
+                  <strong data-i18n="stageDuring">In flight</strong>
+                  <small data-i18n="stageDuringDesc">During transit, orbit, or surface operations</small>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="stage" value="post" />
+                <span>
+                  <strong data-i18n="stagePost">Recovery</strong>
+                  <small data-i18n="stagePostDesc">After return to Earth</small>
+                </span>
+              </label>
+            </div>
+
+            <div class="field-row two-col">
+              <label>
+                <span data-i18n="gravityLabel">Gravity environment</span>
+                <select id="gravitySelect">
+                  <option value="Earth gravity (1.00 g)">Earth gravity (1.00 g)</option>
+                  <option value="Microgravity (~0 g)">Microgravity (~0 g)</option>
+                  <option value="Lunar gravity (0.17 g)">Lunar gravity (0.17 g)</option>
+                  <option value="Martian gravity (0.38 g)">Martian gravity (0.38 g)</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="missionDayOpt">Mission day (optional)</span>
+                <input id="checkinDay" type="number" min="1" max="1500" placeholder="Leave blank if unknown" />
+              </label>
+            </div>
+
+            <details class="helper-box">
+              <summary data-i18n="gravityHelpQ">How do I choose the gravity setting?</summary>
+              <p data-i18n="gravityHelpA">Use Earth (1.00 g) for preflight and recovery, Microgravity (~0 g) for spacecraft or orbital stations, Lunar (0.17 g) for Moon surface, and Martian (0.38 g) for Mars.</p>
+            </details>
+
+            <div class="wizard-actions">
+              <button type="button" id="step1Cancel" class="btn-outline" data-i18n="backToday">Back</button>
+              <button type="button" id="step1Next" class="btn-primary" data-i18n="continueBtn">Continue →</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: OBSERVATIONS -->
+          <div id="step-2" class="wizard-step">
+            <h2 data-i18n="step2Title">What feels different today?</h2>
+            <p class="muted" data-i18n="step2Sub">Describe what you noticed and when it started.</p>
+
+            <label>
+              <span class="sr-only" data-i18n="obsLabel">Observations</span>
+              <textarea id="obsText" rows="4" placeholder="Write in your own words..."></textarea>
+            </label>
+
+            <div class="voice-row">
+              <button type="button" id="voiceDictateBtn" class="btn-outline btn-sm">🎤 <span data-i18n="dictateBtn">Dictate (Voice)</span></button>
+              <span id="voiceStatus" class="muted small-text"></span>
+            </div>
+
+            <p class="field-label" data-i18n="funcAffects">Affected mission functions (optional)</p>
+            <div class="chip-grid">
+              <label class="chip-check"><input type="checkbox" name="function" value="Mobility or balance" /> <span data-i18n="fnMobility">Mobility or balance</span></label>
+              <label class="chip-check"><input type="checkbox" name="function" value="Vision" /> <span data-i18n="fnVision">Vision</span></label>
+              <label class="chip-check"><input type="checkbox" name="function" value="Fine motor" /> <span data-i18n="fnMotor">Fine motor</span></label>
+              <label class="chip-check"><input type="checkbox" name="function" value="Cognitive focus" /> <span data-i18n="fnCog">Cognitive focus</span></label>
+              <label class="chip-check"><input type="checkbox" name="function" value="Sleep" /> <span data-i18n="fnSleep">Sleep</span></label>
+              <label class="chip-check"><input type="checkbox" name="function" value="Mood" /> <span data-i18n="fnMood">Mood</span></label>
+            </div>
+
+            <div class="wizard-actions">
+              <button type="button" id="step2Back" class="btn-outline" data-i18n="backBtn">Back</button>
+              <button type="button" id="step2Next" class="btn-primary" data-i18n="continueBtn">Continue →</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: OPTIONAL MEASUREMENTS -->
+          <div id="step-3" class="wizard-step">
+            <h2 data-i18n="step3Title">Add readings, if you have them</h2>
+            <p class="muted" data-i18n="step3Sub">All measurements are optional. Leave any field blank if you did not measure it.</p>
+
+            <div class="field-row two-col">
+              <label>
+                <span data-i18n="hrLabel">Heart rate (bpm)</span>
+                <input id="measHr" type="number" min="25" max="240" placeholder="Blank if not measured" />
+              </label>
+              <label>
+                <span data-i18n="bpLabel">Blood pressure (mmHg)</span>
+                <input id="measBp" type="text" maxlength="15" placeholder="e.g. 118/76 (or blank)" />
+              </label>
+              <label>
+                <span data-i18n="tempLabel">Body temperature (°C)</span>
+                <input id="measTemp" type="number" min="32" max="43" step="0.1" placeholder="Blank if not measured" />
+              </label>
+              <label>
+                <span data-i18n="glucoseLabel">Blood glucose (mg/dL)</span>
+                <input id="measGlucose" type="number" min="20" max="600" placeholder="Blank if not measured" />
+              </label>
+              <label>
+                <span data-i18n="sleepLabel">Sleep duration (hours)</span>
+                <input id="measSleep" type="number" min="0" max="24" step="0.5" placeholder="Blank if not measured" />
+              </label>
+              <label>
+                <span data-i18n="sourceLabel">Measurement source (optional)</span>
+                <input id="measSource" type="text" maxlength="60" placeholder="e.g. Cabin pulse oximeter" />
+              </label>
+            </div>
+
+            <label class="media-upload">
+              <span data-i18n="mediaOptLabel">Optional photo / audio clip (session preview only, not stored)</span>
+              <input id="mediaInput" type="file" accept="image/*,video/*,audio/*" />
+            </label>
+            <div id="mediaPreview" class="media-preview"></div>
+
+            <div class="wizard-actions">
+              <button type="button" id="step3Back" class="btn-outline" data-i18n="backBtn">Back</button>
+              <button type="button" id="step3Next" class="btn-primary" data-i18n="continueReview">Continue to review →</button>
+            </div>
+          </div>
+
+          <!-- STEP 4: REVIEW -->
+          <div id="step-4" class="wizard-step">
+            <h2 data-i18n="step4Title">Check what you entered</h2>
+            <div class="review-cards">
+              <div class="review-item">
+                <div>
+                  <strong data-i18n="revContext">Mission context</strong>
+                  <p id="reviewContext" class="muted"></p>
+                </div>
+                <button type="button" class="btn-link" id="editStep1" data-i18n="editBtn">Edit</button>
+              </div>
+              <div class="review-item">
+                <div>
+                  <strong data-i18n="revObs">Observations</strong>
+                  <p id="reviewObs" class="muted"></p>
+                </div>
+                <button type="button" class="btn-link" id="editStep2" data-i18n="editBtn">Edit</button>
+              </div>
+              <div class="review-item">
+                <div>
+                  <strong data-i18n="revMeas">Measurements</strong>
+                  <p id="reviewMeas" class="muted"></p>
+                </div>
+                <button type="button" class="btn-link" id="editStep3" data-i18n="editBtn">Edit</button>
+              </div>
+            </div>
+            <p class="muted small-text" data-i18n="saveWithoutMeas">You can save without measurements. Blank fields remain blank.</p>
+
+            <div class="wizard-actions">
+              <button type="button" id="step4Back" class="btn-outline" data-i18n="backBtn">Back</button>
+              <button type="button" id="saveOnboardBtn" class="btn-primary" data-i18n="saveOnboard">Save onboard</button>
+            </div>
+          </div>
+
+          <!-- SAVED CONFIRMATION -->
+          <div id="step-saved" class="wizard-step saved-screen">
+            <div class="saved-badge" aria-hidden="true">✓</div>
+            <h2 data-i18n="savedOnboardTitle">Saved onboard</h2>
+            <p class="muted" data-i18n="savedOnboardDesc">Your check-in is saved on this device and ready for preflight comparison or export.</p>
+            <div class="stack-actions">
+              <button type="button" id="savedHistoryBtn" class="btn-primary btn-lg" data-i18n="viewHistoryCompare">View mission history &amp; comparison</button>
+              <button type="button" id="savedTodayBtn" class="btn-outline btn-lg" data-i18n="backToToday">Back to Today</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: MISSION HISTORY -->
+      <section id="view-history" class="view" aria-labelledby="historyHeading">
+        <div class="card">
+          <div class="section-top">
+            <div>
+              <h2 id="historyHeading" data-i18n="historyTitle">Mission History</h2>
+              <p class="muted" data-i18n="historyLead">Longitudinal view across Preflight, In flight, and Recovery compared against your Preflight baseline.</p>
+            </div>
+            <div class="export-bar">
+              <span class="status-pill" id="historyExportStatus">Saved onboard</span>
+              <button type="button" id="exportReportBtn" class="btn-primary" disabled data-i18n="exportBtn">Export structured report (JSON)</button>
+            </div>
+          </div>
+
+          <div id="phaseCoverage" class="phase-grid"></div>
+          <div id="baselineDiffBox" class="diff-box" hidden></div>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: GROUND REVIEW -->
+      <section id="view-ground" class="view" aria-labelledby="groundHeading">
+        <div class="card">
+          <h2 id="groundHeading" data-i18n="groundTitle">Ground Review</h2>
+          <p class="muted" data-i18n="groundLead">Import a structured JSON report exported from Crew Health Check to inspect observations, measurements, preflight deltas, and recording gaps.</p>
+
+          <div class="import-box">
+            <label class="file-drop">
+              <strong data-i18n="importLabel">Select exported report (.json)</strong>
+              <input type="file" id="groundFileInput" accept=".json,application/json" />
+            </label>
+          </div>
+
+          <div id="groundError" class="alert-error" role="alert" hidden>
+            <p id="groundErrorText"></p>
+            <button type="button" id="groundRetryBtn" class="btn-outline btn-sm" data-i18n="retryBtn">Try another file</button>
+          </div>
+
+          <div id="groundReportView" hidden></div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: TASK PLANNING (QAOA + QISKIT) -->
+      <section id="view-planning" class="view" aria-labelledby="planningHeading">
+        <div class="card">
+          <div class="section-top">
+            <div>
+              <h2 id="planningHeading" data-i18n="planningTitle">Task Planning (Classical vs. QAOA)</h2>
+              <p class="muted" data-i18n="planningLead">Balance operational tasks within available crew minutes. Crew IDs and health records are excluded from planning files.</p>
+            </div>
+            <span class="status-pill">QAOA · Qiskit</span>
+          </div>
+
+          <form id="planningForm" class="planning-form">
+            <div class="planning-top-row">
+              <label>
+                <span data-i18n="budgetLabel">Available minutes</span>
+                <input id="planningBudget" type="number" required min="1" max="240" placeholder="45" />
+              </label>
+              <button type="button" id="planningSampleBtn" class="btn-outline" data-i18n="sampleTasksBtn">Load lunar sample</button>
+            </div>
+
+            <label>
+              <span data-i18n="tasksLabel">Operational tasks (up to 8)</span>
+              <textarea id="planningTasks" rows="4" required placeholder="Inspect airlock seal | 15 | 40&#10;Calibrate radiation dosimeter | 10 | 35&#10;Clean CO2 scrubber filter | 20 | 45"></textarea>
+            </label>
+            <p class="muted small-text" data-i18n="tasksFormat">Format: task name | minutes (1–240) | priority points (1–100)</p>
+
+            <div class="btn-row">
+              <button type="submit" class="btn-primary" data-i18n="compareBtn">Compare schedules</button>
+            </div>
+          </form>
+
+          <p id="planningStatus" class="status-note" role="status"></p>
+
+          <div id="planningComparison" class="planning-grid" hidden>
+            <div class="compare-card">
+              <strong data-i18n="exactMethod">Method: Exact Classical Enumeration</strong>
+              <p id="planningExact"></p>
+            </div>
+            <div class="compare-card quantum">
+              <strong data-i18n="quantumMethod">Method: Quantum QAOA Simulation</strong>
+              <p id="planningQuantum"></p>
+              <p id="planningCircuitMeta" class="muted small-text"></p>
+            </div>
+          </div>
+
+          <div id="planningHistBox" class="hist-box" hidden>
+            <h3 data-i18n="histTitle">Top Measured Quantum States (|bitstring⟩)</h3>
+            <div id="planningHistBars" class="hist-bars"></div>
+          </div>
+
+          <details class="helper-box">
+            <summary data-i18n="qiskitCliTitle">Reproduce &amp; verify with local Python Qiskit Aer</summary>
+            <p class="muted small-text" data-i18n="qiskitCliDesc">Download plan.json, run the Qiskit script locally, and import result.json below:</p>
+            <code>python mvp/quantum_task_scheduling.py plan.json result.json</code>
+            <div class="btn-row">
+              <button type="button" id="planningDownloadBtn" class="btn-outline btn-sm" disabled data-i18n="downloadPlanBtn">Download plan.json</button>
+              <label class="btn-outline btn-sm file-btn">
+                <span data-i18n="importResultBtn">Import result.json</span>
+                <input type="file" id="planningResultInput" accept=".json,application/json" disabled hidden />
+              </label>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span data-i18n="footerText">Independent educational prototype · Works offline · No automated clinical diagnosis · Crew ID is local-only</span>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="planning.js"></script>
+</body>
+</html>
