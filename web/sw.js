@@ -1,4 +1,4 @@
-const CACHE_NAME = "crew-health-check-v6";
+const CACHE_NAME = "crew-health-check-v7";
 const ASSETS = ["./guided.css",
   "./",
   "./index.html",
