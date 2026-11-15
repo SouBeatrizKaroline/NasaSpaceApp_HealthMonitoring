@@ -1,40 +1,40 @@
-# Design & UX/UI — Princípio de Baixa Carga Cognitiva
+# Design & UX/UI — Low Cognitive Load Principle
 
-## 1. Filosofia de Design
-Em ambientes espaciais hostis, **menos é segurança**. Interfaces cheias de gráficos simultâneos, menus profundos e cores vibrantes em excesso aumentam o erro humano.
+## 1. Design Philosophy
+In hostile space environments, **simplicity is safety**. Interfaces packed with simultaneous charts, deep nested menus, and excessive visual noise increase human error.
 
-**Regras de Ouro do Design:**
-1. **Máximo de 3 Visões Principais:** Sem submenus complexos.
-2. **Semáforo Clínico Universal:**
-   - 🟢 **Nominal (`#22C55E`):** Indicadores dentro da faixa esperada para o ambiente.
-   - 🟡 **Atenção (`#F59E0B`):** Desvio leve; requer ação de autocuidado (NANDA-I).
-   - 🔴 **Crítico (`#EF4444`):** Risco clínico; requer protocolo imediato e notificação ao *Flight Surgeon*.
-3. **Dark Mode de Cabine (`#0B0F19`):** Reduz fadiga ocular em ambientes com iluminação artificial controlada e economiza energia em telas OLED.
-4. **Linguagem Acessível:** Todo termo técnico (ex.: *NANDA-I 00198*) é acompanhado de explicação simples e "por que este exame importa".
+**Golden Design Rules:**
+1. **Maximum of 3 Core Views:** No deep menu hierarchies.
+2. **Universal Clinical Color Coding:**
+   - 🟢 **Nominal (`#22C55E`):** Indicators within expected range for the active mission environment.
+   - 🟡 **Attention (`#F59E0B`):** Mild deviation; requires self-care intervention (NANDA-I).
+   - 🔴 **Critical (`#EF4444`):** High clinical risk; requires immediate protocol and Flight Surgeon notification.
+3. **Cabin Dark Mode (`#0B0F19`):** Reduces eye strain under controlled spacecraft lighting and saves power on OLED displays.
+4. **Accessible Language:** Every clinical label (e.g., *NANDA-I 00198*) is paired with a plain-language explanation and "why this measurement matters."
 
 ---
 
-## 2. Arquitetura das 3 Visões
+## 2. Three-View Information Architecture
 
-### Visão 1: Painel Corporal & Status da Missão (Home)
-- **Centro:** Silhueta humana vetorial (SVG) limpa com **5 zonas clicáveis**:
-  1. *Cabeça & Neuro-Ocular* (SANS, sono, estresse, dor de cabeça)
-  2. *Tórax & Cardiovascular* (FC, PA, HRV, respiração)
-  3. *Metabolismo & Nutrição* (glicemia, hidratação, temperatura)
-  4. *Musculoesquelético* (perda óssea/muscular por microgravidade)
-  5. *Pele & Imunidade* (lesões, erupções, radiação)
-- **Lateral Direita:** Card de detalhe da zona selecionada + **1 gráfico de tendência temporal** (últimos 7 dias) + seletor de ambiente (*Nave / Estação / Rover / Base*).
+### View 1: Body Dashboard & Mission Status (Home)
+- **Center:** Clean vector human silhouette (SVG) with **5 clickable zones**:
+  1. *Head & Neuro-Ocular* (SANS, sleep, stress, headache)
+  2. *Thorax & Cardiovascular* (HR, BP, HRV, respiration)
+  3. *Metabolism & Nutrition* (blood glucose, hydration, temperature)
+  4. *Musculoskeletal* (microgravity bone/muscle loss)
+  5. *Skin & Immune* (lesions, rashes, radiation exposure)
+- **Right Panel:** Selected zone detail card + **1 dynamic trend chart** (7-day history) + environment selector (*Spacecraft / Station / Rover / Base*).
 
-### Visão 2: Check-in Rápido & Multimodal (Fluxo em 3 Passos)
-- **Passo 1 — Queixa & Voz:** Botão único de microfone ("Fale como se sente") ou seleção rápida de sintoma.
-- **Passo 2 — Evidência Multimodal:**
-  - Upload/captura de **Foto** (pele, olho, tira reagente)
-  - Medição por **Vídeo** (15s de câmera para pulso rPPG)
-  - Entrada rápida de **Sinais Vitais** (PA, glicemia, temperatura, horas de sono)
-- **Passo 3 — Diagnóstico & Ação:**
-  - Exibe **Diagnóstico de Enfermagem (NANDA-I)** + **Ação Prática Imediata**
-  - Exibe **Alerta Médico / Prioridade Quântica** (se aplicável).
+### View 2: Quick Multimodal Check-in (3-Step Flow)
+- **Step 1 — Complaint & Voice:** Single microphone button ("Speak how you feel") or quick symptom tap.
+- **Step 2 — Multimodal Evidence:**
+  - **Photo** upload/capture (skin, eye, test strip)
+  - **Video** measurement (15s camera pulse rPPG)
+  - Quick **Vitals** input (BP, blood sugar, temperature, sleep hours)
+- **Step 3 — Diagnosis & Action:**
+  - Displays **Nursing Diagnosis (NANDA-I)** + **Immediate Self-Care Action**
+  - Displays **Medical Alert / Quantum Triage Priority** (when triggered).
 
-### Visão 3: Rotina & Micro-Gamificação
-- Checklist diário enxuto integrado à rotina da missão (ex.: *Exercício Resistido 45min*, *Hidratação 2.5L*, *Check-in de Humor*).
-- Barra de **Prontidão da Missão (Mission Readiness Score)** discreta, sem elementos infantis, mantendo o engajamento científico.
+### View 3: Mission Routine & Micro-Gamification
+- Lean daily preventive checklist (e.g., *Resistive Exercise 45m*, *Hydration 2.5L*, *Mood Check-in*).
+- Subtle **Mission Readiness Score** progress bar—clean and scientific, avoiding childish gamification tropes.

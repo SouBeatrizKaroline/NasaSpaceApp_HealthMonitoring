@@ -1,41 +1,41 @@
 # Product Management — AstroCare-Q
 
-## 1. Visão do Produto
-Capacitar astronautas em missões de longa duração a **monitorar, compreender e agir** sobre sua própria saúde física e mental em menos de 2 minutos por check-in, mesmo sem conexão em tempo real com a Terra.
+## 1. Product Vision
+Empower astronauts on long-duration missions to **monitor, understand, and act** on their own physical and behavioral health in under 2 minutes per check-in, even without real-time Earth connectivity.
 
 ---
 
 ## 2. Personas
 
-| Persona | Contexto | Principal Dor | O que o AstroCare-Q entrega |
+| Persona | Context | Core Pain Point | What AstroCare-Q Delivers |
 | :--- | :--- | :--- | :--- |
-| **Astronauta (Usuário Primário)** | Em órbita, base lunar ou trânsito para Marte; rotina intensa, fadiga e isolamento. | Não é médico; formulários longos geram atrito e atrasam a detecção de riscos. | Check-in rápido por voz/câmera, mapa corporal visual e ações práticas (NANDA-I). |
-| **Flight Surgeon (Usuário Secundário)** | Médico de voo em Terra (com atraso de sinal de minutos). | Recebe dados brutos desconexos sem contexto clínico estruturado. | Resumo SOAP estruturado, hipótese médica e prioridade calculada. |
+| **Astronaut (Primary User)** | In orbit, lunar base, or Mars transit; high workload, fatigue, and isolation. | Not a physician; long forms create friction and delay risk detection. | Fast voice/camera check-in, visual body map, and practical self-care steps (NANDA-I). |
+| **Flight Surgeon (Secondary User)** | Ground medical team operating under minutes-long signal latency. | Receives fragmented raw metrics without structured clinical context. | Structured SOAP summary, medical hypothesis, and calculated triage priority. |
 
 ---
 
-## 3. Escopo Enxuto: MVP (Hackathon) vs. Pós-Hackathon
+## 3. Lean Scope: MVP (Hackathon) vs. Post-Hackathon
 
-Para entregar um projeto funcional e polido com **recursos limitados**, o escopo é rigorosamente dividido:
+To deliver a polished, working solution with **limited resources**, scope is strictly prioritized:
 
-### ✅ Fase 1 — MVP Funcional (Hackathon 48h)
-- **Mapa Corporal Interativo (SVG):** 5 regiões clicáveis com status por cor (Verde/Âmbar/Vermelho).
-- **Micro-Anamnese Guiada (3 passos):** Queixa principal + 3 perguntas adaptativas + sinais vitais.
-- **Captura Multimodal Básica:**
-  - *Webcam:* Estimativa simples de pulso (rPPG) ou captura de foto de pele/rosto.
-  - *Voz:* Ditado da queixa principal (Web Speech API) com extração de palavras-chave.
-- **Motor Clínico JSON:** Cruzamento determinístico de Anamnese → Diagnóstico NANDA-I → Ação de Autocuidado → Alerta Médico.
-- **Módulo Quântico Simulado (`quantum_triage_qubo.py`):** Priorização de intervenções médicas quando há múltiplos alertas simultâneos.
-- **Modo Ambiente:** Seletor de contexto (*Nave*, *Estação*, *Rover*, *Base Lunar/Marciana*) que ajusta os alertas de risco.
+### ✅ Phase 1 — Functional MVP (48h Hackathon)
+- **Interactive Body Map (SVG):** 5 clickable anatomical zones with color-coded status (Green / Amber / Red).
+- **Guided Micro-Anamnesis (3 Steps):** Chief complaint + 3 adaptive questions + vital signs.
+- **Lightweight Multimodal Capture:**
+  - *Webcam:* Basic pulse estimation (rPPG) or skin/facial photo capture.
+  - *Voice:* Spoken chief complaint dictation (Web Speech API) with keyword extraction.
+- **JSON Clinical Engine:** Deterministic mapping from Anamnesis → NANDA-I Diagnosis → Self-Care Action → Medical Escalation Alert.
+- **Simulated Quantum Module (`quantum_triage_qubo.py`):** Optimal protocol prioritization when multiple alerts occur simultaneously.
+- **Environment Mode:** Context selector (*Spacecraft*, *Space Station*, *Rover*, *Lunar/Mars Base*) that adjusts risk thresholds.
 
-### 🔭 Fase 2 — Evolução Pós-Hackathon
-- Integração real com sensores vestíveis via Bluetooth/BLE e telemetria de dosímetros quânticos.
-- Treinamento de *Quantum Kernel* (QML) com datasets públicos da NASA Life Sciences Data Archive.
-- Sincronização assíncrona criptografada (PQC) para o painel do *Flight Surgeon*.
+### 🔭 Phase 2 — Post-Hackathon Evolution
+- Real BLE wearable integration and live quantum dosimeter telemetry.
+- *Quantum Kernel* (QML) training on public datasets from the NASA Life Sciences Data Archive.
+- Asynchronous post-quantum encrypted (PQC) sync to the Ground Flight Surgeon dashboard.
 
 ---
 
-## 4. Métricas de Sucesso (KPIs)
-- **Tempo de Check-in:** < 90 segundos do início ao plano de ação.
-- **Taxa de Aderência:** > 85% dos check-ins diários concluídos (apoiado por micro-gamificação discreta).
-- **Clareza de Decisão:** 100% dos alertas críticos acompanhados de instrução passo a passo em linguagem simples.
+## 4. Success Metrics (KPIs)
+- **Check-in Time:** < 90 seconds from start to actionable plan.
+- **Adherence Rate:** > 85% daily check-in completion (supported by subtle mission-readiness gamification).
+- **Decision Clarity:** 100% of critical alerts paired with step-by-step plain-language instructions.

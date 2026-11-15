@@ -1,63 +1,63 @@
-# AstroCare-Q — Health Monitoring Software for Astronauts
+# AstroCare-Q — Autonomous Health Monitoring Software for Astronauts
 
 > **2026 NASA Space Apps Challenge** · *Create Health Monitoring Software for Astronauts on Space Missions*
 
-**AstroCare-Q** é uma plataforma enxuta de monitoramento de saúde autônomo para astronautas em missões de longa duração (Lua/Artemis, estações orbitais, rovers e Marte). O sistema integra **Anamnese Espacial Estruturada**, **Diagnósticos de Enfermagem (NANDA-I)**, **Triagem Médica (CID-11/Flight Surgeon)**, **Análise Multimodal (Vídeo, Foto, Voz)** e **Computação/Engenharia Quântica** em uma interface limpa e de baixa carga cognitiva.
+**AstroCare-Q** is a lean, autonomous health monitoring platform built for astronauts on long-duration space missions (Lunar/Artemis, orbital stations, rovers, and Mars). The system integrates **Structured Space Anamnesis**, **NANDA-I Nursing Diagnoses**, **Medical Triage (ICD-11 / Flight Surgeon)**, **Multimodal Analysis (Video, Photo, Voice)**, and **Quantum Computing/Sensing** into a clean, low-cognitive-load interface.
 
 ---
 
-## 🎯 Por que este modelo resolve o desafio?
+## 🎯 Why This Approach Solves the Challenge
 
-Em missões distantes da Terra, o atraso de comunicação impede suporte médico em tempo real. O astronauta precisa identificar alterações precocemente e agir com autonomia:
+On deep-space missions, communication delays prevent real-time medical support from Earth. Astronauts need to detect physiological and behavioral changes early and act autonomously:
 
-1. **Anamnese + NANDA-I + Diagnóstico Médico (Camada Clínica Dupla):**
-   - **Diagnóstico de Enfermagem (NANDA-I):** Foca na *resposta humana e no autocuidado* (sono, hidratação, intolerância à atividade, integridade da pele, estresse), gerando ações práticas imediatas que o próprio astronauta executa.
-   - **Diagnóstico Médico / Triagem:** Avalia gravidade clínica (ex.: síndrome neuro-ocular associada ao voo espacial — SANS, arritmias, infecções) e define quando acionar a equipe ou o *Flight Surgeon* em Terra.
-2. **Análise Multimodal Leve (Sem Hardware Complexo):**
-   - **Vídeo (rPPG via webcam):** Estima frequência cardíaca e variabilidade (HRV) pelo rosto em 15–30s.
-   - **Foto / Imagem:** Avaliação visual de pele, edema facial (*puffy face*) ou tiras de exame rápido.
-   - **Voz:** Transcrição da anamnese falada (mãos livres) + análise básica de fadiga/estresse vocal.
-3. **Computação, Engenharia e Ciência Quântica (Viável com Recursos Limitados):**
-   - **Computação Quântica (QUBO / QML):** Otimização combinatória de triagem (qual protocolo executar primeiro considerando risco vital, tempo e estoque médico limitado) via simulador local.
-   - **Engenharia Quântica (Camada de Sensores):** Arquitetura preparada para telemetria de magnetometria quântica (NV-centers/OPMs) e dosimetria quântica de radiação (simulada via JSON/API no MVP).
-   - **Ciência Quântica:** Modelagem de risco cumulativo por radiação cósmica e proteção de dados clínicos com criptografia pós-quântica.
-4. **Design Enxuto (Low Cognitive Load):**
-   - Apenas **3 visões principais**, sem poluição visual: *Painel Corporal Interativo*, *Check-in Multimodal* e *Rotina da Missão*.
+1. **Anamnesis + NANDA-I + Medical Triage (Dual Clinical Layer):**
+   - **Nursing Diagnosis (NANDA-I):** Focuses on the *human response and self-care* (sleep, hydration, activity intolerance, skin integrity, stress), generating immediate, actionable interventions the astronaut can perform independently.
+   - **Medical Diagnosis / Triage:** Evaluates clinical severity (e.g., Spaceflight Associated Neuro-ocular Syndrome — SANS, arrhythmias, infections) and defines clear thresholds to alert the crew or Ground Flight Surgeons.
+2. **Lightweight Multimodal Analysis (No Heavy Hardware Required):**
+   - **Video (Webcam rPPG):** Estimates heart rate and heart rate variability (HRV) from facial video in 15–30 seconds.
+   - **Photo / Image:** Visual assessment of skin lesions, facial edema (*puffy face*), or rapid diagnostic test strips.
+   - **Voice:** Hands-free spoken anamnesis transcription plus basic vocal fatigue/stress indicators.
+3. **Quantum Computing, Engineering & Science (Feasible with Limited Resources):**
+   - **Quantum Computing (QUBO / QML):** Combinatorial triage optimization—prioritizing which clinical protocols to run first under tight crew time and limited medical supply constraints—executed on a local simulator.
+   - **Quantum Engineering (Sensor Layer):** Telemetry architecture ready for next-generation quantum biosensors (NV-center / OPM magnetometry and quantum radiation dosimetry, simulated via JSON/API in the MVP).
+   - **Quantum Science:** Cumulative cosmic radiation biological risk modeling and post-quantum cryptography (PQC) concepts for securing clinical telemetry.
+4. **Lean Design (Low Cognitive Load):**
+   - Strictly **3 core views** with zero visual clutter: *Interactive Body Dashboard*, *Multimodal Check-in*, and *Mission Routine*.
 
 ---
 
-## 📁 Estrutura do Repositório
+## 📁 Repository Structure
 
 ```text
 NasaSpaceApp_HealthMonitoring/
-├── README.md                          # Visão geral e arquitetura do projeto
+├── README.md                          # Project overview and system architecture
 ├── docs/
-│   ├── PRODUCT_MANAGEMENT.md          # Estratégia de Produto, MVP, Personas e Viabilidade
-│   ├── DESIGN_UX_UI.md                # Diretrizes de Design, 3 Telas e Código de Cores
-│   ├── CLINICAL_NANDA_MEDICAL.md      # Motor de Anamnese, NANDA-I e Triagem Médica
-│   └── QUANTUM_ARCHITECTURE.md        # Computação, Engenharia e Ciência Quântica no MVP
+│   ├── PRODUCT_MANAGEMENT.md          # Product strategy, MVP scope, personas & feasibility
+│   ├── DESIGN_UX_UI.md                # UX/UI guidelines, 3-screen layout & color coding
+│   ├── CLINICAL_NANDA_MEDICAL.md      # Anamnesis, NANDA-I & Medical Triage engine
+│   └── QUANTUM_ARCHITECTURE.md        # Quantum Computing, Engineering & Science in the MVP
 └── mvp/
-    ├── anamnesis_nanda_engine.json    # Base clínica conectando os 5 Riscos da NASA ao NANDA-I
-    └── quantum_triage_qubo.py         # Protótipo funcional de priorização clínica via QUBO
+    ├── anamnesis_nanda_engine.json    # Clinical rule base linking NASA Hazards to NANDA-I
+    └── quantum_triage_qubo.py         # Working QUBO clinical triage optimization prototype
 ```
 
 ---
 
-## 🛠️ Stack Recomendada para o MVP (Recursos Limitados)
+## 🛠️ Recommended MVP Stack (Resource-Constrained)
 
-| Camada | Tecnologia Leve / Gratuita | Motivo da Escolha |
+| Layer | Lightweight / Free Tech | Rationale |
 | :--- | :--- | :--- |
-| **Frontend** | React + Vite + TypeScript + Tailwind CSS | Rápido de prototipar, responsivo e leve para rodar offline na nave. |
-| **Backend** | Python (FastAPI) | Integra nativamente visão computacional, áudio e bibliotecas quânticas. |
-| **Multimodal** | OpenCV + MediaPipe + Web Speech API | rPPG por webcam, análise de imagem e transcrição de voz sem custo de GPU pesada. |
-| **Quântico** | Qiskit (AerSimulator) / NumPy fallback | Executa algoritmos QUBO/QAOA localmente em notebook comum para a demo. |
+| **Frontend** | React + Vite + TypeScript + Tailwind CSS | Fast to prototype, responsive, and lightweight for offline spacecraft use. |
+| **Backend** | Python (FastAPI) | Natively integrates computer vision, audio processing, and quantum libraries. |
+| **Multimodal** | OpenCV + MediaPipe + Web Speech API | Webcam rPPG, image analysis, and voice-to-text without heavy GPU requirements. |
+| **Quantum** | Qiskit (AerSimulator) / NumPy fallback | Runs QUBO/QAOA optimization locally on a standard laptop for the hackathon demo. |
 
 ---
 
-## 🚀 Como testar o protótipo QUBO (MVP)
+## 🚀 Running the QUBO Triage Prototype (MVP)
 
 ```bash
 python mvp/quantum_triage_qubo.py
 ```
 
-O script executa a otimização de priorização clínica para um astronauta com múltiplos achados simultâneos, respeitando restrições de tempo e suprimentos médicos da missão.
+The script runs clinical triage optimization for an astronaut with multiple simultaneous alerts while respecting mission time and medical supply constraints.

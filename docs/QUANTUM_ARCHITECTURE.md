@@ -1,33 +1,33 @@
-# Arquitetura Quântica (Viável com Recursos Limitados)
+# Quantum Architecture (Feasible with Limited Resources)
 
-Para evitar que o uso de tecnologias quânticas seja apenas "decorativo" ou impossível de demonstrar em um hackathon, o **AstroCare-Q** separa claramente o que **roda hoje em simulador** do que é **integração de sensores futuros**.
-
----
-
-## 1. Computação Quântica — Roda no MVP (Simulador Local)
-
-### Problema Real da Missão: Triagem Multi-Critério sob Recursos Limitados
-Quando um astronauta apresenta múltiplos desvios simultâneos (ex.: fadiga + lesão de pele + alteração cardiovascular) e a nave tem **tempo de tripulação, energia e estoque médico limitados**, qual protocolo deve ser priorizado?
-
-- **Solução:** Modelagem como problema **QUBO** (*Quadratic Unconstrained Binary Optimization*), resolvível por **QAOA** (*Quantum Approximate Optimization Algorithm*) em simuladores (Qiskit Aer) ou *annealing* simulado:
-  - **Variáveis binárias ($x_i \in \{0,1\}$):** Executar ou não o protocolo clínico $i$.
-  - **Função objetivo:** Maximizar a redução de risco clínico (peso NANDA-I + gravidade médica) penalizando conflitos de tempo e consumo excessivo de suprimentos.
-- **Quantum Machine Learning (QML) — Evolução:** Uso de *Quantum Kernel Estimation* para classificar padrões de biomarcadores em conjuntos pequenos (*small-data*), cenário típico de dados médicos de astronautas.
+To ensure quantum technology is genuinely useful rather than purely buzzword-driven, **AstroCare-Q** separates what **runs today on a local simulator** from **next-generation sensor integration**.
 
 ---
 
-## 2. Engenharia Quântica — Camada de Biossensores (Telemetria Simulada)
+## 1. Quantum Computing — Runs in the MVP (Local Simulator)
 
-Na arquitetura do sistema, a entrada de dados aceita um JSON padronizado preparado para **sensores quânticos de próxima geração** (simulados no MVP por geradores sintéticos):
+### Real Mission Problem: Multi-Criteria Triage Under Scarce Resources
+When an astronaut experiences multiple simultaneous deviations (e.g., fatigue + skin lesion + cardiovascular alert) while the spacecraft has **limited crew time, power, and medical supplies**, which protocols should be executed first?
 
-1. **Magnetometria Quântica (NV-Centers em Diamante / OPMs):**
-   - Medição sem contato de campos magnéticos do coração (**MCG**) e cérebro (**MEG**) com altíssima sensibilidade, eliminando eletrodos descartáveis em missões longas.
-2. **Dosimetria Quântica de Radiação:**
-   - Monitoramento em tempo real do fluxo de partículas ionizantes no habitat para correlacionar exposição com risco imunológico e cutâneo.
+- **Solution:** Formulated as a **QUBO** (*Quadratic Unconstrained Binary Optimization*) problem, solvable via **QAOA** (*Quantum Approximate Optimization Algorithm*) on local simulators (Qiskit Aer) or simulated annealing:
+  - **Binary variables ($x_i \in \{0,1\}$):** Execute clinical protocol $i$ or defer it.
+  - **Objective function:** Maximize clinical risk reduction (NANDA-I + medical severity weight) while penalizing time and medical supply constraint violations.
+- **Quantum Machine Learning (QML) — Future Phase:** *Quantum Kernel Estimation* to classify biomarker patterns in small-sample (*small-data*) astronaut cohorts.
 
 ---
 
-## 3. Ciência Quântica — Modelagem e Segurança
+## 2. Quantum Engineering — Biosensor Layer (Simulated Telemetry)
 
-- **Modelagem de Dano Biológico por Radiação:** Uso de parâmetros probabilísticos de interação radiação-tecido para ajustar o limiar de alerta do painel corporal conforme o ambiente (*ISS/Órbita Baixa* vs. *Espaço Profundo/Marte*).
-- **Comunicação Segura (Criptografia Pós-Quântica - PQC):** Camada conceitual para proteger o prontuário eletrônico do astronauta contra interceptação nas transmissões nave ↔ Terra.
+The ingestion API accepts a standardized JSON schema designed for **next-generation quantum biosensors** (driven by synthetic telemetry generators in the MVP):
+
+1. **Quantum Magnetometry (NV-Centers in Diamond / OPMs):**
+   - Contactless measurement of cardiac (**MCG**) and neural (**MEG**) magnetic fields with ultra-high sensitivity, eliminating disposable electrodes on multi-year missions.
+2. **Quantum Radiation Dosimetry:**
+   - Real-time ionizing particle flux tracking inside the habitat to correlate exposure with immune and skin risk.
+
+---
+
+## 3. Quantum Science — Risk Modeling & Security
+
+- **Radiation Biological Damage Modeling:** Probabilistic radiation-tissue interaction parameters dynamically adjust body-dashboard alert thresholds based on mission environment (*ISS/LEO* vs. *Deep Space/Mars*).
+- **Secure Telemetry (Post-Quantum Cryptography - PQC):** Architectural layer protecting sensitive astronaut electronic health records across spacecraft-to-Earth links.

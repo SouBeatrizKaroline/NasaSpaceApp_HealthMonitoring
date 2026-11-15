@@ -6,57 +6,57 @@
       "id": "RULE_SANS_01",
       "nasa_hazard": "Altered Gravity Fields",
       "body_zone": "head_neuro_ocular",
-      "anamnesis_triggers": ["visao_turva", "cefaleia_matinal", "pressao_ocular"],
-      "multimodal_inputs": ["foto_edema_facial", "teste_amsler"],
+      "anamnesis_triggers": ["blurred_vision", "morning_headache", "ocular_pressure"],
+      "multimodal_inputs": ["facial_edema_photo", "amsler_grid_test"],
       "nanda_diagnosis": {
         "code": "00204",
-        "label": "Perfusão tissular periférica ineficaz / Risco neuro-ocular"
+        "label": "Ineffective peripheral tissue perfusion / Neuro-ocular risk"
       },
-      "medical_hypothesis": "Suspeita de SANS (Spaceflight Associated Neuro-ocular Syndrome)",
+      "medical_hypothesis": "Suspected SANS (Spaceflight Associated Neuro-ocular Syndrome)",
       "severity": "red",
-      "immediate_action": "Realizar teste de grade de Amsler, reduzir ingestão de sódio e encaminhar pacote SOAP ao Flight Surgeon."
+      "immediate_action": "Perform Amsler grid visual test, reduce sodium intake, and transmit SOAP summary to Flight Surgeon."
     },
     {
       "id": "RULE_SLEEP_02",
       "nasa_hazard": "Isolation and Confinement",
       "body_zone": "head_neuro_ocular",
-      "anamnesis_triggers": ["insonia", "irritabilidade", "fadiga_cognitiva"],
-      "multimodal_inputs": ["voz_cadencia_lenta", "horas_sono_menor_5"],
+      "anamnesis_triggers": ["insomnia", "irritability", "cognitive_fatigue"],
+      "multimodal_inputs": ["slow_vocal_cadence", "sleep_hours_under_5"],
       "nanda_diagnosis": {
         "code": "00198",
-        "label": "Padrão de sono prejudicado"
+        "label": "Disturbed sleep pattern"
       },
-      "medical_hypothesis": "Privação de sono / Desregulação circadiana em cabine",
+      "medical_hypothesis": "Sleep deprivation / Cabin circadian misalignment",
       "severity": "amber",
-      "immediate_action": "Ativar modo de iluminação quente na cabine, executar protocolo de respiração 4-7-8 e ajustar escala de descanso."
+      "immediate_action": "Switch cabin lighting to warm spectrum, run 4-7-8 breathing protocol, and adjust rest schedule."
     },
     {
       "id": "RULE_RAD_SKIN_03",
       "nasa_hazard": "Space Radiation",
       "body_zone": "skin_immune",
-      "anamnesis_triggers": ["eritema", "prurido", "fadiga_pos_eva"],
-      "multimodal_inputs": ["foto_lesao_pele", "dosimetro_quantico_alto"],
+      "anamnesis_triggers": ["erythema", "pruritus", "post_eva_fatigue"],
+      "multimodal_inputs": ["skin_lesion_photo", "high_quantum_dosimeter_reading"],
       "nanda_diagnosis": {
         "code": "00046",
-        "label": "Integridade da pele prejudicada"
+        "label": "Impaired skin integrity"
       },
-      "medical_hypothesis": "Reação cutânea ou exposição cumulativa elevada à radiação",
+      "medical_hypothesis": "Acute skin reaction or elevated cumulative radiation exposure",
       "severity": "red",
-      "immediate_action": "Deslocar-se para área com maior blindagem da nave, aplicar barreira hidratante e registrar imagem comparativa em 12h."
+      "immediate_action": "Relocate to shielded spacecraft module, apply moisturizing barrier, and capture follow-up photo in 12h."
     },
     {
       "id": "RULE_CARDIO_HYDRATION_04",
       "nasa_hazard": "Hostile Closed Environments",
       "body_zone": "thorax_cardio",
-      "anamnesis_triggers": ["tontura", "palpitacao", "sede_intensa"],
-      "multimodal_inputs": ["video_rppg_fc_alta", "pa_baixa"],
+      "anamnesis_triggers": ["dizziness", "palpitations", "intense_thirst"],
+      "multimodal_inputs": ["video_rppg_elevated_hr", "low_blood_pressure"],
       "nanda_diagnosis": {
         "code": "00027",
-        "label": "Volume de líquidos deficiente"
+        "label": "Deficient fluid volume"
       },
-      "medical_hypothesis": "Desidratação ou intolerância ortostática",
+      "medical_hypothesis": "Dehydration or orthostatic intolerance",
       "severity": "amber",
-      "immediate_action": "Ingerir 500ml de solução eletrolítica de forma fracionada e repetir leitura rPPG por vídeo em 30 minutos."
+      "immediate_action": "Consume 500mL electrolyte solution in small sips and repeat webcam rPPG pulse check in 30 minutes."
     }
   ]
 }

@@ -1,12 +1,12 @@
 """
-AstroCare-Q | Protótipo de Triagem Clínica via QUBO (Computação Quântica / Simulador)
+AstroCare-Q | Clinical Triage Optimization Prototype via QUBO (Quantum Computing / Simulator)
 
-Objetivo:
-Selecionar o conjunto ótimo de protocolos clínicos (NANDA-I + Médicos) para um astronauta
-respeitando restrições de tempo disponível e unidades de suprimento médico da missão.
+Objective:
+Select the optimal set of clinical protocols (NANDA-I + Medical) for an astronaut
+while respecting available crew time and mission medical supply constraints.
 
-Funciona com Qiskit (se instalado) ou fallback clássico exato em Python puro / NumPy
-para garantir execução fácil com recursos limitados.
+Runs with Qiskit (if installed) or an exact Python fallback so it works reliably
+in resource-constrained hackathon environments.
 """
 
 from dataclasses import dataclass
@@ -19,22 +19,22 @@ class ClinicalProtocol:
     id: str
     name: str
     nanda_code: str
-    clinical_benefit: float   # Impacto na redução de risco (0 a 10)
-    time_minutes: int         # Tempo necessário do astronauta
-    supply_units: int         # Consumo de kit médico
+    clinical_benefit: float   # Risk reduction impact (0 to 10)
+    time_minutes: int         # Astronaut time required
+    supply_units: int         # Medical kit units consumed
 
 
-def solve_qubo_bruteforce(
+def solve_qubo_exact(
     protocols: List[ClinicalProtocol],
     max_time: int,
     max_supplies: int,
     penalty_weight: float = 2.5,
 ) -> Tuple[List[ClinicalProtocol], float]:
     """
-    Resolve a formulação QUBO:
-      Minimizar E(x) = - sum(b_i * x_i) + P * (excesso_tempo^2 + excesso_suprimentos^2)
-    Para N <= 12 protocolos, a avaliação exata em simulador local leva milissegundos
-    e valida a mesma matriz QUBO usada por algoritmos QAOA em Qiskit.
+    Solves the QUBO formulation:
+      Minimize E(x) = - sum(b_i * x_i) + P * (time_excess^2 + supply_excess^2)
+    For N <= 12 protocols, exact evaluation on a local simulator runs in milliseconds
+    and validates the exact same QUBO matrix used by QAOA circuits in Qiskit.
     """
     best_score = float("inf")
     best_selection: List[ClinicalProtocol] = []
@@ -48,7 +48,7 @@ def solve_qubo_bruteforce(
         time_violation = max(0, total_time - max_time)
         supply_violation = max(0, total_supplies - max_supplies)
 
-        # Função de energia QUBO
+        # QUBO energy function
         energy = -total_benefit + penalty_weight * (
             (time_violation ** 2) * 0.1 + (supply_violation ** 2)
         )
@@ -61,28 +61,28 @@ def solve_qubo_bruteforce(
 
 
 if __name__ == "__main__":
-    # Cenário simulado: Astronauta com múltiplos alertas após atividade extraveicular (EVA)
+    # Simulated scenario: Astronaut with multiple alerts after an Extravehicular Activity (EVA)
     candidate_protocols = [
-        ClinicalProtocol("P1", "Protocolo Hidratação & Eletrólitos", "NANDA 00027", 8.5, 10, 1),
-        ClinicalProtocol("P2", "Teste Visual SANS (Grade de Amsler)", "NANDA 00204", 9.0, 8, 0),
-        ClinicalProtocol("P3", "Higiene do Sono & Respiração Guiada", "NANDA 00198", 6.5, 15, 0),
-        ClinicalProtocol("P4", "Curativo & Proteção Cutânea Pós-Radiação", "NANDA 00046", 7.8, 12, 2),
-        ClinicalProtocol("P5", "Captura rPPG Vídeo + Alerta Flight Surgeon", "TRIAGEM-MED", 9.5, 5, 0),
+        ClinicalProtocol("P1", "Hydration & Electrolyte Protocol", "NANDA 00027", 8.5, 10, 1),
+        ClinicalProtocol("P2", "SANS Visual Screening (Amsler Grid)", "NANDA 00204", 9.0, 8, 0),
+        ClinicalProtocol("P3", "Sleep Hygiene & Guided Breathing", "NANDA 00198", 6.5, 15, 0),
+        ClinicalProtocol("P4", "Post-Radiation Skin Barrier Care", "NANDA 00046", 7.8, 12, 2),
+        ClinicalProtocol("P5", "Video rPPG Capture + Flight Surgeon Alert", "MED-TRIAGE", 9.5, 5, 0),
     ]
 
     MAX_TIME_MIN = 30
     MAX_SUPPLIES = 2
 
-    chosen, benefit = solve_qubo_bruteforce(
+    chosen, benefit = solve_qubo_exact(
         candidate_protocols, max_time=MAX_TIME_MIN, max_supplies=MAX_SUPPLIES
     )
 
-    print("=== AstroCare-Q | Otimização de Triagem Clínica (QUBO) ===")
-    print(f"Restrições da Missão: Tempo <= {MAX_TIME_MIN} min | Suprimentos <= {MAX_SUPPLIES} un.")
-    print("\nProtocolos Priorizados:")
+    print("=== AstroCare-Q | Clinical Triage Optimization (QUBO) ===")
+    print(f"Mission Constraints: Time <= {MAX_TIME_MIN} min | Supplies <= {MAX_SUPPLIES} units")
+    print("\nPrioritized Protocols:")
     for item in chosen:
         print(
             f"  - [{item.id}] {item.name} ({item.nanda_code}) | "
-            f"Benefício: {item.clinical_benefit} | Tempo: {item.time_minutes}m | Suprimentos: {item.supply_units}"
+            f"Benefit: {item.clinical_benefit} | Time: {item.time_minutes}m | Supplies: {item.supply_units}"
         )
-    print(f"\nBenefício Clínico Total Otimizado: {benefit:.1f}")
+    print(f"\nTotal Optimized Clinical Benefit: {benefit:.1f}")
