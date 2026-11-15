@@ -18,7 +18,8 @@
       <div class="eyebrow" data-i18n="eyebrow">CREW WELLNESS / PRIVATE CHECK-IN</div>
       <h1 data-i18n="title">A clear picture of how you are doing.</h1>
       <p data-i18n="lead">Record what changed, what you notice, and how it affects your mission tasks. You are in control of what you enter.</p>
-      <nav class="quick-nav" id="profileQuickNav" hidden><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav>
+      <nav class="quick-nav" id="profileQuickNav" hidden><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav>
+      <p><a class="gravity-source" href="#planning" lang="en">Open onboard task planning</a></p>
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
     <section class="panel profile-panel" aria-labelledby="profileTitle">
@@ -34,7 +35,7 @@
         <button id="switchProfile" class="secondary" type="button" data-i18n="switchProfile">Switch profile</button>
       </div>
     </section>
-    <div class="workspace" id="profileWorkspace" hidden><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
+    <div class="workspace" id="profileWorkspace" hidden><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
       <h2 data-i18n="contextTitle">Mission context</h2>
       <div class="grid three">
         
@@ -133,8 +134,24 @@
       <div id="recordList" class="record-list" aria-live="polite"></div>
     </section>
     </div></div>
+    <section class="panel" id="planning" lang="en" aria-labelledby="planningTitle">
+      <h2 id="planningTitle">Onboard task planning</h2>
+      <p>Enter operational tasks and compare an exact schedule with a Qiskit simulator result. Keep crew and health data out of planning files.</p>
+      <form id="planningForm">
+        <label><span>Available minutes</span><input id="planningBudget" type="number" required min="1" max="240"></label>
+        <label><span>Tasks (up to 8)</span><textarea id="planningTasks" rows="5" required aria-describedby="planningFormat"></textarea></label>
+        <p id="planningFormat">One task per line: task name | minutes (1–240) | priority points (1–100).</p>
+        <div class="actions"><button class="primary" type="submit">Compare schedules</button><button id="planningDownload" class="secondary" type="button" disabled>Download Qiskit input</button></div>
+      </form>
+      <p>Run <code>python mvp/quantum_task_scheduling.py plan.json result.json</code> locally, then open the result below.</p>
+      <label><span>Qiskit result file</span><input type="file" id="planningResult" accept=".json,application/json" disabled></label>
+      <p id="planningStatus" role="status"></p>
+      <p id="planningExact"></p>
+      <p id="planningQuantum"></p>
+    </section>
   </main>
   <footer><span data-i18n="footer">Independent educational prototype · No clinical interpretation · No agency endorsement</span></footer>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
+  <script src="planning.js"></script>
 </body></html>

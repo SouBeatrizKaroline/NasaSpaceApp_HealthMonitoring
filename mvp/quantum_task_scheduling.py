@@ -1,4 +1,7 @@
-"""Synthetic task-scheduling research demo. No health data or clinical decisions."""
+"""Compare schedules for user-entered operational tasks."""
+import argparse
+import json
+from pathlib import Path
 from itertools import product
 
 
@@ -13,16 +16,31 @@ def exact_classical(tasks, budget):
 
 
 def main():
-    # Fictional work items for a toy resource-allocation example.
-    tasks = [
-        {"name": "Inspect filter", "duration": 2, "value": 5},
-        {"name": "Inventory tools", "duration": 3, "value": 7},
-        {"name": "Review checklist", "duration": 1, "value": 3},
-        {"name": "Organize samples", "duration": 2, "value": 4},
-    ]
-    budget = 5
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("plan", type=Path)
+    parser.add_argument("result", type=Path)
+    args = parser.parse_args()
+    if args.plan.resolve() == args.result.resolve():
+        parser.error("Choose a different path for the result.")
+    try:
+        plan = json.loads(args.plan.read_text(encoding="utf-8"))
+        tasks, budget = plan["tasks"], plan["budget"]
+        if type(budget) is not int or not 1 <= budget <= 240:
+            raise ValueError
+        if not isinstance(tasks, list) or not 1 <= len(tasks) <= 8:
+            raise ValueError
+        for task in tasks:
+            name, duration, value = task["name"], task["duration"], task["value"]
+            if not isinstance(name, str) or not name.strip() or len(name) > 100:
+                raise ValueError
+            if type(duration) is not int or not 1 <= duration <= 240:
+                raise ValueError
+            if type(value) is not int or not 1 <= value <= 100:
+                raise ValueError
+    except (OSError, ValueError, KeyError, TypeError):
+        parser.error("Provide a valid plan exported from the task planning panel.")
     classical_value, classical_bits = exact_classical(tasks, budget)
-    print("Synthetic scheduling example")
+    print("Operational task scheduling")
     print("Exact classical baseline:", classical_value, classical_bits)
 
     try:
@@ -59,11 +77,11 @@ def main():
     result = solver.solve(problem)
     chosen = tuple(int(round(value)) for value in result.x)
     print("QAOA simulator result:", result.fval, chosen)
-    print("Selected synthetic tasks:", [
+    print("Selected tasks:", [
         task["name"] for task, bit in zip(tasks, chosen) if bit
     ])
-    print("This is a toy experiment; compare with the exact baseline.")
-    print("No advantage is asserted and no crew or health data is used.")
+    output = {"method": "qiskit-qaoa", "plan": {"budget": budget, "tasks": tasks}, "bits": chosen}
+    args.result.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
