@@ -195,3 +195,78 @@
   .topbar-inner, .topbar-actions { flex-wrap: wrap; }
   #view-checkin .stepper { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
+
+/* Crew Health Check visual identity */
+:root {
+  --header-bg: #182b43;
+  --bg: #f1f4fa;
+  --surface: #ffffff;
+  --surface-alt: #eaf0fa;
+  --border: #d1dceb;
+  --border-strong: #8296b4;
+  --ink: #18283e;
+  --muted: #4a5e78;
+  --green: #234c9b;
+  --green-hover: #1b3978;
+  --green-soft: #e1ecfd;
+  --focus: #2854ab;
+  --shadow: 0 12px 32px #162f5810;
+  --display-font: "Barlow", "Trebuchet MS", sans-serif;
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+:root[data-theme="dark"] {
+  --header-bg: #101b2d;
+  --bg: #101827;
+  --surface: #19263b;
+  --surface-alt: #131f33;
+  --border: #344961;
+  --border-strong: #738eb0;
+  --ink: #f3f7ff;
+  --muted: #b3c4df;
+  --green: #345eb8;
+  --green-hover: #294b95;
+  --green-soft: #22395c;
+  --focus: #9cbaff;
+}
+h1, h2, h3, .brand strong, .sidebar-brand strong {
+  font-family: var(--display-font);
+  letter-spacing: -.025em;
+}
+.topbar { border-bottom: 1px solid #97b0df45; }
+.brand-icon, .gate-mark, .sidebar-brand img { border-radius: 12px; }
+#profileGate { max-width: 460px; }
+#profileGate .hero-strip { padding-bottom: 8px; }
+#profileGate .profile-form { padding: clamp(18px,5vw,30px); border-top: 3px solid var(--green); }
+#profileGate .notice-inline { background: var(--surface-alt); }
+#appWorkspace .mission-sidebar { background: var(--header-bg); }
+#appWorkspace .nav-tab.active { background: #274771; color: white; }
+.today-banner, .reading-horizon {
+  background:
+    radial-gradient(ellipse at 69% 160%, #394e82 0%, #516ca5 43%, #9fb6f2 49%, #516baf 50%, transparent 52%),
+    linear-gradient(115deg,#0c172c,#25395d);
+}
+.today-body { padding: clamp(20px,4vw,38px); }
+[data-theme="dark"] .today-card { background: linear-gradient(115deg,#19263b,#1c3150); }
+.summary-item { background: var(--surface-alt); }
+#view-checkin .wizard-step { box-shadow: var(--shadow); }
+#view-checkin .step-dot { background: var(--surface); min-height: 64px; }
+#view-checkin .step-dot.active { background: var(--green); border-color: var(--green); }
+#view-checkin .step-number { font: 600 .85rem var(--display-font); }
+#view-checkin .reading-fields .field-row { padding: 0; border: 0; background: transparent; gap: 12px; }
+.reading-fields .field-row > label {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 13px;
+  min-width: 0;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+#appWorkspace .reading-help { background: var(--green-soft); color: var(--ink); }
+.review-item, .record-card { border-left: 3px solid var(--border-strong); }
+#view-checkin input:not([type="radio"]):not([type="checkbox"]),
+#view-checkin textarea, #profileGate input { min-height: 44px; }
+@media (min-width: 1100px) {
+  .reading-layout .field-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
