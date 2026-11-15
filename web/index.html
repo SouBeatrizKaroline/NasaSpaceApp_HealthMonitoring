@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#071321">
+  <meta name="theme-color" content="#f3f6f4">
   <title>Crew Health Check — Mission Self-Check-In</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,14 +12,16 @@
     <a class="brand" href="#" aria-label="Crew Health Check home"><span class="brand-mark">CH</span><span><strong>Crew Health Check</strong><small data-i18n="independent">Independent educational prototype</small></span></a>
     <label class="language"><span data-i18n="language">Language</span><select id="language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="pt">Português</option></select></label>
   </header>
+  <a class="skip-link" href="#profileTitle">Skip to profile</a>
   <main class="layout">
+  <div class="welcome-grid">
     <section class="intro">
-      <div class="orbital-art" aria-hidden="true"><span></span></div>
-      <div class="eyebrow" data-i18n="eyebrow">CREW WELLNESS / PRIVATE CHECK-IN</div>
-      <h1 data-i18n="title">A clear picture of how you are doing.</h1>
+      
+      <div class="eyebrow" data-i18n="eyebrow">CREW HEALTH / EVERY MISSION STAGE</div>
+      <h1 data-i18n="title">Your health, across the mission.</h1>
       <p data-i18n="lead">Record what changed, what you notice, and how it affects your mission tasks. You are in control of what you enter.</p>
       <nav class="quick-nav" id="profileQuickNav" hidden><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav>
-      <p><a class="gravity-source" href="#planning" lang="en">Open onboard task planning</a></p>
+
       <div class="boundary"><span class="boundary-icon">i</span><p data-i18n="boundary">This demo records your report. It does not diagnose, interpret measurements or media, or replace mission procedures.</p></div>
     </section>
     <section class="panel profile-panel" aria-labelledby="profileTitle">
@@ -35,6 +37,7 @@
         <button id="switchProfile" class="secondary" type="button" data-i18n="switchProfile">Switch profile</button>
       </div>
     </section>
+    </div>
     <div class="workspace" id="profileWorkspace" hidden><aside class="workflow"><nav aria-label="Crew Health Check"><a href="#mission" data-i18n="contextTitle">Mission context</a><a href="#checkin" data-i18n="navCheckin">Check-in</a><a href="#observations" data-i18n="measureTitle">Optional measurements</a><a href="#history" data-i18n="recordsTitle">Saved on this device</a><a href="#planning" lang="en">Task planning</a></nav></aside><div class="workspace-content"><section class="context panel" id="mission">
       <h2 data-i18n="contextTitle">Mission context</h2>
       <div class="grid three">
@@ -151,7 +154,7 @@
       <div id="recordList" class="record-list" aria-live="polite"></div>
     </section>
     </div></div>
-    <section class="panel" id="planning" lang="en" aria-labelledby="planningTitle">
+    <details class="resource-panel" id="planningResource"><summary>Mission operations <span>Task planning with Qiskit</span></summary><section class="panel" id="planning" lang="en" aria-labelledby="planningTitle">
       <h2 id="planningTitle">Onboard task planning</h2>
       <p>Enter operational tasks and compare an exact schedule with a Qiskit simulator result. Keep crew and health data out of planning files.</p>
       <form id="planningForm">
@@ -166,7 +169,7 @@
       <p id="planningExact"></p>
       <p id="planningQuantum"></p>
     </section>
-    <section class="panel" id="sleep-research" lang="en" aria-labelledby="sleepResearchTitle">
+    </details><details class="resource-panel" id="researchResource"><summary>Research library <span>Published spaceflight sleep data</span></summary><section class="panel" id="sleep-research" lang="en" aria-labelledby="sleepResearchTitle">
       <h2 id="sleepResearchTitle">Spaceflight sleep research</h2>
       <p>Explore published group averages measured by wrist actigraphy across Shuttle and International Space Station missions.</p>
       <label for="researchCohort"><span>Study cohort</span></label>
@@ -182,10 +185,12 @@
       <p class="subtext">These historical group averages provide research context. They are not personal targets or clinical thresholds. The study used actigraphy, while the check-in records self-reports.</p>
       <p><a class="gravity-source" href="https://pubmed.ncbi.nlm.nih.gov/25127232/">Barger et al. (2014) · Original study</a> · <a class="gravity-source" href="https://www.nasa.gov/wp-content/uploads/2023/03/sleep-accomodations-technical-brief-ochmo.pdf">NASA · Sleep Accommodations technical brief</a></p>
     </section>
+  </details>
   </main>
   <footer><span data-i18n="footer">Independent educational prototype · No clinical interpretation · No agency endorsement</span></footer>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
+  <script src="design.js"></script>
   <script src="sleep-research.js"></script>
   <script src="planning.js"></script>
 </body></html>
